@@ -93,6 +93,14 @@ label.l{display:block;font-size:12px;font-weight:700;color:var(--soft);margin:12
 #pList .card{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
 .card{display:flex;justify-content:space-between;align-items:center;gap:10px;background:var(--paper);border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:8px}
 .card:active{background:var(--blue-dim)}
+#v-setelan .card:has(#gExport):active {
+  background: var(--paper);
+  }
+#v-setelan .card:has(#gExport) button:active {
+  background: var(--blue-dim);
+  transform: scale(0.97);
+  transition: transform 0.1s ease;
+}
 .card .t{font-weight:700}.card .s{font-size:12px;color:var(--muted);margin-top:2px}
 .card .v{font-weight:800;white-space:nowrap}
 .card .v.red{color:var(--danger)}.card .v.blue{color:var(--blue)}
@@ -392,9 +400,9 @@ label.l{display:block;font-size:12px;font-weight:700;color:var(--soft);margin:12
   // ---------- About Me (teks bisa diubah lewat kode) ----------
   const ABOUT_ME = {
     judul: 'About Me',
-    teks: 'Untuk request silahkan hubungi developer melalui whatsapp 087875015256',
+    teks: 'Untuk request fitur silahkan hubungi developer melalui whatsapp',
     wa: '6287875015256',   // nomor untuk tombol chat (awali 62). Kosongkan '' kalau tidak mau ada tombol
-    pesanWa: 'Halo developer, saya mau request fitur untuk aplikasi kasir Arridho Jaya.'
+    pesanWa: 'Halo developer, saya mau request fitur untuk aplikasi kasir yang anda kembangkan.'
   };
   (function () {
     $('#aboutMeTitle').textContent = ABOUT_ME.judul;
