@@ -1,0 +1,615 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cetak Label Barcode</title>
+<style>
+  :root {
+    --paper: #FFFFFF; --paper-dim: #F2ECDD; --ink: #211C15; --ink-soft: #4A4136; --muted: #6E6455;
+    --border: #A99A7C; --red: #A6320C; --red-deep: #7E260A; --red-dim: #F3D9CC;
+    --green: #2F5940; --green-dim: #D9EADD; --yellow: #946B0A; --yellow-dim: #FBEBC9;
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; }
+  body { margin: 0; font-family: system-ui, -apple-system, "Segoe UI", Arial, sans-serif; background: var(--paper-dim); color: var(--ink); }
+  .app { height: 100vh; display: flex; flex-direction: column; }
+
+  /* ----- header ----- */
+  .top { flex: none; display: flex; align-items: center; gap: 14px; padding: 10px 18px; background: var(--paper); border-bottom: 2px solid var(--ink); }
+  .top h1 { margin: 0; font-size: 17px; }
+  .top .back { margin-left: auto; font-size: 13px; font-weight: 700; color: var(--red); text-decoration: none; border: 1px solid var(--border); border-radius: 6px; padding: 7px 12px; }
+  .top .back:hover { background: var(--red-dim); }
+  .banner { flex: none; padding: 9px 18px; font-size: 13px; line-height: 1.5; }
+  .banner.ok { background: var(--green-dim); color: var(--green); }
+  .banner.bad { background: var(--red-dim); color: var(--red); font-weight: 700; }
+
+  /* ----- isi ----- */
+  .body { flex: 1; min-height: 0; display: flex; }
+  .side { width: 370px; flex: 0 0 370px; overflow-y: auto; background: var(--paper); border-right: 1px solid var(--border); }
+  .sec { padding: 12px 16px 14px; border-bottom: 1px solid var(--paper-dim); }
+  .sec h4 { margin: 0 0 4px; font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+  .stats { font-size: 12.5px; color: var(--ink-soft); line-height: 1.6; background: var(--paper-dim); }
+  .stats b { color: var(--ink); }
+  .mono { font-family: "SF Mono", Consolas, Menlo, monospace; }
+  label { display: block; font-size: 12px; font-weight: 600; color: var(--ink-soft); margin: 12px 0 4px; }
+  input, select { width: 100%; padding: 9px 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 14px; font-family: inherit; background: var(--paper); color: var(--ink); }
+  input:focus, select:focus { outline: 2px solid var(--red); border-color: var(--red); }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 10px; }
+  .full { grid-column: 1 / -1; }
+  .chk { display: flex; align-items: center; gap: 8px; font-weight: 500; }
+  .chk input { width: auto; }
+  input[type=range] { padding: 0; }
+  .hide { display: none !important; }
+  .btn { padding: 10px 16px; border-radius: 7px; border: none; font-size: 14px; font-weight: 700; cursor: pointer; }
+  .btn-primary { background: var(--red); color: #fff; }
+  .btn-primary:hover { background: var(--red-deep); }
+  .btn-secondary { background: transparent; border: 1px solid var(--border); color: var(--ink-soft); }
+
+  .item { border: 1px solid var(--border); border-radius: 8px; padding: 2px 10px 10px; margin: 10px 0; background: var(--paper-dim); }
+  .item-head { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; }
+  .item-head b { font-size: 13px; }
+  .del { background: var(--red-dim); color: var(--red); border: none; border-radius: 6px; padding: 5px 10px; font-size: 12px; font-weight: 700; cursor: pointer; }
+  .bc-row { display: flex; gap: 6px; }
+  .bc-row input { flex: 1; min-width: 0; }
+  .bc-row .btn { flex: none; padding: 8px 10px; font-size: 12.5px; }
+  .cat-make { padding: 6px 8px; font-size: 12px; white-space: nowrap; }
+  .cat-tools { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: 8px 0; font-size: 12.5px; color: var(--ink-soft); }
+  .cat-tools b { color: var(--ink); }
+  .cat-tools .btn { padding: 5px 10px; font-size: 12px; }
+  .cat-list { border: 1px solid var(--border); border-radius: 8px; max-height: 360px; overflow-y: auto; background: var(--paper); }
+  .cat-row { display: grid; grid-template-columns: auto 1fr auto; gap: 8px; align-items: center; padding: 8px 10px; border-bottom: 1px solid var(--paper-dim); }
+  .cat-row:last-child { border-bottom: none; }
+  .cat-row.sel { background: var(--green-dim); }
+  .cat-row.off { opacity: .55; }
+  .cat-row input[type=checkbox] { width: auto; }
+  .cat-row .cn { font-size: 13px; font-weight: 600; line-height: 1.25; }
+  .cat-row .cs { font-size: 11.5px; color: var(--muted); margin-top: 1px; }
+  .cat-row .cs .warnx { color: var(--red); font-weight: 700; }
+  .cat-row input.cq { width: 64px; padding: 6px 6px; text-align: center; font-size: 13px; }
+  .cat-note { padding: 10px 12px; font-size: 12px; color: var(--muted); text-align: center; }
+
+  .preview { flex: 1; min-width: 0; overflow: auto; padding: 16px; }
+  .sheets { --z: 1.4; display: flex; flex-wrap: wrap; gap: 18px; align-content: flex-start; }
+  .sheet { zoom: var(--z); width: 100mm; height: 150mm; flex: 0 0 auto; background: #fff; display: grid; box-shadow: 0 2px 10px rgba(0,0,0,.25); overflow: hidden; break-after: page; page-break-after: always; }
+  .label { display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; padding: 1mm; color: #000; }
+  .label.cut { outline: 0.1mm dotted #000; outline-offset: -0.1mm; }
+  .label svg { width: 92%; flex: 1 1 auto; min-height: 0; max-height: 55%; }
+  .label .num { font-family: "Courier New", monospace; font-size: 3.2mm; line-height: 1.1; letter-spacing: .3mm; margin-top: .6mm; }
+  .label .name { font-size: 3mm; line-height: 1.15; margin-top: .4mm; max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 600; }
+  .label .price { font-size: 4.6mm; line-height: 1.1; margin-top: .3mm; font-weight: 800; }
+  .label .tag { font-size: 2.2mm; margin-top: .3mm; }
+
+  .foot { flex: none; display: flex; gap: 12px; align-items: center; justify-content: space-between; padding: 10px 18px; background: var(--paper); border-top: 1px solid var(--border); }
+  .msg { font-size: 12.5px; line-height: 1.5; flex: 1; min-width: 0; }
+  .msg .bad { color: var(--red); font-weight: 700; }
+  .msg .warn { color: var(--yellow); font-weight: 700; }
+  .msg .okk { color: var(--green); font-weight: 700; }
+  .msg button { border: 1px solid var(--border); background: var(--paper); border-radius: 5px; font-size: 12px; padding: 3px 8px; cursor: pointer; margin-left: 4px; }
+  .btns { display: flex; gap: 8px; flex: none; }
+
+  .overlay { position: fixed; inset: 0; background: rgba(36,31,26,.45); display: flex; align-items: center; justify-content: center; z-index: 50; padding: 16px; }
+  .dialog { background: #fff; border-radius: 10px; padding: 20px; width: min(420px, 100%); }
+  .dialog h3 { margin: 0 0 10px; font-size: 16px; }
+  .dialog p { margin: 0; font-size: 13px; color: var(--ink-soft); line-height: 1.5; }
+  .dialog .acts { display: flex; gap: 8px; justify-content: flex-end; margin-top: 18px; }
+  .toast { position: fixed; left: 50%; bottom: 80px; transform: translateX(-50%); background: var(--ink); color: #fff; padding: 10px 16px; border-radius: 8px; font-size: 13px; opacity: 0; pointer-events: none; transition: opacity .2s; z-index: 60; max-width: 90vw; }
+  .toast.show { opacity: 1; }
+  .toast.err { background: var(--red); }
+
+  #printLabels { display: none; }
+  @page { size: 100mm 150mm; margin: 0; }
+  @media (max-width: 820px) {
+    .app { height: auto; min-height: 100vh; }
+    .body { flex-direction: column; }
+    .side { width: 100%; flex: none; overflow: visible; border-right: 0; }
+    .preview { flex: none; overflow: visible; }
+    .sheets { --z: .85 !important; justify-content: center; }
+    .foot { flex-direction: column; align-items: stretch; }
+    .btns .btn { flex: 1; }
+  }
+  @media print {
+    html, body { height: auto; width: 100mm; background: #fff; }
+    .app, .toast, .overlay { display: none !important; }
+    #printLabels { display: block; }
+    #printLabels .sheet { zoom: 1; box-shadow: none; margin: 0; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <h1>🏷 Cetak Label Barcode</h1>
+    <a class="back" href="index.html">← Kembali ke Kasir</a>
+  </header>
+  <div class="banner" id="banner"></div>
+
+  <div class="body">
+    <aside class="side">
+      <div class="sec">
+        <h4>1. Isi label</h4>
+        <select id="mode">
+          <option value="cat" selected>Dari katalog produk (pilih barang)</option>
+          <option value="new">Barang baru (ketik nama, buat barcode)</option>
+        </select>
+      </div>
+
+      <div class="sec hide" id="newBox">
+        <h4>Barang baru</h4>
+        <div id="newRows"></div>
+        <button class="btn btn-secondary" id="addNew" type="button" style="width:100%;">+ Tambah barang</button>
+        <label class="chk"><input id="newSave" type="checkbox" checked> Simpan ke daftar produk kasir saat dicetak (supaya bisa discan)</label>
+      </div>
+
+      <div class="sec" id="catBox">
+        <h4>Pilih barang dari katalog</h4>
+        <input id="catSearch" type="text" placeholder="Cari nama atau barcode...">
+        <div class="cat-tools">
+          <span id="catSummary"></span>
+          <button class="btn btn-secondary" id="catClear" type="button">Kosongkan pilihan</button>
+        </div>
+        <div class="cat-list" id="catList"></div>
+      </div>
+
+      <div class="sec">
+        <h4>2. Kertas dan tampilan</h4>
+        <label>Susunan di kertas</label>
+        <select id="arr">
+          <option value="seq">Berurutan (baris demi baris)</option>
+          <option value="col">Per kolom (1 barang = 1 kolom)</option>
+        </select>
+        <div class="grid">
+          <div><label>Kolom</label><input id="cols" type="number" min="1" max="6" value="2"></div>
+          <div><label>Baris</label><input id="rows" type="number" min="1" max="12" value="5"></div>
+          <div class="full"><label>Teks kecil di label (opsional)</label><input id="tag" type="text" placeholder="cth. nama toko"></div>
+        </div>
+        <label class="chk"><input id="cut" type="checkbox" checked> Garis potong (titik-titik)</label>
+        <label>Ukuran pratinjau</label>
+        <input id="zoom" type="range" min="0.6" max="2.4" step="0.1" value="1.4">
+      </div>
+    </aside>
+    <main class="preview"><div class="sheets" id="sheets"></div></main>
+  </div>
+
+  <div class="foot">
+    <div class="msg" id="msg"></div>
+    <div class="btns">
+      <button class="btn btn-secondary" id="csv" type="button">Unduh CSV</button>
+      <button class="btn btn-primary" id="print" type="button">Cetak</button>
+    </div>
+  </div>
+</div>
+<div id="printLabels"></div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* Halaman ini satu domain dengan kasir (index.html), jadi membaca data yang sama dari browser:
+   'kasirArridho:products' (daftar barang) dan 'kasirArridho:labelRanges' (nomor yang sudah dicetak). */
+const STORAGE_PREFIX = 'kasirArridho:';
+const sGet = (k) => { try { return localStorage.getItem(STORAGE_PREFIX + k); } catch (e) { return null; } };
+const sSet = (k, v) => { try { localStorage.setItem(STORAGE_PREFIX + k, v); return true; } catch (e) { return false; } };
+
+const $ = (id) => document.getElementById(id);
+const esc = (t) => String(t == null ? '' : t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+const digits = (s) => String(s || '').replace(/\D/g, '');
+const ci = (v, lo, hi, d) => Math.max(lo, Math.min(hi, parseInt(v, 10) || d));
+
+const LB_P = ["212222","222122","222221","121223","121322","131222","122213","122312","132212","221213","221312","231212","112232","122132","122231","113222","123122","123221","223211","221132","221231","213212","223112","312131","311222","321122","321221","312212","322112","322211","212123","212321","232121","111323","131123","131321","112313","132113","132311","211313","231113","231311","112133","112331","132131","113123","113321","133121","313121","211331","231131","213113","213311","213131","311123","311321","331121","312113","312311","332111","314111","221411","431111","111224","111422","121124","121421","141122","141221","112214","112412","122114","122411","142112","142211","241211","221114","413111","241112","134111","111242","121142","121241","114212","124112","124211","411212","421112","421211","212141","214121","412121","111143","111341","131141","114113","114311","411113","411311","113141","114131","311141","411131","211412","211214","211232","2331112"];
+const LB_PREFIX = '99';   // awalan kode buatan sendiri (barcode pabrik Indonesia berawalan 899 / 13 digit)
+const LB_LEN = 10;        // panjang kode buatan sendiri
+
+/* ---------- data produk dari kasir ---------- */
+let products = [];
+let productsFound = false;
+function loadProducts() {
+  const raw = sGet('products');
+  productsFound = raw !== null;
+  try { products = raw ? JSON.parse(raw) : []; if (!Array.isArray(products)) products = []; }
+  catch (e) { products = []; productsFound = false; }
+}
+function renderBanner() {
+  const el = $('banner');
+  if (!productsFound) {
+    const extra = location.protocol === 'file:' ? ' Halaman ini dibuka dari file lokal, buka lewat alamat GitHub Pages kasirmu.' : '';
+    el.className = 'banner bad';
+    el.textContent = 'Data produk kasir tidak terbaca di browser ini, jadi daftar barang kosong. ' +
+      'Buka halaman ini dari alamat kasirmu yang sama (lewat tombol Cetak Label di halaman Produk), di browser yang sama dengan kasir.' + extra;
+  } else {
+    el.className = 'banner ok';
+    el.textContent = `✓ Terhubung ke data kasir: ${products.length.toLocaleString('id-ID')} barang terbaca.`;
+  }
+}
+
+/* ---------- Code128 subset C ---------- */
+function lbSvg(d) {
+  if (d.length % 2) d = '0' + d;
+  const vals = [105];
+  for (let i = 0; i < d.length; i += 2) vals.push(parseInt(d.substr(i, 2), 10));
+  let sum = vals[0];
+  for (let i = 1; i < vals.length; i++) sum += vals[i] * i;
+  vals.push(sum % 103);
+  vals.push(106);
+  const pattern = vals.map(v => LB_P[v]).join('');
+  const quiet = 10;
+  let x = quiet, bar = true, rects = '';
+  for (const ch of pattern) {
+    const w = +ch;
+    if (bar) rects += `<rect x="${x}" y="0" width="${w}" height="50"/>`;
+    x += w; bar = !bar;
+  }
+  return `<svg viewBox="0 0 ${x + quiet} 50" preserveAspectRatio="none" shape-rendering="crispEdges" fill="#000">${rects}</svg>`;
+}
+
+/* ---------- catatan nomor yang sudah dicetak: rentang [dari, sampai] ---------- */
+function lbRanges() {
+  try {
+    const r = JSON.parse(sGet('labelRanges') || '[]');
+    return Array.isArray(r) ? r.filter(x => Array.isArray(x) && /^\d+$/.test(x[0]) && /^\d+$/.test(x[1])) : [];
+  } catch (e) { return []; }
+}
+function lbMerge(list) {
+  const byLen = {};
+  list.forEach(([a, b]) => { (byLen[a.length] = byLen[a.length] || []).push([BigInt(a), BigInt(b)]); });
+  const out = [];
+  Object.keys(byLen).forEach(len => {
+    const arr = byLen[len].sort((x, y) => (x[0] < y[0] ? -1 : x[0] > y[0] ? 1 : 0));
+    const fmt = (n) => n.toString().padStart(+len, '0');
+    let cur = arr[0];
+    for (let i = 1; i < arr.length; i++) {
+      const n = arr[i];
+      if (n[0] <= cur[1] + 1n) { if (n[1] > cur[1]) cur[1] = n[1]; }
+      else { out.push([fmt(cur[0]), fmt(cur[1])]); cur = n; }
+    }
+    out.push([fmt(cur[0]), fmt(cur[1])]);
+  });
+  return out;
+}
+function lbInRanges(code, ranges) {
+  code = String(code || '').trim();
+  if (!/^\d+$/.test(code)) return false;
+  const n = BigInt(code);
+  return ranges.some(([a, b]) => a.length === code.length && n >= BigInt(a) && n <= BigInt(b));
+}
+// Nomor aman berikutnya: lebih besar dari semua kode buatan sendiri yang sudah dicetak atau sudah dipakai barang.
+function lbNextStart() {
+  let max = BigInt(LB_PREFIX + '0'.repeat(LB_LEN - LB_PREFIX.length));
+  const isOwn = (s) => s.length === LB_LEN && s.startsWith(LB_PREFIX) && /^\d+$/.test(s);
+  lbRanges().forEach(([a, b]) => { if (isOwn(a) && BigInt(b) > max) max = BigInt(b); });
+  products.forEach(p => { const b = String(p.barcode || '').trim(); if (isOwn(b) && BigInt(b) > max) max = BigInt(b); });
+  return (max + 1n).toString();
+}
+
+/* ---------- tampilan sheet ---------- */
+function sheetsHtml(pages, cols, rows, cut, tag) {
+  const fmt = (v) => { const d = digits(v); return d ? 'Rp ' + Number(d).toLocaleString('id-ID') : ''; };
+  const cell = (c) => {
+    if (!c) return `<div class="label${cut ? ' cut' : ''}"></div>`;
+    const p = fmt(c.price);
+    return `<div class="label${cut ? ' cut' : ''}">${lbSvg(c.code)}<div class="num">${esc(c.code)}</div>` +
+      (c.name ? `<div class="name">${esc(c.name)}</div>` : '') +
+      (p ? `<div class="price">${p}</div>` : '') +
+      (tag ? `<div class="tag">${esc(tag)}</div>` : '') + '</div>';
+  };
+  return pages.map(pg =>
+    `<div class="sheet" style="grid-template-columns:repeat(${cols},1fr);grid-template-rows:repeat(${rows},1fr);">${pg.map(cell).join('')}</div>`
+  ).join('');
+}
+
+/* ---------- toast & dialog ---------- */
+let toastTimer;
+function toast(msg, err) {
+  const t = $('toast');
+  t.textContent = msg;
+  t.className = 'toast show' + (err ? ' err' : '');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2600);
+}
+function ask(title, html, okText) {
+  return new Promise((resolve) => {
+    const o = document.createElement('div');
+    o.className = 'overlay';
+    o.innerHTML = `<div class="dialog"><h3>${esc(title)}</h3><p>${html}</p>
+      <div class="acts"><button class="btn btn-secondary" id="dNo">Batal</button><button class="btn btn-primary" id="dYes">${esc(okText || 'Ya')}</button></div></div>`;
+    document.body.appendChild(o);
+    const done = (v) => { o.remove(); resolve(v); };
+    o.querySelector('#dYes').onclick = () => done(true);
+    o.querySelector('#dNo').onclick = () => done(false);
+    o.onclick = (e) => { if (e.target === o) done(false); };
+  });
+}
+
+/* ---------- mode katalog: pilih barang dari data kasir ---------- */
+const catSel = new Map();            // id barang -> jumlah label
+const CAT_DEFAULT_QTY = 5;
+const CAT_SHOW_MAX = 60;
+const catUsable = (p) => /^\d+$/.test(String(p.barcode || '').trim());
+
+function renderCatList() {
+  const term = $('catSearch').value.trim().toLowerCase();
+  const filtered = products.filter(p => !term ||
+    String(p.name || '').toLowerCase().includes(term) || String(p.barcode || '').toLowerCase().includes(term));
+  // barang yang bisa dicetak tampil dulu, lalu yang belum punya barcode
+  filtered.sort((a, b) => (catUsable(b) - catUsable(a)) || String(a.name).localeCompare(String(b.name), 'id'));
+  const shown = filtered.slice(0, CAT_SHOW_MAX);
+  const box = $('catList');
+  if (!products.length) {
+    box.innerHTML = '<div class="cat-note">Belum ada barang di kasir.</div>';
+    return;
+  }
+  if (!shown.length) {
+    box.innerHTML = '<div class="cat-note">Barang tidak ditemukan.</div>';
+    return;
+  }
+  box.innerHTML = shown.map(p => {
+    const bc = String(p.barcode || '').trim();
+    const ok = catUsable(p);
+    const on = catSel.has(p.id);
+    const sub = !bc ? '<span class="warnx">belum punya barcode</span>'
+      : !ok ? '<span class="warnx">barcode bukan angka</span>'
+      : `<span class="mono">${esc(bc)}</span> · Rp ${Number(p.price || 0).toLocaleString('id-ID')}`;
+    return `<div class="cat-row${on ? ' sel' : ''}${ok ? '' : ' off'}" data-id="${esc(p.id)}">
+      <input type="checkbox" class="cc"${on ? ' checked' : ''}${ok ? '' : ' disabled'}>
+      <div><div class="cn">${esc(p.name)}</div><div class="cs">${sub}</div></div>
+      ${!bc ? '<button type="button" class="btn btn-primary cat-make">Buat barcode</button>'
+        : `<input type="number" class="cq" min="1" max="5000" value="${on ? catSel.get(p.id) : CAT_DEFAULT_QTY}"${on ? '' : ' disabled'}>`}
+    </div>`;
+  }).join('') + (filtered.length > shown.length
+    ? `<div class="cat-note">Menampilkan ${shown.length} dari ${filtered.length} barang. Persempit pencarian untuk melihat sisanya.</div>` : '');
+  box.querySelectorAll('.cat-row').forEach(row => {
+    const id = row.dataset.id, chk = row.querySelector('.cc'), q = row.querySelector('.cq');
+    const mk = row.querySelector('.cat-make');
+    if (mk) {
+      mk.addEventListener('click', () => {
+        loadProducts();                                   // ambil data terbaru dulu supaya nomornya tidak bentrok
+        const code = nextOwnCode();
+        if (!saveProductBarcode(id, code)) { toast('Gagal menyimpan barcode ke data kasir', true); return; }
+        loadProducts();
+        catSel.set(id, CAT_DEFAULT_QTY);                  // langsung terpilih untuk dicetak
+        renderCatList();
+        refresh();
+        toast('Barcode ' + code + ' dibuat dan disimpan ke barang');
+      });
+      return;
+    }
+    chk.addEventListener('change', () => {
+      if (chk.checked) catSel.set(id, ci(q.value, 1, 5000, CAT_DEFAULT_QTY)); else catSel.delete(id);
+      q.disabled = !chk.checked;
+      row.classList.toggle('sel', chk.checked);
+      refresh();
+    });
+    q.addEventListener('input', () => {
+      if (chk.checked) { catSel.set(id, ci(q.value, 1, 5000, 1)); refresh(); }
+    });
+  });
+}
+function readCat() {
+  const out = [];
+  catSel.forEach((count, id) => {
+    const p = products.find(x => x.id === id);
+    if (!p || !catUsable(p)) { catSel.delete(id); return; }   // barang sudah dihapus/diubah di kasir
+    out.push({ code: String(p.barcode).trim(), name: String(p.name || ''), price: String(p.price || ''), count });
+  });
+  return out;
+}
+$('catSearch').addEventListener('input', renderCatList);
+$('catClear').onclick = () => { catSel.clear(); renderCatList(); refresh(); };
+
+/* ---------- buat barcode & simpan ke data kasir ---------- */
+const isOwnCode = (s) => s.length === LB_LEN && s.startsWith(LB_PREFIX) && /^\d+$/.test(s);
+// Nomor 99… berikutnya yang aman; `reserved` = kode yang sudah dipakai di form tapi belum tersimpan.
+function nextOwnCode(reserved) {
+  let n = BigInt(lbNextStart());
+  (reserved || []).forEach(c => { if (isOwnCode(c) && BigInt(c) >= n) n = BigInt(c) + 1n; });
+  return n.toString();
+}
+const newId = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+function readProductsFresh() {
+  if (!productsFound) return null;                        // data kasir tidak terbaca: jangan menulis apa pun
+  try { const l = JSON.parse(sGet('products') || '[]'); return Array.isArray(l) ? l : null; } catch (e) { return null; }
+}
+function saveProductBarcode(id, code) {
+  const list = readProductsFresh();
+  if (!list) return false;
+  const p = list.find(x => x.id === id);
+  if (!p || list.some(x => x.id !== id && String(x.barcode || '').trim() === code)) return false;
+  p.barcode = code;
+  return sSet('products', JSON.stringify(list));
+}
+function saveNewProducts(items) {
+  const list = readProductsFresh();
+  if (!list) return { ok: false, msg: 'Data produk kasir tidak terbaca, barang tidak bisa disimpan' };
+  const used = new Set(list.map(p => String(p.barcode || '').trim()).filter(Boolean));
+  for (const it of items) if (used.has(it.code)) return { ok: false, msg: 'Barcode ' + it.code + ' sudah dipakai barang lain' };
+  const added = items.map(it => ({ id: newId(), name: it.name, price: parseInt(digits(it.price), 10), barcode: it.code }));
+  if (!sSet('products', JSON.stringify(list.concat(added)))) return { ok: false, msg: 'Gagal menyimpan ke data kasir (penyimpanan penuh?)' };
+  return { ok: true, added };
+}
+
+/* ---------- mode barang baru: ketik nama, buat barcode ---------- */
+function renumber() {
+  Array.from($('newRows').children).forEach((d, i) => { d.querySelector('.no').textContent = 'Barang ' + (i + 1); });
+}
+function readNew() {
+  return Array.from($('newRows').children).map(d => ({
+    code: digits(d.querySelector('.nw-code').value),
+    name: d.querySelector('.nw-name').value.trim(),
+    price: d.querySelector('.nw-price').value,
+    count: ci(d.querySelector('.nw-count').value, 1, 5000, 1)
+  }));
+}
+function addNewRow() {
+  const d = document.createElement('div');
+  d.className = 'item';
+  d.innerHTML = `
+    <div class="item-head"><b class="no"></b><button class="del" type="button">Hapus</button></div>
+    <div class="grid">
+      <div class="full"><label>Nama barang</label><input class="nw-name" type="text" placeholder="cth. Indomie Goreng"></div>
+      <div><label>Harga Rp</label><input class="nw-price" type="text" inputmode="numeric" placeholder="cth. 3500"></div>
+      <div><label>Jumlah stiker</label><input class="nw-count" type="number" min="1" max="5000" value="5"></div>
+      <div class="full"><label>Barcode</label>
+        <div class="bc-row"><input class="nw-code mono" type="text" inputmode="numeric" placeholder="kosong = klik Buat barcode"><button class="btn btn-primary nw-make" type="button">Buat barcode</button></div>
+      </div>
+    </div>`;
+  d.querySelector('.del').onclick = () => { d.remove(); if (!$('newRows').children.length) addNewRow(); renumber(); refresh(); };
+  d.querySelector('.nw-make').onclick = () => {
+    loadProducts();
+    const others = readNew().filter((_, i) => $('newRows').children[i] !== d).map(x => x.code);
+    d.querySelector('.nw-code').value = nextOwnCode(others);
+    refresh();
+  };
+  const pr = d.querySelector('.nw-price');
+  pr.addEventListener('input', () => { const g = digits(pr.value); pr.value = g ? parseInt(g, 10).toLocaleString('id-ID') : ''; });
+  d.querySelectorAll('input').forEach(el => el.addEventListener('input', refresh));
+  $('newRows').appendChild(d);
+  renumber();
+}
+$('addNew').onclick = () => { addNewRow(); refresh(); };
+
+/* ---------- susun label ---------- */
+function build() {
+  const cols = ci($('cols').value, 1, 6, 2);
+  const rows = ci($('rows').value, 1, 12, 5);
+  const per = cols * rows;
+  const pages = [];
+  const pushPages = (list) => {
+    for (let i = 0; i < list.length; i += per) {
+      const pg = list.slice(i, i + per);
+      while (pg.length < per) pg.push(null);
+      pages.push(pg);
+    }
+  };
+  const mode = $('mode').value;
+  const items = mode === 'new' ? readNew().filter(it => it.code) : readCat();
+  const flat = items;
+  if ($('arr').value === 'seq') {
+    const all = [];
+    items.forEach(it => { for (let i = 0; i < it.count; i++) all.push(it); });
+    pushPages(all);
+  } else {
+    for (let g = 0; g < items.length; g += cols) {
+      const group = items.slice(g, g + cols);
+      const maxCount = Math.max(...group.map(it => it.count));
+      for (let s = 0; s < Math.ceil(maxCount / rows); s++) {
+        const pg = new Array(per).fill(null);
+        group.forEach((it, c2) => {
+          for (let r = 0; r < rows; r++) if (s * rows + r < it.count) pg[r * cols + c2] = it;
+        });
+        pages.push(pg);
+      }
+    }
+  }
+  return { mode, cols, rows, per, pages, flat, cut: $('cut').checked, tag: $('tag').value.trim() };
+}
+
+/* ---------- cek bentrok ---------- */
+// Kode memang milik barang yang dipilih, jadi cetak ulang itu normal. Yang dicek hanya barcode kembar antar barang.
+function analyze(b) {
+  const seen = new Set(), dup = [], clash = [], incomplete = [];
+  b.flat.forEach(c => {
+    if (seen.has(c.code)) { if (!dup.includes(c.code)) dup.push(c.code); return; }
+    seen.add(c.code);
+  });
+  let noCode = 0;
+  if (b.mode === 'new') {
+    // barang baru tidak boleh memakai barcode yang sudah dipakai barang lain di katalog
+    const usedBy = new Map();
+    products.forEach(p => { const k = String(p.barcode || '').trim(); if (k) usedBy.set(k, p); });
+    b.flat.forEach(c => { const p = usedBy.get(c.code); if (p && !clash.some(x => x.code === c.code)) clash.push({ code: c.code, name: p.name }); });
+    if ($('newSave').checked) b.flat.forEach(c => { if (!c.name || !(parseInt(digits(c.price), 10) > 0)) incomplete.push(c.code); });
+    noCode = readNew().filter(x => !x.code && (x.name || x.price)).length;
+  }
+  return { dup, clash, incomplete, noCode };
+}
+
+function refresh() {
+  const mode = $('mode').value;
+  $('catBox').classList.toggle('hide', mode !== 'cat');
+  $('newBox').classList.toggle('hide', mode !== 'new');
+  $('sheets').style.setProperty('--z', $('zoom').value);
+
+  const b = build();
+  $('sheets').innerHTML = sheetsHtml(b.pages, b.cols, b.rows, b.cut, b.tag);
+  const a = analyze(b);
+  const total = b.pages.reduce((s, pg) => s + pg.filter(Boolean).length, 0);
+  const parts = [];
+  if (!productsFound) parts.push('<span class="bad">Data produk kasir tidak terbaca.</span>');
+  if (a.dup.length) parts.push(`<span class="bad">Ada barang dengan barcode kembar: ${a.dup.slice(0, 3).map(esc).join(', ')}. Perbaiki dulu di halaman Produk.</span>`);
+  const nSel = b.flat.length;
+  if (mode === 'cat') {
+    $('catSummary').innerHTML = nSel ? `<b>${nSel}</b> barang dipilih, <b>${total}</b> label` : 'Belum ada barang dipilih';
+    if (!nSel) parts.push('<span class="warn">Centang barang di daftar katalog untuk mulai.</span>');
+    else if (!parts.length) parts.push('<span class="okk">✓ Nama, harga, dan barcode diambil dari data kasir.</span>');
+  } else {
+    if (a.clash.length) parts.push(`<span class="bad">Barcode sudah dipakai barang lain: ${a.clash.slice(0, 2).map(h => `${esc(h.code)} → ${esc(h.name)}`).join(', ')}. Kalau ini cetak ulang, pilih dari katalog.</span>`);
+    if (a.incomplete.length) parts.push('<span class="bad">Nama dan harga wajib diisi supaya barang bisa disimpan ke kasir (atau matikan centang simpan).</span>');
+    if (a.noCode) parts.push(`<span class="warn">${a.noCode} baris belum punya barcode, klik "Buat barcode".</span>`);
+    if (!nSel) { if (!a.noCode) parts.push('<span class="warn">Isi nama barang lalu klik "Buat barcode".</span>'); }
+    else if (!parts.length) parts.push(`<span class="okk">✓ ${$('newSave').checked ? 'Barang baru akan disimpan ke kasir saat dicetak.' : 'Hanya dicetak, barang tidak disimpan ke kasir.'}</span>`);
+  }
+  $('msg').innerHTML = parts.join(' ') +
+    `<br><span style="color:var(--muted);">${total} label, ${b.per} per lembar, ${b.pages.length} lembar 100×150 mm. Di dialog cetak: kertas 100×150 mm, margin None, skala 100%.</span>`;
+  return { b, a };
+}
+['mode', 'arr', 'cols', 'rows', 'tag', 'cut', 'zoom', 'newSave'].forEach(id => {
+  const el = $(id);
+  if (el.tagName === 'SELECT' || el.type === 'checkbox') el.addEventListener('change', refresh);
+  else el.addEventListener('input', refresh);
+});
+
+$('csv').onclick = () => {
+  const { b } = refresh();
+  const qt = (t) => '"' + String(t || '').replace(/"/g, '""') + '"';
+  const lines = ['barcode,nama,harga'].concat(b.flat.map(c => [c.code, qt(c.name), digits(c.price)].join(',')));
+  const blob = new Blob(['﻿' + lines.join('\n') + '\n'], { type: 'text/csv' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = 'daftar-barcode.csv';
+  link.click();
+};
+
+$('print').onclick = async () => {
+  loadProducts(); renderBanner(); renderCatList();   // ambil data terbaru dari kasir sebelum mengecek
+  const { b, a } = refresh();
+  if (!b.flat.length) { toast('Belum ada barcode untuk dicetak', true); return; }
+  if (a.dup.length) { toast('Ada barcode kembar di daftar barang', true); return; }
+  if (a.clash.length) { toast('Ada barcode yang sudah dipakai barang lain', true); return; }
+  if (a.incomplete.length) { toast('Nama dan harga wajib diisi untuk barang yang disimpan', true); return; }
+  // mode barang baru: simpan ke daftar produk kasir dulu (kalau gagal, batal cetak)
+  let savedNew = null;
+  if (b.mode === 'new' && $('newSave').checked) {
+    const res = saveNewProducts(b.flat);
+    if (!res.ok) { toast(res.msg, true); return; }
+    savedNew = res.added;
+  }
+  // catat kode buatan sendiri (99…) yang dicetak; kode pabrik tidak perlu dicatat
+  const own = Array.from(new Set(b.flat.map(c => c.code))).filter(c => c.length === LB_LEN && c.startsWith(LB_PREFIX)).map(c => [c, c]);
+  if (own.length && !sSet('labelRanges', JSON.stringify(lbMerge(lbRanges().concat(own))))) toast('Catatan nomor gagal disimpan di browser', true);
+  $('printLabels').innerHTML = sheetsHtml(b.pages, b.cols, b.rows, b.cut, b.tag);
+  window.print();
+  if (savedNew) {
+    // barang sudah masuk katalog: pindah ke mode katalog dengan pilihan yang sama, form baru dikosongkan
+    loadProducts(); renderBanner();
+    catSel.clear();
+    savedNew.forEach((p, i) => catSel.set(p.id, b.flat[i].count));
+    $('newRows').innerHTML = '';
+    addNewRow();
+    $('mode').value = 'cat';
+    renderCatList();
+    toast(savedNew.length + ' barang baru disimpan ke kasir');
+  }
+  refresh();
+};
+window.addEventListener('afterprint', () => { $('printLabels').innerHTML = ''; });
+
+// Kalau kamu menambah barang di tab kasir lalu kembali ke tab ini, data diperbarui otomatis.
+window.addEventListener('focus', () => { loadProducts(); renderBanner(); renderCatList(); refresh(); });
+window.addEventListener('storage', () => { loadProducts(); renderBanner(); renderCatList(); refresh(); });
+
+loadProducts();
+renderBanner();
+addNewRow();
+renderCatList();
+refresh();
+</script>
+</body>
+</html>
