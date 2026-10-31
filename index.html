@@ -4717,12 +4717,12 @@
 
   // ---------- Lisensi: gratis sampai 50 produk, lebih dari itu perlu kode aktivasi (Firebase) ----------
   // Kode aktivasi dibeli lewat WhatsApp. Pelanggan memasukkannya di aplikasi; kode dicek ke Firestore
-  // (REST, tanpa library tambahan) dan ditandai "dipakai" oleh perangkat ini. Cek ulang tiap ±12 jam saat online.
+  // (REST, tanpa library tambahan): field 'jumlah' bertambah 1 per perangkat sampai 'maks'. Cek ulang tiap ±12 jam saat online.
   const LIC_FREE_LIMIT = 50;
   const LIC_FB = {
     projectId: 'ISI_PROJECT_ID_FIREBASE',   // Firebase Console > Project settings > Project ID
     apiKey: 'ISI_WEB_API_KEY_FIREBASE',     // Firebase Console > Project settings > Web API Key
-    collection: 'kodeAktivasi'
+    collection: 'kode'
   };
   const LIC_WA = '628XXXXXXXXXX';           // nomor WhatsApp penjual: awali 62, tanpa + dan tanpa 0 di depan
   const LIC_RECHECK_MS = 12 * 60 * 60 * 1000;
@@ -4766,13 +4766,14 @@
     return { status: 200, f: d.fields || {} };
   }
 
-  // Aktivasi: kode harus ada, aktif, dan belum dipakai perangkat lain. Dipakai pertama kali = dikunci ke perangkat ini.
+  // Aktivasi: kode harus ada, aktif, dan belum melewati batas pemakaian (field jumlah < maks).
+  // Tiap perangkat yang berhasil mengaktifkan menambah 'jumlah' sebanyak 1. Perangkat yang sama tidak dihitung dua kali.
+  const licInt = f => (f && f.integerValue !== undefined) ? parseInt(f.integerValue, 10) : (f && f.doubleValue !== undefined ? Math.floor(f.doubleValue) : 0);
   async function licActivate(raw) {
     const typed = String(raw || '').trim().replace(/\s+/g, '');
     if (!typed) return { ok: false, msg: 'Masukkan kode aktivasi dulu' };
     if (!licFbReady()) return { ok: false, msg: 'Pengaturan Firebase belum diisi di aplikasi (LIC_FB)' };
     if (!navigator.onLine) return { ok: false, msg: 'Butuh internet untuk aktivasi' };
-    const dev = licDevice();
     try {
       let code = typed, doc = await licFetchDoc(code);
       if (doc.status === 404 && typed.toUpperCase() !== typed) { code = typed.toUpperCase(); doc = await licFetchDoc(code); }
@@ -4780,20 +4781,16 @@
       if (doc.status !== 200) return { ok: false, msg: 'Gagal memeriksa kode (kode galat ' + doc.status + ')' };
       const f = doc.f;
       if (licBool(f.aktif) === false) return { ok: false, msg: 'Kode ini sudah dinonaktifkan. Hubungi penjual.' };
-      const used = licBool(f.dipakai) === true;
-      if (used && licStr(f.dipakaiOleh) !== dev) return { ok: false, msg: 'Kode ini sudah dipakai di perangkat lain. Hubungi penjual.' };
-      if (!used) {
-        const res = await fetch(licDocUrl(code, 'updateMask.fieldPaths=dipakai&updateMask.fieldPaths=dipakaiOleh&updateMask.fieldPaths=tanggalDipakai&currentDocument.exists=true'), {
-          method: 'PATCH',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ fields: {
-            dipakai: { booleanValue: true },
-            dipakaiOleh: { stringValue: dev },
-            tanggalDipakai: { timestampValue: new Date().toISOString() }
-          } })
-        });
-        if (!res.ok) return { ok: false, msg: 'Kode tidak bisa diaktifkan (mungkin baru saja dipakai orang lain). Kode galat ' + res.status };
-      }
+      const st0 = licState();
+      if (st0.code === code) { licSave({ code: code, at: st0.at || Date.now(), checked: Date.now() }); return { ok: true }; }   // perangkat ini sudah pernah memakai kode ini
+      const jumlah = licInt(f.jumlah), maks = licInt(f.maks);
+      if (jumlah >= maks) return { ok: false, msg: 'Kode ini sudah mencapai batas pemakaian. Hubungi penjual.' };
+      const res = await fetch(licDocUrl(code, 'updateMask.fieldPaths=jumlah&currentDocument.exists=true'), {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ fields: { jumlah: { integerValue: String(jumlah + 1) } } })
+      });
+      if (!res.ok) return { ok: false, msg: 'Kode tidak bisa diaktifkan (mungkin baru saja habis dipakai). Kode galat ' + res.status };
       licSave({ code: code, at: Date.now(), checked: Date.now() });
       return { ok: true };
     } catch (e) {
@@ -4808,11 +4805,7 @@
     if (!force && Date.now() - (st.checked || 0) < LIC_RECHECK_MS) return;
     try {
       const doc = await licFetchDoc(st.code);
-      let revoked = doc.status === 404;
-      if (doc.status === 200) {
-        const by = licStr(doc.f.dipakaiOleh);
-        revoked = licBool(doc.f.aktif) === false || (!!by && by !== licDevice());
-      }
+      const revoked = doc.status === 404 || (doc.status === 200 && licBool(doc.f.aktif) === false);
       if (revoked) { licSave({}); licToast('Lisensi tidak berlaku lagi. Hubungi penjual.'); }
       else if (doc.status === 200) { st.checked = Date.now(); licSave(st); }
       licRender();
