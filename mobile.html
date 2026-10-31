@@ -410,11 +410,11 @@ label.l{display:block;font-size:12px;font-weight:700;color:var(--soft);margin:12
   // (REST, tanpa library tambahan): field 'jumlah' bertambah 1 per perangkat sampai 'maks'. Cek ulang tiap ±12 jam saat online.
   const LIC_FREE_LIMIT = 50;
   const LIC_FB = {
-    projectId: 'ISI_PROJECT_ID_FIREBASE',   // Firebase Console > Project settings > Project ID
-    apiKey: 'ISI_WEB_API_KEY_FIREBASE',     // Firebase Console > Project settings > Web API Key
+    projectId: 'app-kasir-id',   // Firebase Console > Project settings > Project ID
+    apiKey: 'AIzaSyCqxb4zq_Cr-0Fu_cAS-t3qZ3yhlGn18QA',     // Firebase Console > Project settings > Web API Key
     collection: 'kode'
   };
-  const LIC_WA = '628XXXXXXXXXX';           // nomor WhatsApp penjual: awali 62, tanpa + dan tanpa 0 di depan
+  const LIC_WA = '6287875015256';           // nomor WhatsApp penjual: awali 62, tanpa + dan tanpa 0 di depan
   const LIC_RECHECK_MS = 12 * 60 * 60 * 1000;
 
   function licFbReady() { return !/^ISI_/.test(LIC_FB.projectId) && !/^ISI_/.test(LIC_FB.apiKey); }
