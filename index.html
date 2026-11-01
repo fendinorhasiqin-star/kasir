@@ -170,11 +170,13 @@ footer{padding:36px 0 48px;color:var(--muted);font-size:14px;border-top:1px soli
 var terpasang = window.matchMedia('(display-mode: standalone)').matches
              || window.navigator.standalone === true;
 
-// Kalau sudah dibuka dari ikon aplikasi, langsung masuk ke kasir
-if (terpasang) location.replace(APP_URL);
-
 var btn = document.getElementById('btnPasang');
 var statusEl = document.getElementById('status');
+
+// Sudah dibuka dari aplikasi terpasang: langsung masuk ke kasir
+// (browser biasa tetap melihat halaman landing ini)
+if (terpasang) location.replace(APP_URL);
+
 var tawaran = null;
 var isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
 
