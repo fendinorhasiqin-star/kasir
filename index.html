@@ -671,6 +671,84 @@ body {
 .akun-row strong{display:block;font-size:13px}
 .akun-row small{display:block;font-size:11px;color:#89958E;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 
+/* ===== LENCANA "1" DI PROFIL (ajakan login) ===== */
+.side-item, .nav-item { position: relative; }
+.notif-badge { position: absolute; top: 50%; right: 14px; transform: translateY(-50%); min-width: 20px; height: 20px; padding: 0 6px; border-radius: 10px; background: #E5484D; color: #fff; font-size: 11px; font-weight: 800; line-height: 20px; text-align: center; box-shadow: 0 0 0 2px #0E3B25; animation: badge-pulse 2s ease-in-out infinite; }
+.nav-item .notif-badge { top: 4px; right: calc(50% - 22px); transform: none; box-shadow: 0 0 0 2px #fff; }
+.profile .notif-badge { top: -4px; right: -4px; transform: none; box-shadow: 0 0 0 2px #fff; }
+.profile { position: relative; }
+@keyframes badge-pulse { 0%, 100% { opacity: 1; } 50% { opacity: .65; } }
+@media (prefers-reduced-motion: reduce) { .notif-badge { animation: none; } }
+@media (max-width: 900px) { .side-item .notif-badge { top: 6px; right: calc(50% - 22px); transform: none; } }
+.akun-card.belum { border: 1px solid #F2C14E; background: #FFFBEF; }
+
+/* ===== HUTANG: tampilan rapi ===== */
+#featureContent .debt-form, .debt-summary, .debt-list-head, .debt-hint, .debt-card { max-width: 760px; }
+.debt-summary { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+.debt-summary > div { padding: 14px 18px; border-radius: 14px; background: #E5F5EA; }
+.debt-summary small { display: block; color: #4C6B58; font-size: 11.5px; font-weight: 700; }
+.debt-summary strong { display: block; margin-top: 4px; color: #0D6638; font-size: 20px; }
+.debt-form-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 200px) auto; gap: 10px; }
+.debt-list-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 20px 0 4px; }
+.debt-list-head h3 { font-size: 15px; }
+.debt-transfer { display: flex; gap: 8px; }
+.debt-transfer .feature-button { min-height: 36px; padding: 0 12px; font-size: 12px; }
+.debt-hint { margin: 0 0 10px; color: #89958E; font-size: 11.5px; line-height: 1.45; }
+.debt-card { padding: 16px 18px; }
+.debt-main { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.debt-info { min-width: 0; }
+.debt-info h3 { margin: 0; font-size: 15px; overflow-wrap: anywhere; }
+.debt-info small { display: block; margin-top: 3px; color: #718078; font-size: 12px; }
+.debt-remaining { flex: none; text-align: right; }
+.debt-remaining small { display: block; color: #89958E; font-size: 11px; }
+.debt-remaining strong { display: block; color: #B35A00; font-size: 17px; }
+.debt-remaining.paid strong { color: #16834A; }
+.debt-remaining .purchase-status { margin-top: 6px; }
+.debt-pay { display: flex; gap: 8px; margin-top: 12px; padding-top: 12px; border-top: 1px solid #EDF1EE; }
+.debt-pay input { flex: 1; min-width: 0; min-height: 42px; padding: 10px 12px; border: 1px solid #DCE5DF; border-radius: 10px; background: white; color: #26352D; font: inherit; font-size: 13px; }
+@media (max-width: 560px) {
+  .debt-form-row { grid-template-columns: 1fr; }
+  .debt-summary strong { font-size: 17px; }
+}
+
+/* ===== PELANGGAN / SUPPLIER / PEMBELIAN / PENGATURAN: tampilan rapi ===== */
+#featureContent .tidy-form, .tidy-summary, .tidy-head, .tidy-hint, .tidy-contact, .tidy-purchase, .tidy-request { max-width: 760px; }
+.tidy-summary { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-bottom: 12px; }
+.tidy-summary > div { padding: 14px 18px; border-radius: 14px; background: #E5F5EA; }
+.tidy-summary small { display: block; color: #4C6B58; font-size: 11.5px; font-weight: 700; }
+.tidy-summary strong { display: block; margin-top: 4px; color: #0D6638; font-size: 18px; overflow-wrap: anywhere; }
+.tidy-form-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto; gap: 10px; }
+.tidy-two { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.tidy-pay-row { display: grid; grid-template-columns: minmax(0, 220px) minmax(0, 1fr); gap: 10px; }
+.tidy-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 20px 0 8px; }
+.tidy-head h3 { font-size: 15px; }
+.tidy-transfer { display: flex; gap: 8px; }
+.tidy-transfer .feature-button { min-height: 36px; padding: 0 12px; font-size: 12px; }
+.tidy-hint { margin: 0 0 10px; color: #89958E; font-size: 11.5px; line-height: 1.45; }
+.tidy-contact { display: flex; align-items: center; gap: 12px; padding: 12px 16px; margin-bottom: 10px; }
+.tidy-avatar { flex: none; width: 40px; height: 40px; display: grid; place-items: center; border-radius: 50%; background: #E5F5EA; color: #16834A; font-size: 16px; }
+.tidy-info { flex: 1; min-width: 0; }
+.tidy-info h3 { margin: 0; font-size: 14.5px; overflow-wrap: anywhere; }
+.tidy-info small { display: block; margin-top: 2px; color: #718078; font-size: 12px; }
+.tidy-contact .feature-button { flex: none; min-height: 36px; padding: 0 14px; font-size: 12px; }
+.tidy-purchase { padding: 16px 18px; }
+.tidy-main { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.tidy-right { flex: none; text-align: right; }
+.tidy-right strong { display: block; color: #26352D; font-size: 16px; }
+.tidy-right .purchase-status { margin-top: 6px; }
+.tidy-purchase .purchase-details { margin-top: 12px; padding-top: 10px; border-top: 1px solid #EDF1EE; }
+.tidy-item { display: grid; gap: 9px; margin: 0 0 10px; padding: 12px; background: #F8FAF9; }
+.tidy-item .tidy-item-del { justify-self: end; min-height: 34px; padding: 0 12px; font-size: 12px; }
+a.tidy-wa { display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 12px; text-decoration: none; }
+@media (max-width: 560px) {
+  .tidy-form-row, .tidy-two, .tidy-pay-row { grid-template-columns: 1fr; }
+  .tidy-summary { grid-template-columns: 1fr 1fr; }
+  .tidy-summary strong { font-size: 16px; }
+}
+
+/* ===== PROFIL & PENGATURAN ===== */
+.tidy-field label { display: block; margin-bottom: 6px; color: #53645A; font-size: 12px; font-weight: 700; }
+
 /* ===== VERSI KOMPUTER ===== */
 :root { --side-w: 260px; }
 html { scrollbar-gutter: stable; overflow-x: hidden; }
@@ -837,6 +915,29 @@ body { padding: 0 !important; background: #F4F7F5; overflow-x: hidden; }
 .product-tools .product-transfer-button:hover { background: #D6EFDE; }
 .product-tools .product-transfer-button i { font-size: 12px; }
 .product-import-input { display: none !important; }
+
+/* ===== PRODUK: toolbar rapi (cari + tambah, sortir di bawah) & import/export di baris judul ===== */
+.feature-header-actions { display: flex; align-items: center; gap: 8px; margin-left: auto; }
+.feature-header-actions:empty { display: none; }
+.feature-header-actions .product-transfer-button { min-height: 40px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 0 14px; border: 1px solid #CFE3D5; border-radius: 10px; background: #E5F5EA; color: #16834A; font: inherit; font-size: 12px; font-weight: 800; white-space: nowrap; cursor: pointer; }
+.feature-header-actions .product-transfer-button:hover { background: #D6EFDE; }
+.feature-header-actions .product-transfer-button i { font-size: 12px; }
+#featureContent .product-tools.product-toolbar { grid-template-columns: minmax(0, 1fr) auto; align-items: stretch; gap: 10px; max-width: 900px; }
+#featureContent .product-tools.product-toolbar #productSearch { grid-column: 1; }
+#featureContent .product-tools.product-toolbar .product-add-inline { grid-column: 2; grid-row: 1; }
+#featureContent .product-tools.product-toolbar #productSort { grid-column: 1; grid-row: 2; }
+#featureContent .product-tools.product-toolbar .product-hint { grid-column: 1 / -1; grid-row: 3; margin: 0; }
+@media (max-width: 480px) {
+  .feature-header-actions .product-transfer-button { padding: 0 10px; font-size: 11px; }
+  #featureContent .product-tools.product-toolbar .product-add-inline { padding: 0 14px; }
+}
+/* Import/Export: di bawah tombol Tambah Produk, sejajar kolom sortir */
+#featureContent .product-tools.product-toolbar .product-transfer-inline { grid-column: 2; grid-row: 2; display: flex; gap: 8px; align-items: stretch; }
+#featureContent .product-tools.product-toolbar .product-transfer-inline .product-transfer-button { flex: 1; min-height: 48px; padding: 0 14px; font-size: 13px; border-radius: 12px; }
+@media (max-width: 480px) {
+  #featureContent .product-tools.product-toolbar .product-transfer-inline { gap: 6px; }
+  #featureContent .product-tools.product-toolbar .product-transfer-inline .product-transfer-button { padding: 0 9px; font-size: 12px; }
+}
 .product-toolbar { grid-template-columns: minmax(0, 1fr); }
 @media (min-width: 901px) {
   .product-toolbar { grid-template-columns: minmax(0, 1fr) 220px auto; }
@@ -1098,6 +1199,7 @@ body { padding: 0 !important; background: #F4F7F5; overflow-x: hidden; }
     <section class="feature-panel" role="dialog" aria-modal="true" aria-labelledby="featureTitle">
       <div class="feature-header">
         <h2 id="featureTitle"></h2>
+        <div class="feature-header-actions" id="featureHeaderActions"></div>
         <button class="feature-close" type="button" onclick="backFeature()" aria-label="Kembali">&#8592;</button>
       </div>
             <div id="featureContent"></div>
@@ -1806,14 +1908,11 @@ function renderProducts() {
     <i class="fa-solid fa-chevron-right product-list-arrow" aria-hidden="true"></i>
   </article>`).join('') || emptyMessage('Produk tidak ditemukan.');
     return `<div class="product-tools product-toolbar"><input id="productSearch" type="search" placeholder="Cari nama atau barcode produk" oninput="filterProducts()" aria-label="Cari produk">
-    <label class="product-sort-label" for="productSort">Urutkan</label>
-    <select id="productSort" onchange="filterProducts()" aria-label="Urutkan produk"><option value="az">Nama A–Z</option><option value="za">Nama Z–A</option><option value="newest">Terbaru</option><option value="price-low">Harga terendah</option><option value="price-high">Harga tertinggi</option></select>
-    <div class="product-toolbar-actions">
-      <button class="product-add-inline" type="button" onclick="showProductEditor()"><i class="fa-solid fa-plus" aria-hidden="true"></i>Tambah Produk</button>
-      <button class="product-transfer-button" type="button" onclick="document.getElementById('productsCSV').click()" aria-label="Impor Excel"><i class="fa-solid fa-file-import" aria-hidden="true"></i><span>IMPORT EXCEL</span></button>
-      <button class="product-transfer-button" type="button" onclick="exportProductsCSV()" aria-label="Ekspor Excel"><i class="fa-solid fa-file-export" aria-hidden="true"></i><span>EXPORT EXCEL</span></button>
-      <input id="productsCSV" class="product-import-input" type="file" accept=".csv,.xlsx,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" onchange="importProductsCSV(event)" aria-label="Pilih file Excel untuk diimpor">
-    </div>
+    <button class="product-add-inline" type="button" onclick="showProductEditor()"><i class="fa-solid fa-plus" aria-hidden="true"></i>Tambah Produk</button>
+    <select id="productSort" onchange="filterProducts(); focusProductSearch()" aria-label="Urutkan produk"><option value="az">Urutkan: Nama A–Z</option><option value="za">Urutkan: Nama Z–A</option><option value="newest">Urutkan: Terbaru</option><option value="price-low">Urutkan: Harga terendah</option><option value="price-high">Urutkan: Harga tertinggi</option></select>
+    <div class="product-transfer-inline"><button class="product-transfer-button" type="button" onclick="document.getElementById('productsCSV').click()" aria-label="Impor Excel"><i class="fa-solid fa-file-import" aria-hidden="true"></i><span>Import</span></button>
+    <button class="product-transfer-button" type="button" onclick="exportProductsCSV()" aria-label="Ekspor Excel"><i class="fa-solid fa-file-export" aria-hidden="true"></i><span>Export</span></button>
+    <input id="productsCSV" class="product-import-input" type="file" accept=".csv,.xlsx,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" onchange="importProductsCSV(event)" aria-label="Pilih file Excel untuk diimpor"></div>
     <p class="product-hint">Tekan dan tahan produk untuk mengedit.</p></div>
     <div class="product-list" id="productList">${list}</div>`;
 }
@@ -1985,17 +2084,27 @@ function adjustStock(event, id) {
   if (product.stock + amount < 0) return notify('Stok tidak boleh kurang dari nol.');
   product.stock += amount; saveData(); openMenu('Stok Barang');
 }
+function contactCard(item, key, title) {
+  return `<div class="feature-card tidy-contact"><div class="tidy-avatar"><i class="fa-solid fa-user" aria-hidden="true"></i></div><div class="tidy-info"><h3>${escapeHTML(item.name)}</h3><small>${escapeHTML(item.phone || 'Tidak ada nomor')}</small></div><button class="feature-button danger" type="button" onclick="deleteEntry('${key}', ${item.id}, '${title}')">Hapus</button></div>`;
+}
 function renderSuppliers() {
-  const list = data.suppliers.map(supplier => `<div class="feature-card feature-row"><div><h3>${escapeHTML(supplier.name)}</h3><p>${escapeHTML(supplier.phone || 'Tidak ada nomor')}</p></div><button class="feature-button danger" onclick="deleteEntry('suppliers', ${supplier.id}, 'Supplier')">Hapus</button></div>`).join('') || emptyMessage('Belum ada supplier.');
-  return `<form class="feature-form" onsubmit="saveContact(event, 'suppliers', 'Supplier')"><h3>Tambah supplier</h3><input name="name" placeholder="Nama supplier" required><input name="phone" placeholder="Nomor telepon"><button type="submit">Simpan supplier</button></form>${list}`;
+  const list = data.suppliers.map(supplier => contactCard(supplier, 'suppliers', 'Supplier')).join('') || emptyMessage('Belum ada supplier.');
+  return `<form class="feature-form tidy-form" onsubmit="saveContact(event, 'suppliers', 'Supplier')"><h3>Tambah supplier</h3>
+      <div class="tidy-form-row"><input name="name" placeholder="Nama supplier" required><input name="phone" placeholder="Nomor telepon"><button type="submit">Simpan supplier</button></div>
+    </form>
+    <div class="tidy-head"><h3>Daftar supplier (${data.suppliers.length})</h3></div>${list}`;
 }
 function renderCustomers() {
-  const list = data.customers.map(customer => `<div class="feature-card feature-row"><div><h3>${escapeHTML(customer.name)}</h3><p>${escapeHTML(customer.phone || 'Tidak ada nomor')}</p></div><button class="feature-button danger" onclick="deleteEntry('customers', ${customer.id}, 'Pelanggan')">Hapus</button></div>`).join('') || emptyMessage('Belum ada pelanggan.');
-  return `<form class="feature-form" onsubmit="saveContact(event, 'customers', 'Pelanggan')"><h3>Tambah pelanggan</h3><input name="name" placeholder="Nama pelanggan" required><input name="phone" placeholder="Nomor telepon"><button type="submit">Simpan pelanggan</button></form>
-    <section class="feature-card"><h3>Import dan ekspor data pelanggan</h3><p>Ekspor pelanggan sebagai CSV, atau impor file CSV dengan kolom: name, phone. Kolom id bersifat opsional. Pelanggan yang cocok berdasarkan ID, nomor telepon, atau nama akan diperbarui; lainnya ditambahkan.</p>
-      <div class="purchase-actions"><button class="feature-button secondary" type="button" onclick="exportCustomersCSV()"><i class="fa-solid fa-download" aria-hidden="true"></i> Ekspor pelanggan</button></div>
-      <form class="feature-form" style="padding:0;margin:12px 0 0;border:0" onsubmit="return false"><label for="customersCSV" class="product-sort-label">Pilih file CSV untuk diimpor</label><input id="customersCSV" type="file" accept=".csv,text/csv" onchange="importCustomersCSV(event)"></form>
-    </section>${list}`;
+  const list = data.customers.map(customer => contactCard(customer, 'customers', 'Pelanggan')).join('') || emptyMessage('Belum ada pelanggan.');
+  return `<form class="feature-form tidy-form" onsubmit="saveContact(event, 'customers', 'Pelanggan')"><h3>Tambah pelanggan</h3>
+      <div class="tidy-form-row"><input name="name" placeholder="Nama pelanggan" required><input name="phone" placeholder="Nomor telepon"><button type="submit">Simpan pelanggan</button></div>
+    </form>
+    <div class="tidy-head"><h3>Daftar pelanggan (${data.customers.length})</h3>
+      <div class="tidy-transfer"><button class="feature-button secondary" type="button" onclick="document.getElementById('customersCSV').click()"><i class="fa-solid fa-file-import" aria-hidden="true"></i> Import</button><button class="feature-button secondary" type="button" onclick="exportCustomersCSV()"><i class="fa-solid fa-file-export" aria-hidden="true"></i> Export</button>
+      <input id="customersCSV" class="product-import-input" type="file" accept=".csv,text/csv" onchange="importCustomersCSV(event)" aria-label="Pilih file CSV pelanggan untuk diimpor"></div>
+    </div>
+    <p class="tidy-hint">File CSV memakai kolom: name, phone (id opsional). Pelanggan yang cocok berdasarkan ID, nomor telepon, atau nama akan diperbarui; lainnya ditambahkan.</p>
+    ${list}`;
 }
 function saveContact(event, key, title) {
   event.preventDefault(); const form = event.currentTarget;
@@ -2016,39 +2125,41 @@ function renderPurchases() {
   const activePurchases = data.purchases.filter(purchase => !purchase.cancelled);
   const totalPurchases = activePurchases.reduce((sum, purchase) => sum + Number(purchase.total || 0), 0);
   const unpaidTotal = activePurchases.filter(purchase => purchase.paymentStatus === 'unpaid').reduce((sum, purchase) => sum + Number(purchase.total || 0), 0);
-  const summary = `<div class="feature-card"><h3>Ringkasan pembelian</h3><p>Total pembelian: <strong>${rupiah(totalPurchases)}</strong></p><p>Belum lunas: <strong>${rupiah(unpaidTotal)}</strong></p><p>${activePurchases.length} transaksi aktif</p></div>`;
+  const summary = `<section class="tidy-summary"><div><small>Total pembelian</small><strong>${rupiah(totalPurchases)}</strong></div><div><small>Belum lunas</small><strong>${rupiah(unpaidTotal)}</strong></div><div><small>Transaksi aktif</small><strong>${activePurchases.length}</strong></div></section>`;
   const list = data.purchases.map(purchase => {
     const date = new Date(purchase.date);
+    const dateText = Number.isNaN(date.getTime()) ? '-' : date.toLocaleDateString('id-ID');
     const items = getPurchaseItems(purchase);
     const status = purchase.paymentStatus === 'paid' ? 'Lunas' : purchase.paymentStatus === 'unpaid' ? 'Belum lunas' : 'Status belum dicatat';
     const isLegacy = !purchase.productId && !Array.isArray(purchase.items);
     const heading = items.length === 1 ? `${escapeHTML(items[0].productName || 'Produk')} × ${items[0].qty}` : `${items.length || 1} produk dari ${escapeHTML(purchase.supplierName || 'supplier')}`;
     const itemDetails = items.map(item => `<p>${escapeHTML(item.productName || 'Produk')} × ${item.qty} · ${rupiah(item.cost ?? (item.qty ? item.total / item.qty : 0))}/unit · ${rupiah(item.total ?? item.qty * item.cost)}</p>`).join('');
-    return `<article class="feature-card"><h3>${heading}</h3>
-      <p>${escapeHTML(purchase.supplierName || 'Supplier tidak tercatat')} · ${Number.isNaN(date.getTime()) ? '-' : date.toLocaleDateString('id-ID')} · ${rupiah(purchase.total)}</p>
-      ${purchase.cancelled ? '<span class="purchase-status">Dibatalkan</span>' : `<span class="purchase-status ${purchase.paymentStatus === 'paid' ? 'paid' : ''}">${status}</span>`}
-      <details class="purchase-details"><summary>Detail pembelian</summary>${itemDetails}<p>Tanggal pembelian: ${Number.isNaN(date.getTime()) ? '-' : date.toLocaleDateString('id-ID')}</p>
+    return `<article class="feature-card tidy-purchase">
+      <div class="tidy-main"><div class="tidy-info"><h3>${heading}</h3><small>${escapeHTML(purchase.supplierName || 'Supplier tidak tercatat')} · ${dateText}</small></div>
+        <div class="tidy-right"><strong>${rupiah(purchase.total)}</strong>${purchase.cancelled ? '<span class="purchase-status">Dibatalkan</span>' : `<span class="purchase-status ${purchase.paymentStatus === 'paid' ? 'paid' : ''}">${status}</span>`}</div></div>
+      <details class="purchase-details"><summary>Detail pembelian</summary>${itemDetails}<p>Tanggal pembelian: ${dateText}</p>
       ${!purchase.cancelled && !isLegacy ? `<div class="purchase-actions"><button class="feature-button secondary" type="button" onclick="togglePurchasePayment(${purchase.id})">Tandai ${purchase.paymentStatus === 'paid' ? 'belum lunas' : 'lunas'}</button><button class="feature-button danger" type="button" onclick="cancelPurchase(${purchase.id})">Batalkan pembelian</button></div>` : ''}
       ${!purchase.cancelled && isLegacy ? '<p>Catatan lama: pengelolaan status dan pembatalan tidak tersedia untuk transaksi ini.</p>' : ''}</details>
     </article>`;
   }).join('') || emptyMessage('Belum ada catatan pembelian.');
-  if (!data.products.length || !data.suppliers.length) return `${summary}<div class="feature-card"><p>Tambahkan produk dan supplier terlebih dahulu.</p></div>${list}`;
+  const listHead = `<div class="tidy-head"><h3>Riwayat pembelian</h3></div>`;
+  if (!data.products.length || !data.suppliers.length) return `${summary}<div class="feature-card"><p>Tambahkan produk dan supplier terlebih dahulu.</p></div>${listHead}${list}`;
   const today = new Date();
   const localToday = new Date(today.getTime() - today.getTimezoneOffset() * 60000).toISOString().slice(0, 10);
-  return `${summary}<form class="feature-form" onsubmit="savePurchase(event)"><h3>Catat pembelian stok</h3>
-    <select name="supplier" required>${supplierOptions()}</select>
-    <input name="date" type="date" value="${localToday}" required aria-label="Tanggal pembelian">
+  return `${summary}<form class="feature-form tidy-form" onsubmit="savePurchase(event)"><h3>Catat pembelian stok</h3>
+    <div class="tidy-two"><select name="supplier" required>${supplierOptions()}</select>
+    <input name="date" type="date" value="${localToday}" required aria-label="Tanggal pembelian"></div>
     <div id="purchaseItems">${renderPurchaseRow()}</div>
     <button class="feature-button secondary" type="button" onclick="addPurchaseRow()">+ Tambah produk</button>
-    <select name="paymentStatus" aria-label="Status pembayaran"><option value="unpaid">Belum lunas</option><option value="paid">Lunas</option></select>
-    <button type="submit">Simpan pembelian & tambah stok</button></form>${list}`;
+    <div class="tidy-pay-row"><select name="paymentStatus" aria-label="Status pembayaran"><option value="unpaid">Belum lunas</option><option value="paid">Lunas</option></select>
+    <button type="submit">Simpan pembelian & tambah stok</button></div></form>${listHead}${list}`;
 }
 function renderPurchaseRow() {
-  return `<div class="feature-card purchase-item-row" style="display:grid;gap:9px;margin:0 0 10px;padding:12px">
+  return `<div class="feature-card purchase-item-row tidy-item">
     <select name="product" required>${productOptions()}</select>
-    <input name="qty" type="number" min="1" placeholder="Jumlah dibeli" required>
-    <input name="cost" type="number" min="0" placeholder="Harga modal per unit" required>
-    <button class="feature-button danger" type="button" onclick="this.closest('.purchase-item-row').remove(); ensurePurchaseRow()">Hapus produk</button>
+    <div class="tidy-two"><input name="qty" type="number" min="1" placeholder="Jumlah dibeli" required>
+    <input name="cost" type="number" min="0" placeholder="Harga modal per unit" required></div>
+    <button class="feature-button danger tidy-item-del" type="button" onclick="this.closest('.purchase-item-row').remove(); ensurePurchaseRow()">Hapus produk</button>
   </div>`;
 }
 function addPurchaseRow() {
@@ -2121,24 +2232,28 @@ async function cancelPurchase(id) {
   saveData(); openMenu('Pembelian');
 }
 function renderDebts() {
+  const sisaTotal = data.debts.reduce((sum, debt) => sum + (Number(debt.remaining) || 0), 0);
+  const belumLunas = data.debts.filter(debt => (Number(debt.remaining) || 0) > 0).length;
   const list = data.debts.map(debt => {
     const remaining = Number(debt.remaining) || 0;
-    return `<article class="feature-card" oncontextmenu="event.preventDefault(); deleteDebt(${debt.id})">
-      <div onpointerdown="startDebtPress(${debt.id}, event)" onpointerup="cancelDebtPress()" onpointerleave="cancelDebtPress()" onpointercancel="cancelDebtPress()">
-        <h3>${escapeHTML(debt.name)}</h3><p>Total hutang: <strong>${rupiah(debt.amount)}</strong></p>
-        <p>Sisa hutang: <strong>${rupiah(remaining)}</strong></p>
-        <span class="purchase-status ${remaining === 0 ? 'paid' : ''}">${remaining === 0 ? 'Lunas' : 'Belum lunas'}</span>
-        <p class="product-hint">Tekan dan tahan catatan untuk menghapus.</p>
+    return `<article class="feature-card debt-card" oncontextmenu="event.preventDefault(); deleteDebt(${debt.id})">
+      <div class="debt-main" onpointerdown="startDebtPress(${debt.id}, event)" onpointerup="cancelDebtPress()" onpointerleave="cancelDebtPress()" onpointercancel="cancelDebtPress()">
+        <div class="debt-info"><h3>${escapeHTML(debt.name)}</h3><small>Total hutang ${rupiah(debt.amount)}</small></div>
+        <div class="debt-remaining ${remaining === 0 ? 'paid' : ''}"><small>Sisa hutang</small><strong>${rupiah(remaining)}</strong><span class="purchase-status ${remaining === 0 ? 'paid' : ''}">${remaining === 0 ? 'Lunas' : 'Belum lunas'}</span></div>
       </div>
-      ${remaining > 0 ? `<form class="feature-row" style="margin-top:10px" onsubmit="payDebt(event, ${debt.id})"><input name="payment" type="number" min="1" max="${remaining}" placeholder="Jumlah pembayaran" required><button class="feature-button" type="submit">Bayar</button></form>` : ''}
+      ${remaining > 0 ? `<form class="debt-pay" onsubmit="payDebt(event, ${debt.id})"><input name="payment" type="number" min="1" max="${remaining}" placeholder="Jumlah pembayaran" required><button class="feature-button" type="submit">Bayar</button></form>` : ''}
     </article>`;
   }).join('') || emptyMessage('Belum ada catatan hutang.');
-  return `<form class="feature-form" onsubmit="addDebt(event)"><h3>Catat hutang pelanggan</h3><input name="name" placeholder="Nama pelanggan" required><input name="amount" type="number" min="1" placeholder="Jumlah hutang" required><button type="submit">Simpan hutang</button></form>
-    <section class="feature-card"><h3>Import dan ekspor catatan hutang</h3><p>CSV menggunakan kolom: id, name, amount, remaining. Catatan lunas tetap disertakan saat ekspor.</p>
-      <div class="purchase-actions"><button class="feature-button secondary" type="button" onclick="exportDebtsCSV()"><i class="fa-solid fa-download" aria-hidden="true"></i> Ekspor hutang</button></div>
-      <form class="feature-form" style="padding:0;margin:12px 0 0;border:0" onsubmit="return false"><label for="debtsCSV" class="product-sort-label">Pilih file CSV untuk diimpor</label><input id="debtsCSV" type="file" accept=".csv,text/csv" onchange="importDebtsCSV(event)"></form>
-    </section>
-    <h3 style="font-size:15px;margin:18px 0 10px">Semua catatan hutang</h3>${list}`;
+  return `<section class="debt-summary"><div><small>Total sisa hutang</small><strong>${rupiah(sisaTotal)}</strong></div><div><small>Belum lunas</small><strong>${belumLunas} catatan</strong></div></section>
+    <form class="feature-form debt-form" onsubmit="addDebt(event)"><h3>Catat hutang pelanggan</h3>
+      <div class="debt-form-row"><input name="name" placeholder="Nama pelanggan" required><input name="amount" type="number" min="1" placeholder="Jumlah hutang" required><button type="submit">Simpan hutang</button></div>
+    </form>
+    <div class="debt-list-head"><h3>Semua catatan hutang</h3>
+      <div class="debt-transfer"><button class="feature-button secondary" type="button" onclick="document.getElementById('debtsCSV').click()"><i class="fa-solid fa-file-import" aria-hidden="true"></i> Import</button><button class="feature-button secondary" type="button" onclick="exportDebtsCSV()"><i class="fa-solid fa-file-export" aria-hidden="true"></i> Export</button>
+      <input id="debtsCSV" class="product-import-input" type="file" accept=".csv,text/csv" onchange="importDebtsCSV(event)" aria-label="Pilih file CSV hutang untuk diimpor"></div>
+    </div>
+    <p class="debt-hint">Tekan dan tahan catatan untuk menghapus. File CSV memakai kolom: id, name, amount, remaining.</p>
+    ${list}`;
 }
 let debtPressTimer;
 function startDebtPress(id, event) {
@@ -2426,17 +2541,18 @@ function filterReports() {
   document.getElementById('featureContent').innerHTML = renderReports(period, start, end);
 }
 function renderProfile() {
-  return `${renderAkunCard()}<form class="feature-form" onsubmit="saveProfile(event)"><h3>Informasi pengguna</h3><label for="profileAdmin">Nama admin</label><input id="profileAdmin" name="admin" placeholder="Nama admin" value="${escapeHTML(data.settings.admin)}" required><button type="submit">Simpan profil</button></form>`;
+  return `${renderAkunCard()}
+    <form class="feature-form tidy-form" onsubmit="saveProfile(event)"><h3>Informasi pengguna</h3>
+      <div class="tidy-field"><label for="profileAdmin">Nama admin</label><input id="profileAdmin" name="admin" placeholder="Nama admin" value="${escapeHTML(data.settings.admin)}" required></div>
+      <button type="submit">Simpan profil</button></form>`;
 }
 function renderSettings() {
-  return `<form class="feature-form" onsubmit="saveSettings(event)"><h3>Informasi toko</h3><label for="shopName">Nama toko</label><input id="shopName" name="shop" placeholder="Nama toko" value="${escapeHTML(data.settings.shop)}" required><label for="shopAddress">Alamat toko (opsional)</label><input id="shopAddress" name="address" placeholder="Alamat toko (opsional)" value="${escapeHTML(data.settings.address || '')}"><button type="submit">Simpan pengaturan</button></form>
-        <section class="feature-card"><h3>Printer thermal</h3><p>Cetak lewat printer komputer atau Bluetooth LE (ESC/POS). Untuk komputer, pilih ukuran kertas thermal 58 mm pada dialog cetak.</p>
-      <select id="printMode" onchange="savePrintMode(this.value)" aria-label="Metode cetak"><option value="system" ${(localStorage.getItem('pos_printMode') || 'system') === 'system' ? 'selected' : ''}>Printer komputer / menu cetak (58 mm)</option><option value="bt" ${(localStorage.getItem('pos_printMode') || 'system') === 'bt' ? 'selected' : ''}>Bluetooth langsung</option></select>
-      <button class="feature-button secondary" type="button" style="width:100%;margin-top:10px" onclick="connectBluetoothPrinter()">Hubungkan / pilih printer</button>
-      <button class="feature-button secondary" type="button" style="width:100%;margin-top:8px" onclick="printBluetoothTest()">Cetak tes Bluetooth</button>
-      <p class="product-hint" id="printerStatus" aria-live="polite"></p></section>
-    
-`;
+  return `<form class="feature-form tidy-form" onsubmit="saveSettings(event)"><h3>Informasi toko</h3>
+      <div class="tidy-two"><div class="tidy-field"><label for="shopName">Nama toko</label><input id="shopName" name="shop" placeholder="Nama toko" value="${escapeHTML(data.settings.shop)}" required></div>
+      <div class="tidy-field"><label for="shopAddress">Alamat toko (opsional)</label><input id="shopAddress" name="address" placeholder="Alamat toko (opsional)" value="${escapeHTML(data.settings.address || '')}"></div></div>
+      <button type="submit">Simpan pengaturan</button></form>
+    <section class="feature-card tidy-request"><h3>Request fitur</h3><p>Jika Anda ingin request fitur untuk ditambahkan ke aplikasi kasir ini, hubungi developer lewat WhatsApp di 0878-7501-5256.</p>
+      <a class="feature-button tidy-wa" href="https://wa.me/6287875015256?text=${encodeURIComponent('Halo developer, saya ingin request fitur untuk aplikasi kasir: ')}" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp" aria-hidden="true"></i> Request fitur ke developer</a></section>`;
 }
 function csvEscape(value) {
   const text = String(value ?? '');
@@ -2758,7 +2874,7 @@ function renderAkunCard() {
       <p>${SINKRON_PRODUK_SIAP ? 'Produk Anda tersimpan di akun ini dan tidak akan hilang walau ganti HP.' : 'Anda sudah masuk. Penyimpanan produk otomatis ke akun belum aktif; sementara itu simpan manual lewat Ekspor produk di bawah.'}</p>
       <button class="feature-button secondary" type="button" style="width:100%;margin-top:12px" onclick="keluarAkun()">Keluar dari akun</button></section>`;
   }
-  return `<section class="feature-card akun-card"><h3>Akun</h3>
+  return `<section class="feature-card akun-card belum"><h3>Amankan data toko Anda</h3>
     <p>${SINKRON_PRODUK_SIAP ? 'Saat ini produk hanya tersimpan di HP ini. Masuk dengan Google supaya produk otomatis aman dan tidak akan hilang, bahkan kalau HP rusak atau aplikasi terhapus.' : 'Masuk dengan Google untuk menghubungkan toko Anda ke akun. Penyimpanan produk otomatis ke akun belum aktif; sementara itu simpan manual lewat Ekspor produk di bawah.'}</p>
     <button class="feature-button" type="button" style="width:100%;margin-top:12px" onclick="location.href='login.html'"><i class="fa-brands fa-google" aria-hidden="true" style="margin-right:7px"></i>Masuk dengan Google</button>
     <p class="product-hint">Kata sandi Google Anda tidak pernah dilihat aplikasi ini.</p></section>`;
@@ -2789,8 +2905,25 @@ function tutupAkunBanner() {
   el.hidden = true;
 }
 
+function updateAkunBadge() {
+  const perlu = SINKRON_PRODUK_SIAP && !akunSaatIni();
+  document.querySelectorAll('.side-item[data-menu="Profil"], .nav-item, .profile').forEach(el => {
+    const profil = el.matches('.profile') || el.dataset.menu === 'Profil' || el.textContent.trim() === 'Profil';
+    if (!profil) return;
+    let badge = el.querySelector(':scope > .notif-badge');
+    if (perlu && !badge) {
+      badge = document.createElement('b');
+      badge.className = 'notif-badge';
+      badge.textContent = '1';
+      badge.setAttribute('aria-label', '1 pemberitahuan: data belum tersimpan di akun');
+      el.appendChild(badge);
+    } else if (!perlu && badge) badge.remove();
+  });
+}
+
 function updateDashboard() {
   updateAkunBanner();
+  updateAkunBadge();
   const today = new Date().toDateString();
   const todaysTransactions = data.transactions.filter(transaction => new Date(transaction.date).toDateString() === today);
   const sales = todaysTransactions.reduce((sum, transaction) => sum + transaction.total, 0);
@@ -2961,5 +3094,39 @@ if (firebaseConfig.apiKey !== 'ISI_DI_SINI') {
 }
 </script>
 
+<script>
+/* ===== PRODUK: import/export di header + fokus selalu kembali ke kolom pencarian ===== */
+(function () {
+  const headerActions = '';
+  function setHeaderActions(html) {
+    const slot = document.getElementById('featureHeaderActions');
+    if (slot) slot.innerHTML = html;
+  }
+  window.focusProductSearch = function () {
+    const input = document.getElementById('productSearch');
+    if (input && document.activeElement !== input) input.focus({ preventScroll: true });
+  };
+  const baseShowFeature = showFeature;
+  showFeature = function (title, html) { setHeaderActions(''); baseShowFeature(title, html); };
+  const baseOpenMenu = openMenu;
+  openMenu = function (menu) {
+    baseOpenMenu(menu);
+    if (menu === 'Produk') { setHeaderActions(headerActions); focusProductSearch(); }
+  };
+  const baseEditor = showProductEditor;
+  showProductEditor = function (id) { setHeaderActions(''); baseEditor(id); };
+
+  // Klik di mana pun di halaman Produk (bukan di input/pilihan/pop-up) -> fokus kembali ke pencarian
+  document.addEventListener('click', event => {
+    if (activeFeature !== 'Produk') return;
+    if (!document.getElementById('featureModal').classList.contains('open')) return;
+    if (!event.target.closest('#featureModal')) return;
+    if (!document.getElementById('productSearch')) return;
+    if (document.querySelector('.payment-overlay, .product-limit-overlay, .camera-overlay, .app-dialog-overlay')) return;
+    if (event.target.closest('input, textarea, select, label, a')) return;
+    focusProductSearch();
+  });
+})();
+</script>
 </body>
 </html>
