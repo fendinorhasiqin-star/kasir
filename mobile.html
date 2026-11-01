@@ -644,6 +644,23 @@ body {
     border-radius: 0 0 24px 24px;
   }
 }
+
+/* AKUN */
+.akun-banner{display:flex;align-items:flex-start;gap:12px;background:#E5F5EA;border:1px solid #CFE9D9;border-radius:16px;padding:13px 14px;margin:0 0 16px}
+.akun-banner[hidden]{display:none}
+.akun-banner > i{color:#16834A;font-size:18px;margin-top:2px}
+.akun-banner > div{flex:1;min-width:0}
+.akun-banner strong{display:block;font-size:13px;color:#0D6638}
+.akun-banner p{font-size:12px;color:#3d5a49;margin-top:3px;line-height:1.45}
+.akun-banner .aksi{display:flex;gap:8px;margin-top:10px}
+.akun-banner .aksi button{border:0;border-radius:10px;font:inherit;font-size:12px;font-weight:700;padding:8px 12px;cursor:pointer}
+.akun-banner .masuk{background:#16834A;color:#fff}
+.akun-banner .nanti{background:transparent;color:#0D6638}
+.akun-row{display:flex;align-items:center;gap:12px;margin:12px 0 4px}
+.akun-row > div{min-width:0}
+.akun-row img,.akun-avatar{width:40px;height:40px;border-radius:50%;background:#E5F5EA;color:#16834A;display:grid;place-items:center;object-fit:cover;flex:none}
+.akun-row strong{display:block;font-size:13px}
+.akun-row small{display:block;font-size:11px;color:#89958E;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 </style>
 </head>
 
@@ -670,6 +687,18 @@ body {
     <div class="heading">
       <h1>Dashboard</h1>
       <p>Ringkasan aktivitas toko hari ini</p>
+    </div>
+
+    <div class="akun-banner" id="akunBanner" hidden>
+      <i class="fa-solid fa-cloud-arrow-up"></i>
+      <div>
+        <strong>Amankan data toko Anda</strong>
+        <p id="akunBannerTeks"></p>
+        <div class="aksi">
+          <button type="button" class="masuk" onclick="location.href='login.html'">Masuk dengan Google</button>
+          <button type="button" class="nanti" onclick="tutupAkunBanner()">Nanti</button>
+        </div>
+      </div>
     </div>
 
     <section class="summary">
@@ -812,6 +841,7 @@ body {
 
 <script>
 const FREE_PRODUCT_LIMIT = 50;
+const SINKRON_PRODUK_SIAP = false; // ubah ke true HANYA setelah produk benar-benar disimpan ke akun (Firestore)
 const ACTIVATION_CODE = '1111--0000-9999-8888'; // Isi dengan kode aktivasi yang Anda tetapkan.
 const WHATSAPP_NUMBER = '6287875015256'; // Opsional: nomor internasional tanpa tanda +, spasi, atau strip.
 const defaultProducts = [
@@ -1162,7 +1192,7 @@ function showPaymentSuccess(transaction, cash) {
     <div class="payment-success"><i class="fa-solid fa-circle-check payment-success-icon" aria-hidden="true"></i>
       <h3 id="successTitle">Transaksi Selesai</h3><p>Pembayaran berhasil disimpan.</p>
       <div class="feature-total">Total: ${rupiah(transaction.total)}<br>Kembalian: ${rupiah(cash - transaction.total)}</div>
-      <div class="payment-success-actions"><button class="feature-button secondary" type="button" onclick="printReceipt()">CETAK</button><button class="feature-button" type="button" onclick="closeFeature()">SELESAI</button></div>
+      <div class="payment-success-actions"><button class="feature-button secondary" type="button" onclick="printReceipt(${transaction.id})">CETAK</button><button class="feature-button" type="button" onclick="closeFeature()">SELESAI</button></div>
     </div>
     <div class="receipt-print" id="receiptPrint"><div class="receipt-header"><h2>${escapeHTML(data.settings.shop)}</h2>
       ${data.settings.address ? `<p>${escapeHTML(data.settings.address)}</p>` : ''}<p>${new Date(transaction.date).toLocaleDateString('id-ID')} · ${new Date(transaction.date).toLocaleTimeString('id-ID')}</p></div>
@@ -1174,10 +1204,154 @@ function showPaymentSuccess(transaction, cash) {
     </div>
   </section>`;
 }
-function printReceipt() {
+function printReceiptSystem() {
   document.body.classList.add('printing-receipt');
   window.onafterprint = () => document.body.classList.remove('printing-receipt');
   window.print();
+}
+const BT_PRINTER_SERVICES = [0x18f0, 0xff00, 0xffe0, 0xffe5, 0xfee7, 0xffb0, 'e7810a71-73ae-499d-8c15-faa9aef0c3f2', '49535343-fe7d-4ae5-8fa9-9fafd205e455'];
+let bluetoothPrinter = null;
+let bluetoothPrinterCharacteristic = null;
+const bluetoothSupported = () => !!(navigator.bluetooth && navigator.bluetooth.requestDevice);
+function savePrintMode(mode) {
+  localStorage.setItem('pos_printMode', mode === 'system' ? 'system' : 'bt');
+}
+function printerStatus(message) {
+  const status = document.getElementById('printerStatus');
+  if (status) status.textContent = message;
+}
+async function connectBluetoothPrinter() {
+  if (!bluetoothSupported()) {
+    printerStatus('Web Bluetooth tidak didukung browser ini. Gunakan menu cetak Android.');
+    alert('Browser ini tidak mendukung Web Bluetooth.');
+    return null;
+  }
+  try {
+    if (!bluetoothPrinter) {
+      bluetoothPrinter = await navigator.bluetooth.requestDevice({ acceptAllDevices: true, optionalServices: BT_PRINTER_SERVICES });
+      bluetoothPrinter.addEventListener('gattserverdisconnected', () => { bluetoothPrinterCharacteristic = null; });
+    }
+    const characteristic = await getBluetoothPrinterCharacteristic();
+    printerStatus('Terhubung ke ' + (bluetoothPrinter.name || 'printer Bluetooth') + '.');
+    return characteristic;
+  } catch (error) {
+    if (error.name !== 'NotFoundError') printerStatus('Gagal terhubung: ' + (error.message || 'periksa printer dan dukungan BLE.'));
+    return null;
+  }
+}
+async function getBluetoothPrinterCharacteristic() {
+  if (bluetoothPrinterCharacteristic && bluetoothPrinter?.gatt?.connected) return bluetoothPrinterCharacteristic;
+  if (!bluetoothPrinter) throw new Error('Pilih printer Bluetooth terlebih dahulu.');
+  const server = await bluetoothPrinter.gatt.connect();
+  const services = await server.getPrimaryServices();
+  for (const service of services) {
+    const characteristics = await service.getCharacteristics();
+    const writable = characteristics.find(item => item.properties.writeWithoutResponse || item.properties.write);
+    if (writable) return bluetoothPrinterCharacteristic = writable;
+  }
+  throw new Error('Tidak ditemukan kanal tulis BLE. Printer mungkin memakai Bluetooth Classic/SPP.');
+}
+const printerDelay = ms => new Promise(resolve => setTimeout(resolve, ms));
+function wrapPrinterText(value, width = 32) {
+  const words = String(value || '').replace(/\s+/g, ' ').trim().split(' ').filter(Boolean);
+  const lines = [];
+  let line = '';
+  words.forEach(word => {
+    while (word.length > width) {
+      if (line) { lines.push(line); line = ''; }
+      lines.push(word.slice(0, width));
+      word = word.slice(width);
+    }
+    const next = line ? line + ' ' + word : word;
+    if (next.length > width) { lines.push(line); line = word; } else line = next;
+  });
+  if (line) lines.push(line);
+  return lines;
+}
+function bluetoothReceiptBytes(transaction) {
+  const bytes = [];
+  const push = (...values) => bytes.push(...values);
+  const text = value => {
+    const safe = String(value ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^\x20-\x7E]/g, '?');
+    for (const character of safe) bytes.push(character.charCodeAt(0));
+  };
+  const line = value => { text(value); push(0x0A); };
+  const center = () => push(0x1B, 0x61, 1);
+  const left = () => push(0x1B, 0x61, 0);
+  const bold = enabled => push(0x1B, 0x45, enabled ? 1 : 0);
+  const rule = '-'.repeat(32);
+  const items = Array.isArray(transaction.items) ? transaction.items : [];
+  push(0x1B, 0x40);
+  center(); bold(true);
+  wrapPrinterText(data.settings.shop.toUpperCase()).forEach(line);
+  bold(false);
+  if (data.settings.address) wrapPrinterText(data.settings.address).forEach(line);
+  const date = new Date(transaction.date);
+  line(`${date.toLocaleDateString('id-ID')} ${date.toLocaleTimeString('id-ID')}`);
+  left(); line(rule);
+  items.forEach(item => {
+    wrapPrinterText(item.name).forEach(line);
+    const leftText = `${item.qty}${item.unit ? ' ' + item.unit : ''} x ${rupiah(item.price)}`;
+    const rightText = rupiah(item.price * item.qty);
+    const shortLeft = leftText.slice(0, Math.max(0, 31 - rightText.length));
+    line(shortLeft + ' '.repeat(Math.max(1, 32 - shortLeft.length - rightText.length)) + rightText);
+  });
+  line(rule); bold(true);
+  line('TOTAL'.padEnd(32 - rupiah(transaction.total).length) + rupiah(transaction.total));
+  bold(false); line(rule);
+  center(); line('Terima kasih telah'); line('berbelanja');
+  push(0x0A, 0x0A, 0x0A, 0x0A);
+  return new Uint8Array(bytes);
+}
+async function sendBluetoothBytes(bytes) {
+  const characteristic = await getBluetoothPrinterCharacteristic();
+  const noResponse = !!characteristic.properties.writeWithoutResponse;
+  let chunkSize = 100;
+  for (let offset = 0; offset < bytes.length;) {
+    const chunk = bytes.slice(offset, offset + chunkSize);
+    try {
+      if (noResponse) await characteristic.writeValueWithoutResponse(chunk);
+      else await characteristic.writeValueWithResponse(chunk);
+    } catch (error) {
+      if (chunkSize > 20) { chunkSize = 20; continue; }
+      throw error;
+    }
+    offset += chunk.length;
+    await printerDelay(25);
+  }
+}
+async function printBluetoothTest() {
+  if (!bluetoothPrinter && !await connectBluetoothPrinter()) return;
+  try {
+    const test = new Uint8Array([0x1B, 0x40, 0x1B, 0x61, 1, 0x1B, 0x45, 1, ...Array.from('TES PRINTER').map(char => char.charCodeAt(0)), 0x1B, 0x45, 0, 0x0A, 0x0A, 0x0A]);
+    await sendBluetoothBytes(test);
+    printerStatus('Tes berhasil dikirim ke printer.');
+  } catch (error) {
+    bluetoothPrinterCharacteristic = null;
+    printerStatus('Gagal mencetak tes: ' + (error.message || 'koneksi Bluetooth gagal.'));
+  }
+}
+async function printReceipt(transactionId) {
+  const transaction = data.transactions.find(item => item.id === transactionId) || data.transactions[0];
+  if (!transaction) return;
+  const mode = localStorage.getItem('pos_printMode') || (bluetoothSupported() ? 'bt' : 'system');
+  if (mode !== 'system' && bluetoothSupported()) {
+    try {
+      if (!bluetoothPrinter) {
+        bluetoothPrinter = await navigator.bluetooth.requestDevice({ acceptAllDevices: true, optionalServices: BT_PRINTER_SERVICES });
+        bluetoothPrinter.addEventListener('gattserverdisconnected', () => { bluetoothPrinterCharacteristic = null; });
+      }
+      await sendBluetoothBytes(bluetoothReceiptBytes(transaction));
+      printerStatus('Struk berhasil dikirim ke printer Bluetooth.');
+      return;
+    } catch (error) {
+      if (error.name === 'NotFoundError') return;
+      bluetoothPrinterCharacteristic = null;
+      if (confirm('Cetak Bluetooth gagal: ' + (error.message || 'printer tidak kompatibel.') + '\n\nBuka menu cetak Android?')) printReceiptSystem();
+      return;
+    }
+  }
+  printReceiptSystem();
 }
 function renderProducts() {
   const list = getSortedProducts().map(product => `<article class="product-list-item" onpointerdown="startProductPress(${product.id}, event)" onpointerup="cancelProductPress()" onpointerleave="cancelProductPress()" onpointercancel="cancelProductPress()" oncontextmenu="event.preventDefault(); editProduct(${product.id})">
@@ -1671,7 +1845,12 @@ function filterReports() {
   document.getElementById('featureContent').innerHTML = renderReports(period, start, end);
 }
 function renderSettings() {
-  return `<form class="feature-form" onsubmit="saveSettings(event)"><h3>Profil toko</h3><input name="shop" placeholder="Nama toko" value="${escapeHTML(data.settings.shop)}" required><input name="address" placeholder="Alamat toko (opsional)" value="${escapeHTML(data.settings.address || '')}"><input name="admin" placeholder="Nama admin" value="${escapeHTML(data.settings.admin)}" required><button type="submit">Simpan pengaturan</button></form>
+  return `${renderAkunCard()}<form class="feature-form" onsubmit="saveSettings(event)"><h3>Profil toko</h3><input name="shop" placeholder="Nama toko" value="${escapeHTML(data.settings.shop)}" required><input name="address" placeholder="Alamat toko (opsional)" value="${escapeHTML(data.settings.address || '')}"><input name="admin" placeholder="Nama admin" value="${escapeHTML(data.settings.admin)}" required><button type="submit">Simpan pengaturan</button></form>
+    <section class="feature-card"><h3>Printer thermal</h3><p>Cetak langsung lewat Bluetooth LE (ESC/POS), atau gunakan menu cetak Android.</p>
+      <select id="printMode" onchange="savePrintMode(this.value)" aria-label="Metode cetak"><option value="bt" ${(localStorage.getItem('pos_printMode') || (bluetoothSupported() ? 'bt' : 'system')) === 'bt' ? 'selected' : ''}>Bluetooth langsung</option><option value="system" ${(localStorage.getItem('pos_printMode') || (bluetoothSupported() ? 'bt' : 'system')) === 'system' ? 'selected' : ''}>Menu cetak Android</option></select>
+      <button class="feature-button secondary" type="button" style="width:100%;margin-top:10px" onclick="connectBluetoothPrinter()">Hubungkan / pilih printer</button>
+      <button class="feature-button secondary" type="button" style="width:100%;margin-top:8px" onclick="printBluetoothTest()">Cetak tes Bluetooth</button>
+      <p class="product-hint" id="printerStatus" aria-live="polite"></p></section>
     <section class="feature-card"><h3>Backup &amp; Restore</h3><p>Kelola pencadangan data secara terpisah agar halaman Pengaturan tetap ringkas.</p><button class="feature-button secondary" type="button" style="width:100%;margin-top:12px" onclick="openGoogleSheetsBackup()"><i class="fa-solid fa-table" aria-hidden="true" style="margin-right:7px"></i>Buka Backup &amp; Restore Google Sheets</button></section>
     <section class="feature-card"><h3>Import dan ekspor produk</h3><p>Ekspor produk sebagai CSV, atau impor file CSV/Excel (.xlsx). Kolom nama dapat memakai: nama, produk, barang, nama barang, atau product. Kolom harga dapat memakai: harga, harga jual, atau price. Kolom opsional mendukung Bahasa Indonesia maupun Inggris: id, satuan/unit, modal/cost, stok/stock, dan barcode. Produk yang cocok berdasarkan ID, barcode, atau nama akan diperbarui; produk lain ditambahkan.</p>
       <div class="purchase-actions"><button class="feature-button secondary" type="button" onclick="exportProductsCSV()"><i class="fa-solid fa-download" aria-hidden="true"></i> Ekspor produk</button></div>
@@ -1969,11 +2148,63 @@ function saveSettings(event) {
   alert('Pengaturan berhasil disimpan.');
 }
 function resetData() {
-  if (!confirm('Semua data POS di browser ini akan dihapus. Lanjutkan?')) return;
+  const saran = akunSaatIni() ? '' : (SINKRON_PRODUK_SIAP ? '\n\nData ini belum tersimpan di akun. Masuk dengan Google atau ekspor produk dulu supaya tidak hilang permanen.' : '\n\nEkspor produk dulu supaya tidak hilang permanen.');
+  if (!confirm('Semua data POS di browser ini akan dihapus. Lanjutkan?' + saran)) return;
   ['products', 'suppliers', 'customers', 'debts', 'transactions', 'purchases', 'settings'].forEach(key => localStorage.removeItem('pos_' + key));
   location.reload();
 }
+/* ===== AKUN (login Google opsional) ===== */
+function akunSaatIni() {
+  try {
+    const uid = localStorage.getItem('pos_profil_ok');
+    if (!uid) return null;
+    return { uid, ...JSON.parse(localStorage.getItem('pos_akun') || '{}') };
+  } catch (error) { return null; }
+}
+function renderAkunCard() {
+  const akun = akunSaatIni();
+  if (akun) {
+    return `<section class="feature-card akun-card"><h3>Akun</h3>
+      <div class="akun-row">
+        ${akun.foto ? `<img src="${escapeHTML(akun.foto)}" alt="" referrerpolicy="no-referrer">` : '<span class="akun-avatar"><i class="fa-solid fa-user"></i></span>'}
+        <div><strong>${escapeHTML(akun.nama || 'Akun Google')}</strong><small>${escapeHTML(akun.email || '')}</small></div>
+      </div>
+      <p>${SINKRON_PRODUK_SIAP ? 'Produk Anda tersimpan di akun ini dan tidak akan hilang walau ganti HP.' : 'Anda sudah masuk. Penyimpanan produk otomatis ke akun belum aktif; sementara itu simpan manual lewat Ekspor produk di bawah.'}</p>
+      <button class="feature-button secondary" type="button" style="width:100%;margin-top:12px" onclick="keluarAkun()">Keluar dari akun</button></section>`;
+  }
+  return `<section class="feature-card akun-card"><h3>Akun</h3>
+    <p>${SINKRON_PRODUK_SIAP ? 'Saat ini produk hanya tersimpan di HP ini. Masuk dengan Google supaya produk otomatis aman dan tidak akan hilang, bahkan kalau HP rusak atau aplikasi terhapus.' : 'Masuk dengan Google untuk menghubungkan toko Anda ke akun. Penyimpanan produk otomatis ke akun belum aktif; sementara itu simpan manual lewat Ekspor produk di bawah.'}</p>
+    <button class="feature-button" type="button" style="width:100%;margin-top:12px" onclick="location.href='login.html'"><i class="fa-brands fa-google" aria-hidden="true" style="margin-right:7px"></i>Masuk dengan Google</button>
+    <p class="product-hint">Kata sandi Google Anda tidak pernah dilihat aplikasi ini.</p></section>`;
+}
+function keluarAkun() {
+  if (!confirm('Keluar dari akun? Data di HP ini tetap ada.')) return;
+  location.href = 'login.html?keluar=1';
+}
+function updateAkunBanner() {
+  const el = document.getElementById('akunBanner');
+  if (!el) return;
+  if (!SINKRON_PRODUK_SIAP || akunSaatIni()) { el.hidden = true; return; }
+  const jumlah = data.products.length;
+  const tingkat = jumlah >= 40 ? 2 : jumlah >= 10 ? 1 : 0;
+  if (!tingkat) { el.hidden = true; return; }
+  let tutup = null;
+  try { tutup = JSON.parse(localStorage.getItem('pos_banner_akun') || 'null'); } catch (error) {}
+  if (tutup && tutup.tingkat >= tingkat && Date.now() - tutup.waktu < 3 * 24 * 60 * 60 * 1000) { el.hidden = true; return; }
+  document.getElementById('akunBannerTeks').textContent = tingkat === 2
+    ? `${jumlah} produk Anda baru tersimpan di HP ini. Masuk dengan Google supaya tidak hilang kalau HP rusak atau aplikasi terhapus.`
+    : 'Data Anda baru tersimpan di HP ini. Masuk dengan Google supaya produk aman dan tidak hilang.';
+  el.dataset.tingkat = tingkat;
+  el.hidden = false;
+}
+function tutupAkunBanner() {
+  const el = document.getElementById('akunBanner');
+  try { localStorage.setItem('pos_banner_akun', JSON.stringify({ waktu: Date.now(), tingkat: Number(el.dataset.tingkat) || 1 })); } catch (error) {}
+  el.hidden = true;
+}
+
 function updateDashboard() {
+  updateAkunBanner();
   const today = new Date().toDateString();
   const todaysTransactions = data.transactions.filter(transaction => new Date(transaction.date).toDateString() === today);
   const sales = todaysTransactions.reduce((sum, transaction) => sum + transaction.total, 0);
