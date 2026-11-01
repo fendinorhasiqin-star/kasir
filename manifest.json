@@ -1,31 +1,17 @@
 {
-  "name": "Toko Arridho Jaya",
-  "short_name": "KASIR AJ",
-  "description": "Aplikasi kasir Toko Arridho Jaya",
-  "start_url": "./",
+  "name": "Kasir Arridho Jaya",
+  "short_name": "Kasir AJ",
+  "description": "Aplikasi kasir toko yang tetap jalan saat internet mati.",
+  "lang": "id",
+  "start_url": "mobile.html",
   "scope": "./",
   "display": "standalone",
-  "orientation": "any",
-  "background_color": "#ffffff",
-  "theme_color": "#0B1F3F",
+  "orientation": "portrait",
+  "background_color": "#0f2a3d",
+  "theme_color": "#0f2a3d",
   "icons": [
-    {
-      "src": "icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "icon-maskable-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "maskable"
-    }
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
   ]
 }

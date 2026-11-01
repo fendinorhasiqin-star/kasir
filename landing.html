@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kasir Arridho Jaya</title>
+<meta name="theme-color" content="#0f2a3d">
+<link rel="manifest" href="manifest.json">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=IBM+Plex+Sans:wght@400;500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0f2a3d; --bg:#eef3f6; --paper:#ffffff; --green:#1f8a5b; --green-d:#16684a;
+  --yellow:#ffc93c; --muted:#4d6475; --line:#c9d6de;
+}
+*{box-sizing:border-box;margin:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font:400 17px/1.6 "IBM Plex Sans",system-ui,sans-serif;
+  padding-top:env(safe-area-inset-top,0);padding-bottom:env(safe-area-inset-bottom,0)}
+.wrap{max-width:1040px;margin:0 auto;padding:0 22px}
+header{padding:22px 0;font:800 18px "Bricolage Grotesque",sans-serif;letter-spacing:.01em}
+header span{background:var(--yellow);padding:2px 8px;border-radius:4px;margin-right:8px}
+
+.hero{display:grid;grid-template-columns:1.15fr .85fr;gap:48px;align-items:center;padding:28px 0 64px}
+h1{font:800 clamp(34px,6vw,58px)/1.05 "Bricolage Grotesque",sans-serif;letter-spacing:-.02em;margin-bottom:18px}
+.lead{font-size:19px;color:var(--muted);max-width:30em;margin-bottom:28px}
+.cta{display:flex;flex-wrap:wrap;gap:14px;align-items:center}
+button{font:600 17px "IBM Plex Sans",sans-serif;background:var(--green);color:#fff;border:0;border-radius:10px;
+  padding:15px 26px;cursor:pointer;min-height:52px}
+button:hover{background:var(--green-d)}
+button:focus-visible,a:focus-visible{outline:3px solid var(--yellow);outline-offset:3px}
+.note{font-size:15px;color:var(--muted)}
+#status{margin-top:18px;font-weight:500;color:var(--green-d)}
+
+/* tampilan HP */
+.phone{justify-self:center;width:100%;max-width:290px;background:var(--ink);border-radius:34px;padding:9px;
+  box-shadow:0 22px 44px -22px rgba(15,42,61,.55);animation:rise .8s ease-out both}
+.screen{background:#f3f7f9;border-radius:26px;overflow:hidden;font:400 12px/1.4 "IBM Plex Sans",sans-serif;color:var(--ink)}
+.top{background:var(--green);color:#fff;padding:16px 16px 44px}
+.top b{display:block;font:800 13px "Bricolage Grotesque",sans-serif;letter-spacing:.04em}
+.top small{opacity:.85;font-size:11px}
+.sum{background:#fff;margin:-30px 12px 0;border-radius:14px;padding:12px 14px;box-shadow:0 6px 16px -10px rgba(15,42,61,.4)}
+.sum .lbl{color:var(--muted);font-size:11px}
+.sum .big{font:800 24px "Bricolage Grotesque",sans-serif;margin:2px 0 8px}
+.sum .two{display:flex;justify-content:space-between;border-top:1px solid #e3ebf0;padding-top:8px;font-size:11px;color:var(--muted)}
+.sum .two b{display:block;color:var(--ink);font-size:13px}
+.menu-h{display:flex;justify-content:space-between;padding:14px 14px 6px;font-weight:500}
+.menu-h span{color:var(--muted);font-size:11px;font-weight:400}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:0 12px}
+.grid div{background:#fff;border-radius:10px;padding:9px 4px 7px;text-align:center;font-size:10.5px}
+.grid i{display:block;width:26px;height:26px;border-radius:8px;margin:0 auto 4px;font:800 12px/26px "Bricolage Grotesque",sans-serif;color:#fff;font-style:normal}
+.recent{display:flex;justify-content:space-between;padding:12px 14px 8px;font-weight:500}
+.recent span{color:var(--green-d);font-size:11px;font-weight:400}
+.nav{display:flex;justify-content:space-around;background:#fff;border-top:1px solid #e3ebf0;padding:9px 0 11px;font-size:10.5px;color:var(--muted)}
+.nav b{color:var(--green-d);font-weight:500}
+@keyframes rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+
+section{padding:56px 0;border-top:1px solid var(--line)}
+h3{font:800 28px/1.15 "Bricolage Grotesque",sans-serif;margin-bottom:22px;letter-spacing:-.01em}
+.feat{display:grid;grid-template-columns:repeat(3,1fr);gap:0}
+.feat div{padding:0 24px 0 0}
+.feat div+div{padding-left:24px;border-left:1px solid var(--line)}
+.feat b{display:block;font:800 19px "Bricolage Grotesque",sans-serif;margin-bottom:6px}
+.feat p{color:var(--muted);font-size:16px}
+
+.steps{display:grid;grid-template-columns:1fr 1fr;gap:40px}
+ol{padding-left:22px}
+li{margin-bottom:8px}
+h4{font:800 20px "Bricolage Grotesque",sans-serif;margin-bottom:12px}
+#ios{display:none}
+footer{padding:36px 0 48px;color:var(--muted);font-size:14px;border-top:1px solid var(--line)}
+
+@media (max-width:760px){
+  .hero{grid-template-columns:1fr;gap:36px;padding-bottom:44px}
+  .feat,.steps{grid-template-columns:1fr;gap:22px}
+  .feat div,.feat div+div{padding:0;border:0}
+}
+@media (prefers-reduced-motion:reduce){.phone{animation:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header><span>AJ</span>Kasir Arridho Jaya</header>
+
+  <main class="hero">
+    <div>
+      <h1>Kasir toko yang tetap jalan saat internet mati</h1>
+      <p class="lead">Scan barcode, hitung kembalian, cetak struk. Pasang di HP atau komputer, gratis dipakai.</p>
+      <div class="cta">
+        <button id="btnPasang" type="button">Pasang aplikasi</button>
+        <span class="note">Tanpa Play Store, ukuran kecil</span>
+      </div>
+      <p id="status" role="status"></p>
+    </div>
+
+    <div class="phone" aria-hidden="true">
+      <div class="screen">
+        <div class="top"><b>TOKO SEMBAKO</b><small>Selamat datang, Admin!</small></div>
+        <div class="sum">
+          <div class="lbl">Total Penjualan Hari Ini</div>
+          <div class="big">Rp 1.250.000</div>
+          <div class="two"><span>Transaksi<b>38</b></span><span>Keuntungan<b>Rp 187.000</b></span></div>
+        </div>
+        <div class="menu-h">Menu Utama <span>9 Menu</span></div>
+        <div class="grid">
+          <div><i style="background:#1f8a5b">K</i>Keranjang</div>
+          <div><i style="background:#2f6fb0">P</i>Produk</div>
+          <div><i style="background:#8a5bc2">L</i>Laporan</div>
+          <div><i style="background:#d9822b">S</i>Supplier</div>
+          <div><i style="background:#c2475b">S</i>Stok Barang</div>
+          <div><i style="background:#3a9aa8">P</i>Pembelian</div>
+          <div><i style="background:#5b8a1f">P</i>Pelanggan</div>
+          <div><i style="background:#b8402e">H</i>Hutang</div>
+          <div><i style="background:#5d7384">P</i>Pengaturan</div>
+        </div>
+        <div class="recent">Transaksi Terbaru <span>Lihat Semua</span></div>
+        <div class="nav"><b>Home</b><span>Kasir</span><span>Riwayat</span><span>Profil</span></div>
+      </div>
+    </div>
+  </main>
+
+  <section>
+    <h3>Dibuat untuk kasir yang buru-buru</h3>
+    <div class="feat">
+      <div><b>Cepat</b><p>Scan atau ketik nama barang, harga bisa diubah langsung di keranjang.</p></div>
+      <div><b>Offline</b><p>Transaksi tetap tercatat walau sinyal hilang.</p></div>
+      <div><b>Hutang pelanggan</b><p>Catat hutang per pelanggan dan terima cicilan.</p></div>
+    </div>
+  </section>
+
+  <section id="cara">
+    <h3>Cara memasang</h3>
+    <div class="steps">
+      <div id="android">
+        <h4>Android (Chrome)</h4>
+        <ol>
+          <li>Tekan tombol <b>Pasang aplikasi</b> di atas.</li>
+          <li>Pilih <b>Instal</b>.</li>
+          <li>Buka dari ikon di layar utama.</li>
+        </ol>
+      </div>
+      <div id="iosSteps">
+        <h4>iPhone (Safari)</h4>
+        <ol>
+          <li>Ketuk tombol <b>Bagikan</b> di bawah layar.</li>
+          <li>Pilih <b>Tambah ke Layar Utama</b>.</li>
+          <li>Buka dari ikon di layar utama.</li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <footer>Kasir Arridho Jaya. Paket gratis dapat berubah sewaktu-waktu, dan akun bisa diwajibkan di kemudian hari.</footer>
+</div>
+
+<script>
+/* ====== UBAH DI SINI ====== */
+var APP_URL = 'mobile.html';   // halaman utama kasir
+/* ========================== */
+
+var terpasang = window.matchMedia('(display-mode: standalone)').matches
+             || window.navigator.standalone === true;
+
+// Kalau sudah dibuka dari ikon aplikasi, langsung masuk ke kasir
+if (terpasang) location.replace(APP_URL);
+
+var btn = document.getElementById('btnPasang');
+var status = document.getElementById('status');
+var tawaran = null;
+var isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+
+// Chrome Android: simpan prompt instal bawaan browser
+window.addEventListener('beforeinstallprompt', function (e) {
+  e.preventDefault();
+  tawaran = e;
+});
+
+btn.addEventListener('click', function () {
+  if (tawaran) {
+    tawaran.prompt();
+    tawaran.userChoice.then(function (hasil) {
+      if (hasil.outcome === 'accepted') status.textContent = 'Terpasang. Buka dari ikon di layar utama.';
+      tawaran = null;
+    });
+  } else if (isIOS) {
+    status.textContent = 'Di iPhone: ketuk Bagikan, lalu Tambah ke Layar Utama.';
+    document.getElementById('cara').scrollIntoView();
+  } else {
+    status.textContent = 'Buka lewat Chrome, lalu pilih menu titik tiga dan Instal aplikasi.';
+    document.getElementById('cara').scrollIntoView();
+  }
+});
+
+window.addEventListener('appinstalled', function () {
+  status.textContent = 'Terpasang. Buka dari ikon di layar utama.';
+});
+
+// Daftarkan service worker supaya bisa diinstal dan jalan offline
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js').catch(function () {});
+}
+</script>
+</body>
+</html>
