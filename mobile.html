@@ -865,6 +865,15 @@ let restoringFeature = false;
 let reportState = { period: 'today', start: '', end: '' };
 let reportBestSellerList = [];
 
+/* ===== Pengaturan stok kosong ===== */
+const DEFAULT_EMPTY_STOCK = 0;
+function getEmptyStock() { const v = data.settings.emptyStock; return v === 0 || v === 1 ? v : DEFAULT_EMPTY_STOCK; }
+function isFixedStock(product) { return getEmptyStock() === 1 && product.stock === 1; }
+function saveStockSetting(value) {
+  data.settings.emptyStock = Number(value) === 1 ? 1 : 0;
+  saveData();
+  alert('Pengaturan stok disimpan: stok kosong = ' + data.settings.emptyStock + '.');
+}
 function saveData() {
   ['products', 'suppliers', 'customers', 'debts', 'transactions', 'purchases', 'settings'].forEach(key =>
     localStorage.setItem('pos_' + key, JSON.stringify(data[key]))
@@ -996,7 +1005,7 @@ function changeCartQuantity(id, change) {
   const item = data.cart.find(product => product.id === id);
   const product = data.products.find(product => product.id === id);
   if (!item || !product) return;
-  if (change > 0 && item.qty >= product.stock) return alert('Stok tidak mencukupi.');
+  if (change > 0 && !isFixedStock(product) && item.qty >= product.stock) return alert('Stok tidak mencukupi.');
   item.qty += change;
   if (item.qty < 1) data.cart = data.cart.filter(product => product.id !== id);
   openMenu(activeFeature);
@@ -1042,7 +1051,7 @@ function addProductToCart(id) {
   if (!product || product.stock < 1) return alert('Stok produk habis.');
   const existing = data.cart.find(item => item.id === id);
   if (existing) {
-    if (existing.qty >= product.stock) return alert('Stok tidak mencukupi.');
+    if (!isFixedStock(product) && existing.qty >= product.stock) return alert('Stok tidak mencukupi.');
     existing.qty++;
   } else data.cart.push({ id, name: product.name, unit: product.unit || '', price: product.price, cost: product.cost, qty: 1 });
   openMenu(activeFeature);
@@ -1147,10 +1156,10 @@ function addToCart(event) {
   const form = event.currentTarget;
   const product = data.products.find(item => item.id === Number(form.product.value));
   const qty = Number(form.qty.value);
-  if (!product || qty < 1 || qty > product.stock) return alert('Stok tidak mencukupi.');
+  if (!product || qty < 1 || (!isFixedStock(product) && qty > product.stock)) return alert('Stok tidak mencukupi.');
   const existing = data.cart.find(item => item.id === product.id);
   if (existing) {
-    if (existing.qty + qty > product.stock) return alert('Stok tidak mencukupi.');
+    if (!isFixedStock(product) && existing.qty + qty > product.stock) return alert('Stok tidak mencukupi.');
     existing.qty += qty;
   } else data.cart.push({ id: product.id, name: product.name, unit: product.unit || '', price: product.price, cost: product.cost, qty });
   openMenu(activeFeature);
@@ -1169,12 +1178,12 @@ function checkout(event) {
   if (!Number.isFinite(cash) || cash < total) return alert('Uang yang diterima belum mencukupi.');
   const unavailable = data.cart.some(item => {
     const product = data.products.find(product => product.id === item.id);
-    return !product || product.stock < item.qty;
+    return !product || (!isFixedStock(product) && product.stock < item.qty);
   });
   if (unavailable) return alert('Stok produk berubah dan tidak mencukupi. Periksa kembali keranjang.');
   data.cart.forEach(item => {
     const product = data.products.find(product => product.id === item.id);
-    product.stock -= item.qty;
+    if (!isFixedStock(product)) product.stock -= item.qty;
   });
   const transaction = {
     id: Date.now(), customer: form.elements.namedItem('customer').value.trim() || 'Pelanggan Umum',
@@ -1417,7 +1426,7 @@ function showProductEditor(id = null) {
     <label for="productUnit">Satuan</label><input id="productUnit" name="unit" placeholder="Contoh: pcs, kg, liter" value="${escapeHTML(product?.unit || '')}">
     <label for="productPrice">Harga jual (Rp)</label><input id="productPrice" name="price" type="number" min="0" placeholder="Masukkan harga yang dibayar pelanggan" value="${product?.price ?? ''}" required>
     <label for="productCost">Harga modal per unit (Rp)</label><input id="productCost" name="cost" type="number" min="0" placeholder="Harga beli dari supplier (opsional)" value="${product?.cost ?? ''}">
-    <label for="productStock">Stok barang (unit)</label><input id="productStock" name="stock" type="number" min="0" placeholder="Jumlah stok saat ini" value="${product?.stock ?? ''}">
+    <label for="productStock">Stok barang (unit)</label><input id="productStock" name="stock" type="number" min="0" placeholder="Kosongkan = ${getEmptyStock()}" value="${product?.stock ?? ''}">
     <label for="productBarcode">Barcode (opsional)</label><input id="productBarcode" name="barcode" placeholder="Masukkan nomor barcode" value="${escapeHTML(product?.barcode || '')}">
     <button type="submit">${product ? 'Simpan perubahan' : 'Tambah produk'}</button><button class="feature-button secondary" type="button" onclick="openMenu('Produk')">Batal</button>
     ${product ? `<button class="feature-button danger" type="button" onclick="deleteProduct(${product.id})">Hapus produk</button>` : ''}</form>`;
@@ -1469,7 +1478,7 @@ function saveProduct(event) {
     unit: form.elements.namedItem('unit').value.trim(),
     price: Number(form.elements.namedItem('price').value),
     cost: Number(form.elements.namedItem('cost').value) || 0,
-    stock: Number(form.elements.namedItem('stock').value) || 0,
+    stock: form.elements.namedItem('stock').value === '' ? getEmptyStock() : (Number(form.elements.namedItem('stock').value) || 0),
     barcode: form.elements.namedItem('barcode').value.trim()
   };
   if (!values.name || !Number.isFinite(values.price)) return alert('Nama barang dan harga jual wajib diisi.');
@@ -1518,6 +1527,7 @@ function adjustStock(event, id) {
   
   const product = data.products.find(item => item.id === id);
   const amount = Number(event.submitter.value === 'add' ? event.currentTarget.amount.value : -event.currentTarget.amount.value);
+  if (amount < 0 && isFixedStock(product)) return alert('Stok 1 tidak dapat dikurangi lagi.');
   if (product.stock + amount < 0) return alert('Stok tidak boleh kurang dari nol.');
   product.stock += amount; saveData(); openMenu('Stok Barang');
 }
@@ -1876,6 +1886,8 @@ function renderProfile() {
 }
 function renderSettings() {
   return `<form class="feature-form" onsubmit="saveSettings(event)"><h3>Informasi toko</h3><label for="shopName">Nama toko</label><input id="shopName" name="shop" placeholder="Nama toko" value="${escapeHTML(data.settings.shop)}" required><label for="shopAddress">Alamat toko (opsional)</label><input id="shopAddress" name="address" placeholder="Alamat toko (opsional)" value="${escapeHTML(data.settings.address || '')}"><button type="submit">Simpan pengaturan</button></form>
+    <section class="feature-card"><h3>Pengaturan stok</h3><p>Stok awal untuk produk yang kolom stoknya dikosongkan (saat tambah produk atau impor).</p>
+      <select id="emptyStockSetting" onchange="saveStockSetting(this.value)" aria-label="Stok produk kosong" style="width:100%"><option value="1" ${getEmptyStock() === 1 ? 'selected' : ''}>Angka 1 — stok tetap 1, tidak berkurang saat terjual</option><option value="0" ${getEmptyStock() === 0 ? 'selected' : ''}>Angka 0 — stok 0 berarti habis (stok dihitung normal)</option></select></section>
     <section class="feature-card"><h3>Printer thermal</h3><p>Cetak langsung lewat Bluetooth LE (ESC/POS), atau gunakan menu cetak Android.</p>
       <select id="printMode" onchange="savePrintMode(this.value)" aria-label="Metode cetak"><option value="bt" ${(localStorage.getItem('pos_printMode') || (bluetoothSupported() ? 'bt' : 'system')) === 'bt' ? 'selected' : ''}>Bluetooth langsung</option><option value="system" ${(localStorage.getItem('pos_printMode') || (bluetoothSupported() ? 'bt' : 'system')) === 'system' ? 'selected' : ''}>Menu cetak Android</option></select>
       <button class="feature-button secondary" type="button" style="width:100%;margin-top:10px" onclick="connectBluetoothPrinter()">Hubungkan / pilih printer</button>
@@ -2117,7 +2129,7 @@ async function importProductsCSV(event) {
       const costValue = value('modal', 'cost', 'purchase price', 'cost price');
       const stockValue = value('stok', 'stock', 'quantity', 'qty');
       const cost = costValue === '' ? 0 : Number(costValue);
-      const stock = stockValue === '' ? 0 : Number(stockValue);
+      const stock = stockValue === '' ? getEmptyStock() : Number(stockValue);
       if (!name || !Number.isFinite(price) || price < 0 || !Number.isFinite(cost) || cost < 0 || !Number.isInteger(stock) || stock < 0 || (id && (!Number.isSafeInteger(Number(id)) || Number(id) < 1))) {
         throw new Error(`Data produk pada baris ${rowIndex + 2} tidak valid.`);
       }
