@@ -1847,16 +1847,11 @@ function renderSettings() {
       <button class="feature-button secondary" type="button" style="width:100%;margin-top:10px" onclick="connectBluetoothPrinter()">Hubungkan / pilih printer</button>
       <button class="feature-button secondary" type="button" style="width:100%;margin-top:8px" onclick="printBluetoothTest()">Cetak tes Bluetooth</button>
       <p class="product-hint" id="printerStatus" aria-live="polite"></p></section>
-    <section class="feature-card"><h3>Backup &amp; Restore</h3><p>Kelola pencadangan data secara terpisah agar halaman Pengaturan tetap ringkas.</p><button class="feature-button secondary" type="button" style="width:100%;margin-top:12px" onclick="openGoogleSheetsBackup()"><i class="fa-solid fa-table" aria-hidden="true" style="margin-right:7px"></i>Buka Backup &amp; Restore Google Sheets</button></section>
     <section class="feature-card"><h3>Import dan ekspor produk</h3><p>Ekspor produk sebagai CSV, atau impor file CSV/Excel (.xlsx). Kolom nama dapat memakai: nama, produk, barang, nama barang, atau product. Kolom harga dapat memakai: harga, harga jual, atau price. Kolom opsional mendukung Bahasa Indonesia maupun Inggris: id, satuan/unit, modal/cost, stok/stock, dan barcode. Produk yang cocok berdasarkan ID, barcode, atau nama akan diperbarui; produk lain ditambahkan.</p>
       <div class="purchase-actions"><button class="feature-button secondary" type="button" onclick="exportProductsCSV()"><i class="fa-solid fa-download" aria-hidden="true"></i> Ekspor produk</button></div>
       <form class="feature-form" style="padding:0;margin:12px 0 0;border:0" onsubmit="return false"><label for="productsCSV" class="product-sort-label">Pilih file CSV atau Excel (.xlsx) untuk diimpor</label><input id="productsCSV" type="file" accept=".csv,.xlsx,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" onchange="importProductsCSV(event)"></form>
     </section>
 `;
-}
-function openGoogleSheetsBackup() {
-  showFeature('Backup & Restore Google Sheets', `<section class="feature-card"><h3>Backup dan pemulihan data</h3><p>Halaman ini disiapkan khusus untuk Google Sheets. Agar data dapat dikirim dan dipulihkan dengan aman, integrasi memerlukan Google Apps Script Web App yang terhubung ke spreadsheet Anda.</p><p>Integrasi belum aktif, jadi belum ada data yang dikirim ke Google Sheets atau dipulihkan dari sana.</p></section>
-    <section class="feature-card"><h3>Langkah berikutnya</h3><p>Siapkan spreadsheet dan endpoint Google Apps Script terlebih dahulu. Setelah endpoint dan format data disepakati, tombol backup dan restore dapat dihubungkan di halaman ini.</p></section>`);
 }
 function csvEscape(value) {
   const text = String(value ?? '');
