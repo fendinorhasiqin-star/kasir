@@ -329,24 +329,25 @@ body {
   max-width: 480px;
   height: 100vh;
   max-height: 100vh;
-  padding: 20px;
+  padding: 20px 20px 92px;
   border-radius: 0;
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  position: relative;
 }
 .feature-modal.open:not(.cashier-mode) .feature-header { flex: 0 0 auto; }
 .feature-modal.open:not(.cashier-mode) #featureContent { min-height: 0; flex: 1; overflow-y: auto; margin-right: -20px; padding: 0 20px 20px 0; }
 .feature-modal.open:not(.cashier-mode) .feature-bottom-nav {
-  position: static;
-  left: auto;
-  bottom: auto;
+  position: absolute;
+  left: 0;
+  bottom: 0;
   transform: none;
-  width: calc(100% + 40px);
+  width: 100%;
   max-width: none;
   height: 72px;
   flex: 0 0 72px;
-  margin: 8px -20px -20px;
+  margin: 0;
   padding-bottom: env(safe-area-inset-bottom);
 }
 .feature-modal.cashier-mode {
@@ -802,6 +803,8 @@ const data = {
 };
 let activeFeature = 'Dashboard';
 let featureHistory = [];
+let featureHistoryDepth = 0;
+let featureSessionId = null;
 let restoringFeature = false;
 let reportState = { period: 'today', start: '', end: '' };
 let reportBestSellerList = [];
@@ -829,15 +832,27 @@ function syncNavigation(feature) {
     item.classList.toggle('active', item.textContent.trim() === activeLabel && activeLabel !== '');
   });
 }
-function closeFeature() {
+function closeFeature(fromHistory = false) {
+  const depth = featureHistoryDepth;
   featureHistory = [];
+  featureHistoryDepth = 0;
+  featureSessionId = null;
   document.getElementById('featureModal').classList.remove('open', 'cashier-mode');
   syncNavigation('Home');
+  if (!fromHistory && depth > 0) history.go(-depth);
 }
 function showFeature(title, html) {
   const modal = document.getElementById('featureModal');
-  if (!restoringFeature && modal.classList.contains('open') && activeFeature !== title) {
+  const isOpen = modal.classList.contains('open');
+  if (!isOpen && !restoringFeature) {
+    featureHistory = [];
+    featureSessionId = `${Date.now()}-${Math.random()}`;
+    featureHistoryDepth = 1;
+    history.pushState({ ...(history.state || {}), posFeatureSession: featureSessionId }, '');
+  } else if (!restoringFeature && isOpen && activeFeature !== title) {
     featureHistory.push(activeFeature);
+    featureHistoryDepth++;
+    history.pushState({ ...(history.state || {}), posFeatureSession: featureSessionId }, '');
   }
   activeFeature = title;
   modal.classList.toggle('cashier-mode', title === 'Keranjang' || title === 'Kasir');
@@ -851,8 +866,13 @@ function showFeature(title, html) {
   syncNavigation(title);
 }
 function backFeature() {
+  if (featureSessionId && history.state?.posFeatureSession === featureSessionId) {
+    history.back();
+    return;
+  }
   const previous = featureHistory.pop();
-  if (!previous) return closeFeature();
+  if (!previous) return closeFeature(true);
+  featureHistoryDepth = Math.max(1, featureHistoryDepth - 1);
   restoringFeature = true;
   openMenu(previous);
   restoringFeature = false;
@@ -1886,6 +1906,18 @@ function updateDashboard() {
 document.querySelector('.brand h3').textContent = data.settings.shop.toUpperCase();
 document.querySelector('.brand p').textContent = 'Selamat datang, ' + data.settings.admin + '!';
 updateDashboard();
+window.addEventListener('popstate', event => {
+  if (!document.getElementById('featureModal').classList.contains('open')) return;
+  if (event.state?.posFeatureSession === featureSessionId && featureHistory.length) {
+    const previous = featureHistory.pop();
+    featureHistoryDepth = Math.max(1, featureHistoryDepth - 1);
+    restoringFeature = true;
+    openMenu(previous);
+    restoringFeature = false;
+    return;
+  }
+  closeFeature(true);
+});
 document.addEventListener('keydown', event => {
   if (event.code === 'Space' && event.target.closest?.('.cashier-product')) event.preventDefault();
 });
