@@ -325,7 +325,9 @@ $('btnGoogle').addEventListener('click', async () => {
     }
     if (kode === 'auth/network-request-failed') tampilError('Tidak ada koneksi internet. Sambungkan internet lalu coba lagi.');
     else if (kode === 'auth/unauthorized-domain') tampilError('Domain ini belum diizinkan di Firebase (Authentication > Settings > Authorized domains).');
-    else if (kode !== 'auth/popup-closed-by-user' && kode !== 'auth/cancelled-popup-request') tampilError('Gagal masuk dengan Google. Coba lagi.');
+    else if (kode === 'auth/operation-not-allowed' || kode === 'auth/configuration-not-found') tampilError('Login Google belum diaktifkan di Firebase (Authentication > Sign-in method > Google > Enable). [' + kode + ']');
+    else if (kode === 'auth/invalid-api-key' || kode === 'auth/api-key-not-valid.-please-pass-a-valid-api-key.') tampilError('API key Firebase salah. Periksa firebase-config.js. [' + kode + ']');
+    else if (kode !== 'auth/popup-closed-by-user' && kode !== 'auth/cancelled-popup-request') { console.error(e); tampilError('Gagal masuk dengan Google. Coba lagi. [' + (kode || e.message || 'tidak diketahui') + ']'); }
   } finally {
     $('btnGoogle').disabled = false;
     $('teksGoogle').textContent = 'Masuk dengan Google';
