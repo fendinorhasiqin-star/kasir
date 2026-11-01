@@ -15,6 +15,22 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  scrollbar-width: thin;
+  scrollbar-color: #B9C8BE transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: #B9C8BE;
+  border-radius: 4px;
 }
 
 body {
@@ -320,7 +336,7 @@ body {
   overflow: hidden;
 }
 .feature-modal.open:not(.cashier-mode) .feature-header { flex: 0 0 auto; }
-.feature-modal.open:not(.cashier-mode) #featureContent { min-height: 0; flex: 1; overflow-y: auto; padding-bottom: 20px; }
+.feature-modal.open:not(.cashier-mode) #featureContent { min-height: 0; flex: 1; overflow-y: auto; margin-right: -20px; padding: 0 20px 20px 0; }
 .feature-modal.open:not(.cashier-mode) .feature-bottom-nav {
   position: static;
   left: auto;
@@ -373,6 +389,7 @@ body {
 }
 
 .feature-header h2 { font-size: 20px; }
+.feature-header { gap: 12px; }
 .feature-close {
   width: 36px;
   height: 36px;
@@ -444,7 +461,7 @@ body {
   .cashier-page-header strong { font-size: 15px; font-weight: 800; cursor: pointer; }
 
 .cashier-page-header span { font-size: 13px; white-space: nowrap; }
-.cashier-page-content { flex: 1; min-height: 0; overflow-y: auto; padding: 14px 12px 20px; }
+.cashier-page-content { flex: 1; min-height: 0; overflow-y: auto; margin-right: -12px; padding: 14px 12px 20px; }
 .cashier-search { display: flex; gap: 8px; margin-bottom: 10px; }
 .cashier-search input { flex: 1; min-width: 0; min-height: 54px; padding: 12px 14px; border: 1px solid #DCE5DF; border-radius: 13px; background: white; color: #26352D; font: inherit; font-size: 15px; }
 .camera-button { width: 50px; min-width: 50px; border: 1px solid #DCE5DF; border-radius: 12px; background: white; color: #16834A; font-size: 18px; cursor: pointer; }
@@ -745,7 +762,7 @@ body {
     <section class="feature-panel" role="dialog" aria-modal="true" aria-labelledby="featureTitle">
       <div class="feature-header">
         <h2 id="featureTitle"></h2>
-        <button class="feature-close" onclick="closeFeature()" aria-label="Tutup">&times;</button>
+        <button class="feature-close" type="button" onclick="backFeature()" aria-label="Kembali">&#8592;</button>
       </div>
             <div id="featureContent"></div>
       <nav class="bottom-nav feature-bottom-nav" aria-label="Navigasi utama">
@@ -761,6 +778,7 @@ body {
 
 <script>
 const FREE_PRODUCT_LIMIT = 50;
+const ACTIVATION_CODE = '1111--0000-9999-8888'; // Isi dengan kode aktivasi yang Anda tetapkan.
 const WHATSAPP_NUMBER = '6287875015256'; // Opsional: nomor internasional tanpa tanda +, spasi, atau strip.
 const defaultProducts = [
   { id: 1, name: 'Beras 5 kg', price: 72000, stock: 18, cost: 65000 },
@@ -783,6 +801,8 @@ const data = {
   cart: []
 };
 let activeFeature = 'Dashboard';
+let featureHistory = [];
+let restoringFeature = false;
 let reportState = { period: 'today', start: '', end: '' };
 let reportBestSellerList = [];
 
@@ -810,17 +830,32 @@ function syncNavigation(feature) {
   });
 }
 function closeFeature() {
+  featureHistory = [];
   document.getElementById('featureModal').classList.remove('open', 'cashier-mode');
   syncNavigation('Home');
 }
 function showFeature(title, html) {
-  activeFeature = title;
   const modal = document.getElementById('featureModal');
+  if (!restoringFeature && modal.classList.contains('open') && activeFeature !== title) {
+    featureHistory.push(activeFeature);
+  }
+  activeFeature = title;
   modal.classList.toggle('cashier-mode', title === 'Keranjang' || title === 'Kasir');
   document.getElementById('featureTitle').textContent = title;
   document.getElementById('featureContent').innerHTML = html;
+  document.getElementById('featureContent').querySelectorAll('input:not([type="file"])').forEach(input => {
+    input.autocomplete = 'off';
+    input.spellcheck = false;
+  });
   modal.classList.add('open');
   syncNavigation(title);
+}
+function backFeature() {
+  const previous = featureHistory.pop();
+  if (!previous) return closeFeature();
+  restoringFeature = true;
+  openMenu(previous);
+  restoringFeature = false;
 }
 function emptyMessage(text) { return `<div class="feature-empty">${text}</div>`; }
 function productOptions() {
@@ -854,7 +889,7 @@ function renderCashier() {
   return `<header class="cashier-page-header"><strong><i class="fa-solid fa-cart-shopping" aria-hidden="true" style="margin-right:8px"></i>Keranjang</strong><span><i class="fa-solid fa-user" style="margin-right:5px"></i>${escapeHTML(data.settings.admin)}</span></header>
     <main class="cashier-page-content">
       <div class="cashier-search">
-        <input id="cashierSearch" type="search" placeholder="Scan / ketik nama atau barcode" oninput="searchCashierProducts()" aria-label="Cari nama atau barcode produk">
+        <input id="cashierSearch" type="search" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Scan / ketik nama atau barcode" oninput="searchCashierProducts()" aria-label="Cari nama atau barcode produk">
         <button class="camera-button" type="button" onclick="scanProductBarcode()" aria-label="Scan barcode"><i class="fa-solid fa-camera"></i></button>
       </div>
       <div class="cashier-results" id="cashierResults"></div>${cartMarkup}
@@ -1114,9 +1149,9 @@ function startProductPress(id, event) {
 function cancelProductPress() { clearTimeout(productPressTimer); }
 function showProductEditor(id = null) {
   const product = data.products.find(item => item.id === id);
-  document.getElementById('featureContent').innerHTML = `<form class="feature-form" onsubmit="saveProduct(event)">
+  document.getElementById('featureContent').innerHTML = `<form class="feature-form" autocomplete="off" onsubmit="saveProduct(event)">
     <h3>${product ? 'Edit produk' : 'Tambah produk'}</h3><input type="hidden" name="id" value="${product?.id || ''}">
-    <input name="name" placeholder="Nama barang" value="${escapeHTML(product?.name || '')}" required>
+    <input type="text" name="name" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Nama barang" value="${escapeHTML(product?.name || '')}" required>
     <input name="unit" placeholder="Satuan (contoh: pcs, kg, liter)" value="${escapeHTML(product?.unit || '')}">
     <input name="price" type="number" min="0" placeholder="Harga jual" value="${product?.price ?? ''}" required>
     <input name="cost" type="number" min="0" placeholder="Modal (opsional)" value="${product?.cost ?? ''}">
@@ -1129,7 +1164,7 @@ function showProductEditor(id = null) {
 function editProduct(id) { cancelProductPress(); showProductEditor(id); }
 function showProductLimitNotice() {
   document.getElementById('productLimitOverlay')?.remove();
-  const message = 'Halo, saya ingin mengaktifkan fitur untuk menambah produk di aplikasi POS.';
+  const message = 'Halo, saya ingin mengaktifkan fitur untuk menambah produk tanpa batas di aplikasi POS.';
   const whatsappUrl = WHATSAPP_NUMBER
     ? `https://wa.me/${WHATSAPP_NUMBER.replace(/\\D/g, '')}?text=${encodeURIComponent(message)}`
     : `https://wa.me/?text=${encodeURIComponent(message)}`;
@@ -1138,17 +1173,32 @@ function showProductLimitNotice() {
       <button class="feature-close product-limit-close" type="button" onclick="document.getElementById('productLimitOverlay').remove()" aria-label="Tutup">&times;</button>
       <div class="product-limit-icon"><i class="fa-solid fa-box-open" aria-hidden="true"></i></div>
       <h2 id="productLimitTitle">Batas versi gratis tercapai</h2>
-      <p>Anda menggunakan versi gratis yang dapat menyimpan hingga ${FREE_PRODUCT_LIMIT} produk. Untuk menambah produk, hubungi kami melalui WhatsApp.</p>
+      <p>Anda menggunakan Versi Gratis dengan batas ${FREE_PRODUCT_LIMIT} produk. Untuk menambahkan produk tanpa batas, hubungi kami lewat WhatsApp.</p>
       <a class="feature-button whatsapp-activation" href="${whatsappUrl}" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-whatsapp" aria-hidden="true"></i> Hubungi kami lewat WhatsApp</a>
+      <form class="feature-form" style="margin:12px 0 0;text-align:left" onsubmit="activateUnlimitedProducts(event)">
+        <label for="activationCode" class="product-sort-label">Sudah punya kode aktivasi?</label>
+        <input id="activationCode" name="activationCode" type="text" autocomplete="off" placeholder="Masukkan kode aktivasi" aria-label="Kode aktivasi">
+        <button type="submit">Gunakan Kode Aktivasi</button>
+      </form>
     </section>
   </div>`);
+}
+function activateUnlimitedProducts(event) {
+  event.preventDefault();
+  const code = event.currentTarget.elements.namedItem('activationCode').value.trim();
+  if (!ACTIVATION_CODE) return alert('Kode aktivasi belum tersedia. Silakan hubungi kami lewat WhatsApp.');
+  if (code !== ACTIVATION_CODE) return alert('Kode aktivasi tidak valid.');
+  data.settings.unlimitedProducts = true;
+  saveData();
+  document.getElementById('productLimitOverlay')?.remove();
+  alert('Aktivasi berhasil. Anda sekarang dapat menyimpan produk tanpa batas.');
 }
 function saveProduct(event) {
   event.preventDefault();
   
   const form = event.currentTarget;
   const id = Number(form.elements.namedItem('id').value);
-  if (!id && data.products.length >= FREE_PRODUCT_LIMIT) {
+  if (!id && !data.settings.unlimitedProducts && data.products.length >= FREE_PRODUCT_LIMIT) {
     showProductLimitNotice();
     return;
   }
@@ -1334,20 +1384,95 @@ function cancelPurchase(id) {
   saveData(); openMenu('Pembelian');
 }
 function renderDebts() {
-  const openDebts = data.debts.filter(debt => debt.remaining > 0);
-  const list = openDebts.map(debt => `<div class="feature-card"><div class="feature-row"><div><h3>${escapeHTML(debt.name)}</h3><p>Sisa hutang: <strong>${rupiah(debt.remaining)}</strong> dari ${rupiah(debt.amount)}</p></div></div>
-    <form class="feature-row" style="margin-top:10px" onsubmit="payDebt(event, ${debt.id})"><input name="payment" type="number" min="1" max="${debt.remaining}" placeholder="Jumlah pembayaran" required><button class="feature-button" type="submit">Bayar</button></form></div>`).join('') || emptyMessage('Tidak ada hutang aktif.');
-  return `<form class="feature-form" onsubmit="addDebt(event)"><h3>Catat hutang pelanggan</h3><input name="name" placeholder="Nama pelanggan" required><input name="amount" type="number" min="1" placeholder="Jumlah hutang" required><button type="submit">Simpan hutang</button></form>${list}`;
+  const list = data.debts.map(debt => {
+    const remaining = Number(debt.remaining) || 0;
+    return `<article class="feature-card" oncontextmenu="event.preventDefault(); deleteDebt(${debt.id})">
+      <div onpointerdown="startDebtPress(${debt.id}, event)" onpointerup="cancelDebtPress()" onpointerleave="cancelDebtPress()" onpointercancel="cancelDebtPress()">
+        <h3>${escapeHTML(debt.name)}</h3><p>Total hutang: <strong>${rupiah(debt.amount)}</strong></p>
+        <p>Sisa hutang: <strong>${rupiah(remaining)}</strong></p>
+        <span class="purchase-status ${remaining === 0 ? 'paid' : ''}">${remaining === 0 ? 'Lunas' : 'Belum lunas'}</span>
+        <p class="product-hint">Tekan dan tahan catatan untuk menghapus.</p>
+      </div>
+      ${remaining > 0 ? `<form class="feature-row" style="margin-top:10px" onsubmit="payDebt(event, ${debt.id})"><input name="payment" type="number" min="1" max="${remaining}" placeholder="Jumlah pembayaran" required><button class="feature-button" type="submit">Bayar</button></form>` : ''}
+    </article>`;
+  }).join('') || emptyMessage('Belum ada catatan hutang.');
+  return `<form class="feature-form" onsubmit="addDebt(event)"><h3>Catat hutang pelanggan</h3><input name="name" placeholder="Nama pelanggan" required><input name="amount" type="number" min="1" placeholder="Jumlah hutang" required><button type="submit">Simpan hutang</button></form>
+    <section class="feature-card"><h3>Import dan ekspor catatan hutang</h3><p>CSV menggunakan kolom: id, name, amount, remaining. Catatan lunas tetap disertakan saat ekspor.</p>
+      <div class="purchase-actions"><button class="feature-button secondary" type="button" onclick="exportDebtsCSV()"><i class="fa-solid fa-download" aria-hidden="true"></i> Ekspor hutang</button></div>
+      <form class="feature-form" style="padding:0;margin:12px 0 0;border:0" onsubmit="return false"><label for="debtsCSV" class="product-sort-label">Pilih file CSV untuk diimpor</label><input id="debtsCSV" type="file" accept=".csv,text/csv" onchange="importDebtsCSV(event)"></form>
+    </section>
+    <h3 style="font-size:15px;margin:18px 0 10px">Semua catatan hutang</h3>${list}`;
+}
+let debtPressTimer;
+function startDebtPress(id, event) {
+  if (event.pointerType === 'mouse' && event.button !== 0) return;
+  cancelDebtPress();
+  debtPressTimer = setTimeout(() => deleteDebt(id), 650);
+}
+function cancelDebtPress() { clearTimeout(debtPressTimer); }
+function deleteDebt(id) {
+  cancelDebtPress();
+  const debt = data.debts.find(item => item.id === id);
+  if (!debt || !confirm(`Hapus catatan hutang ${debt.name}?`)) return;
+  data.debts = data.debts.filter(item => item.id !== id);
+  saveData(); openMenu('Hutang');
 }
 function addDebt(event) {
-  event.preventDefault(); const form = event.currentTarget, amount = Number(form.amount.value);
+  event.preventDefault(); const form = event.currentTarget, amount = Number(form.elements.namedItem('amount').value);
   data.debts.unshift({ id: Date.now(), name: form.elements.namedItem('name').value.trim(), amount, remaining: amount });
   saveData(); openMenu('Hutang');
 }
 function payDebt(event, id) {
   event.preventDefault(); const debt = data.debts.find(item => item.id === id);
-  debt.remaining = Math.max(0, debt.remaining - Number(event.currentTarget.payment.value));
+  if (!debt) return;
+  debt.remaining = Math.max(0, debt.remaining - Number(event.currentTarget.elements.namedItem('payment').value));
   saveData(); openMenu('Hutang');
+}
+function exportDebtsCSV() {
+  const columns = ['id', 'name', 'amount', 'remaining'];
+  const rows = [columns, ...data.debts.map(debt => columns.map(column => debt[column] ?? ''))];
+  const csv = '\uFEFF' + rows.map(row => row.map(csvEscape).join(',')).join('\r\n');
+  const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = 'hutang-toko.csv';
+  link.click();
+  URL.revokeObjectURL(url);
+}
+async function importDebtsCSV(event) {
+  const input = event.currentTarget;
+  const file = input.files[0];
+  if (!file) return;
+  try {
+    const rows = parseCSV((await file.text()).replace(/^\uFEFF/, ''));
+    if (rows.length < 2) throw new Error('File CSV tidak berisi catatan hutang.');
+    const headers = rows[0].map(header => header.trim().toLocaleLowerCase('id-ID'));
+    const indexOf = name => headers.indexOf(name);
+    if (indexOf('name') < 0 || indexOf('amount') < 0) throw new Error('CSV wajib memiliki kolom name dan amount.');
+    const imported = rows.slice(1).map((row, rowIndex) => {
+      const value = name => indexOf(name) < 0 ? '' : (row[indexOf(name)] || '').trim();
+      const rawId = value('id');
+      const name = value('name');
+      const amount = Number(value('amount'));
+      const remaining = value('remaining') === '' ? amount : Number(value('remaining'));
+      if (!name || !Number.isFinite(amount) || amount <= 0 || !Number.isFinite(remaining) || remaining < 0 || remaining > amount || (rawId && (!Number.isSafeInteger(Number(rawId)) || Number(rawId) < 1))) {
+        throw new Error(`Catatan hutang pada baris ${rowIndex + 2} tidak valid.`);
+      }
+      return { rawId, name, amount, remaining };
+    });
+    if (!confirm(`Impor ${imported.length} catatan hutang? Catatan akan ditambahkan ke daftar.`)) return;
+    imported.forEach((item, index) => {
+      const id = item.rawId && !data.debts.some(debt => String(debt.id) === item.rawId)
+        ? Number(item.rawId) : Date.now() + index + Math.floor(Math.random() * 1000000);
+      data.debts.push({ id, name: item.name, amount: item.amount, remaining: item.remaining });
+    });
+    saveData(); openMenu('Hutang');
+    alert(`${imported.length} catatan hutang berhasil diimpor.`);
+  } catch (error) {
+    alert(error.message || 'File CSV tidak dapat dibaca.');
+  } finally {
+    input.value = '';
+  }
 }
 function renderHistory() {
   const list = data.transactions.map(transaction => `<div class="feature-card"><h3>${escapeHTML(transaction.customer)}</h3><p>${new Date(transaction.date).toLocaleString('id-ID')} · ${rupiah(transaction.total)}</p></div>`).join('') || emptyMessage('Belum ada transaksi tersimpan.');
@@ -1431,6 +1556,7 @@ function renderBestSellersPage() {
   return `<div class="feature-card"><h3>Produk terlaris</h3><p>Urutan berdasarkan jumlah unit terjual pada periode laporan yang dipilih.</p></div>${list}<button class="feature-button secondary" type="button" style="width:100%" onclick="backToReports()"><i class="fa-solid fa-arrow-left" style="margin-right:6px"></i>Kembali ke laporan</button>`;
 }
 function backToReports() {
+  if (featureHistory[featureHistory.length - 1] === 'Laporan') return backFeature();
   showFeature('Laporan', renderReports(reportState.period, reportState.start, reportState.end));
 }
 function filterReports() {
@@ -1441,19 +1567,41 @@ function filterReports() {
 }
 function renderSettings() {
   return `<form class="feature-form" onsubmit="saveSettings(event)"><h3>Profil toko</h3><input name="shop" placeholder="Nama toko" value="${escapeHTML(data.settings.shop)}" required><input name="address" placeholder="Alamat toko (opsional)" value="${escapeHTML(data.settings.address || '')}"><input name="admin" placeholder="Nama admin" value="${escapeHTML(data.settings.admin)}" required><button type="submit">Simpan pengaturan</button></form>
-    <section class="feature-card"><h3>Import dan ekspor produk</h3><p>Ekspor produk sebagai CSV, atau impor file CSV dengan kolom: name, price, unit, cost, stock, barcode. Produk yang cocok berdasarkan ID, barcode, atau nama akan diperbarui; produk lain ditambahkan.</p>
+    <section class="feature-card"><h3>Backup &amp; Restore</h3><p>Kelola pencadangan data secara terpisah agar halaman Pengaturan tetap ringkas.</p><button class="feature-button secondary" type="button" style="width:100%;margin-top:12px" onclick="openGoogleSheetsBackup()"><i class="fa-solid fa-table" aria-hidden="true" style="margin-right:7px"></i>Buka Backup &amp; Restore Google Sheets</button></section>
+    <section class="feature-card"><h3>Import dan ekspor produk</h3><p>Ekspor produk sebagai CSV, atau impor file CSV/Excel (.xlsx). Kolom nama dapat memakai: nama, produk, barang, nama barang, atau product. Kolom harga dapat memakai: harga, harga jual, atau price. Kolom opsional mendukung Bahasa Indonesia maupun Inggris: id, satuan/unit, modal/cost, stok/stock, dan barcode. Produk yang cocok berdasarkan ID, barcode, atau nama akan diperbarui; produk lain ditambahkan.</p>
       <div class="purchase-actions"><button class="feature-button secondary" type="button" onclick="exportProductsCSV()"><i class="fa-solid fa-download" aria-hidden="true"></i> Ekspor produk</button></div>
-      <form class="feature-form" style="padding:0;margin:12px 0 0;border:0" onsubmit="return false"><label for="productsCSV" class="product-sort-label">Pilih file CSV untuk diimpor</label><input id="productsCSV" type="file" accept=".csv,text/csv" onchange="importProductsCSV(event)"></form>
+      <form class="feature-form" style="padding:0;margin:12px 0 0;border:0" onsubmit="return false"><label for="productsCSV" class="product-sort-label">Pilih file CSV atau Excel (.xlsx) untuk diimpor</label><input id="productsCSV" type="file" accept=".csv,.xlsx,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" onchange="importProductsCSV(event)"></form>
     </section>
 `;
+}
+function openGoogleSheetsBackup() {
+  showFeature('Backup & Restore Google Sheets', `<section class="feature-card"><h3>Backup dan pemulihan data</h3><p>Halaman ini disiapkan khusus untuk Google Sheets. Agar data dapat dikirim dan dipulihkan dengan aman, integrasi memerlukan Google Apps Script Web App yang terhubung ke spreadsheet Anda.</p><p>Integrasi belum aktif, jadi belum ada data yang dikirim ke Google Sheets atau dipulihkan dari sana.</p></section>
+    <section class="feature-card"><h3>Langkah berikutnya</h3><p>Siapkan spreadsheet dan endpoint Google Apps Script terlebih dahulu. Setelah endpoint dan format data disepakati, tombol backup dan restore dapat dihubungkan di halaman ini.</p></section>`);
 }
 function csvEscape(value) {
   const text = String(value ?? '');
   return /[",\r\n]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text;
 }
+function expandScientificNumber(value) {
+  const text = String(value ?? '').trim().replace(',', '.');
+  const match = text.match(/^([+-]?)(\d*)(?:\.(\d*))?[eE]([+-]?\d+)$/);
+  if (!match) return text;
+  const sign = match[1] === '-' ? '-' : '';
+  const integer = match[2] || '';
+  const fraction = match[3] || '';
+  const digits = integer + fraction;
+  const decimalPosition = integer.length + Number(match[4]);
+  if (decimalPosition <= 0) return `${sign}0.${'0'.repeat(-decimalPosition)}${digits}`;
+  if (decimalPosition >= digits.length) return `${sign}${digits}${'0'.repeat(decimalPosition - digits.length)}`;
+  return `${sign}${digits.slice(0, decimalPosition)}.${digits.slice(decimalPosition)}`;
+}
 function exportProductsCSV() {
-  const columns = ['id', 'name', 'unit', 'price', 'cost', 'stock', 'barcode'];
-  const rows = [columns, ...data.products.map(product => columns.map(column => product[column] ?? ''))];
+  const columns = [['id', 'id'], ['nama', 'name'], ['satuan', 'unit'], ['harga', 'price'], ['modal', 'cost'], ['stok', 'stock'], ['barcode', 'barcode']];
+  const rows = [columns.map(([header]) => header), ...data.products.map(product => columns.map(([, key]) => {
+    if (key !== 'barcode') return product[key] ?? '';
+    const barcode = expandScientificNumber(product.barcode);
+    return /^\d+$/.test(barcode) ? `="${barcode}"` : barcode;
+  }))];
   const csv = '\uFEFF' + rows.map(row => row.map(csvEscape).join(',')).join('\r\n');
   const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
   const link = document.createElement('a');
@@ -1464,6 +1612,8 @@ function exportProductsCSV() {
 }
 function parseCSV(text) {
   const rows = [];
+  const firstLine = text.split(/\r?\n/, 1)[0] || '';
+  const delimiter = (firstLine.match(/;/g) || []).length > (firstLine.match(/,/g) || []).length ? ';' : ',';
   let row = [], field = '', quoted = false;
   for (let index = 0; index < text.length; index++) {
     const char = text[index];
@@ -1472,7 +1622,7 @@ function parseCSV(text) {
       else if (char === '"') quoted = false;
       else field += char;
     } else if (char === '"' && field === '') quoted = true;
-    else if (char === ',') { row.push(field); field = ''; }
+    else if (char === delimiter) { row.push(field); field = ''; }
     else if (char === '\n' || char === '\r') {
       if (char === '\r' && text[index + 1] === '\n') index++;
       row.push(field); field = '';
@@ -1542,30 +1692,145 @@ async function importCustomersCSV(event) {
     input.value = '';
   }
 }
+async function parseXLSX(file) {
+  if (typeof DecompressionStream === 'undefined') throw new Error('Browser ini belum mendukung impor Excel. Simpan file sebagai CSV lalu impor kembali.');
+  const bytes = new Uint8Array(await file.arrayBuffer());
+  const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+  let endRecord = -1;
+  for (let offset = bytes.length - 22; offset >= Math.max(0, bytes.length - 65557); offset--) {
+    if (view.getUint32(offset, true) === 0x06054b50) { endRecord = offset; break; }
+  }
+  if (endRecord < 0) throw new Error('File Excel tidak valid atau tidak didukung.');
+  const entryCount = view.getUint16(endRecord + 10, true);
+  let directoryOffset = view.getUint32(endRecord + 16, true);
+  const decoder = new TextDecoder();
+  const entries = new Map();
+  for (let index = 0; index < entryCount; index++) {
+    if (view.getUint32(directoryOffset, true) !== 0x02014b50) throw new Error('Struktur file Excel tidak valid.');
+    const method = view.getUint16(directoryOffset + 10, true);
+    const compressedSize = view.getUint32(directoryOffset + 20, true);
+    const nameLength = view.getUint16(directoryOffset + 28, true);
+    const extraLength = view.getUint16(directoryOffset + 30, true);
+    const commentLength = view.getUint16(directoryOffset + 32, true);
+    const localOffset = view.getUint32(directoryOffset + 42, true);
+    const name = decoder.decode(bytes.subarray(directoryOffset + 46, directoryOffset + 46 + nameLength));
+    entries.set(name, { method, compressedSize, localOffset });
+    directoryOffset += 46 + nameLength + extraLength + commentLength;
+  }
+  const readEntry = async name => {
+    const entry = entries.get(name);
+    if (!entry) return null;
+    const offset = entry.localOffset;
+    if (view.getUint32(offset, true) !== 0x04034b50) throw new Error('Isi file Excel tidak valid.');
+    const nameLength = view.getUint16(offset + 26, true);
+    const extraLength = view.getUint16(offset + 28, true);
+    const start = offset + 30 + nameLength + extraLength;
+    const compressed = bytes.slice(start, start + entry.compressedSize);
+    if (entry.method === 0) return decoder.decode(compressed);
+    if (entry.method !== 8) throw new Error('Metode kompresi file Excel tidak didukung.');
+    try {
+      const stream = new Blob([compressed]).stream().pipeThrough(new DecompressionStream('deflate-raw'));
+      return await new Response(stream).text();
+    } catch (error) {
+      throw new Error('File Excel tidak dapat dibuka di browser ini. Coba simpan sebagai CSV.');
+    }
+  };
+  const parseXML = (text, label) => {
+    if (!text) throw new Error(`File Excel tidak memiliki ${label}.`);
+    const xml = new DOMParser().parseFromString(text, 'application/xml');
+    if (xml.querySelector('parsererror')) throw new Error(`Format ${label} pada file Excel tidak valid.`);
+    return xml;
+  };
+  const workbook = parseXML(await readEntry('xl/workbook.xml'), 'lembar kerja');
+  const firstSheet = workbook.getElementsByTagName('sheet')[0];
+  if (!firstSheet) throw new Error('File Excel tidak memiliki lembar kerja.');
+  const relationId = firstSheet.getAttribute('r:id') || firstSheet.getAttributeNS('http://schemas.openxmlformats.org/officeDocument/2006/relationships', 'id');
+  let sheetPath = 'xl/worksheets/sheet1.xml';
+  const relationshipsText = await readEntry('xl/_rels/workbook.xml.rels');
+  if (relationshipsText && relationId) {
+    const relationships = parseXML(relationshipsText, 'relasi lembar kerja');
+    const relationship = [...relationships.getElementsByTagName('Relationship')].find(item => item.getAttribute('Id') === relationId);
+    if (relationship) {
+      const target = relationship.getAttribute('Target').replace(/^\//, '');
+      sheetPath = target.startsWith('xl/') ? target : `xl/${target.replace(/^\.\//, '')}`;
+    }
+  }
+  const sharedStringsText = await readEntry('xl/sharedStrings.xml');
+  const sharedStrings = sharedStringsText ? [...parseXML(sharedStringsText, 'teks bersama').getElementsByTagName('si')].map(item =>
+    [...item.getElementsByTagName('t')].map(text => text.textContent).join('')
+  ) : [];
+  const worksheet = parseXML(await readEntry(sheetPath), 'lembar Excel');
+  const rows = [];
+  for (const rowElement of worksheet.getElementsByTagName('row')) {
+    const rowNumber = Number(rowElement.getAttribute('r')) || rows.length + 1;
+    const row = rows[rowNumber - 1] || (rows[rowNumber - 1] = []);
+    for (const cell of rowElement.getElementsByTagName('c')) {
+      const reference = cell.getAttribute('r') || '';
+      const letters = reference.match(/[A-Z]+/i)?.[0] || '';
+      let column = 0;
+      for (const letter of letters.toUpperCase()) column = column * 26 + letter.charCodeAt(0) - 64;
+      if (!column) continue;
+      const type = cell.getAttribute('t');
+      let value = '';
+      if (type === 'inlineStr') value = [...cell.getElementsByTagName('t')].map(text => text.textContent).join('');
+      else {
+        const raw = cell.getElementsByTagName('v')[0]?.textContent ?? '';
+        value = type === 's' ? (sharedStrings[Number(raw)] ?? '') : raw;
+      }
+      row[column - 1] = value;
+    }
+  }
+  return rows.filter(Boolean);
+}
 async function importProductsCSV(event) {
   
   const input = event.currentTarget;
   const file = input.files[0];
   if (!file) return;
   try {
-    const rows = parseCSV((await file.text()).replace(/^\uFEFF/, ''));
-    if (rows.length < 2) throw new Error('File CSV tidak berisi data produk.');
-    const headers = rows[0].map(header => header.trim().toLocaleLowerCase('id-ID'));
-    const indexOf = name => headers.indexOf(name);
-    if (indexOf('name') < 0 || indexOf('price') < 0) throw new Error('CSV wajib memiliki kolom name dan price.');
+    const rows = /\.xlsx$/i.test(file.name)
+      ? await parseXLSX(file)
+      : parseCSV((await file.text()).replace(/^\uFEFF/, ''));
+    if (rows.length < 2) throw new Error('File tidak berisi data produk.');
+    const headers = rows[0].map(header => header.trim().toLocaleLowerCase('id-ID').replace(/\s+/g, ' '));
+    const indexOf = (...names) => names.map(name => headers.indexOf(name)).find(index => index >= 0) ?? -1;
+    const requiredNameIndex = indexOf('nama', 'produk', 'barang', 'nama barang', 'nama produk', 'product', 'product name', 'item', 'item name');
+    const requiredPriceIndex = indexOf('harga', 'harga jual', 'price', 'selling price');
+    if (requiredNameIndex < 0 || requiredPriceIndex < 0) throw new Error('File wajib memiliki kolom nama/produk/barang atau product, serta harga atau price.');
     const imported = rows.slice(1).map((row, rowIndex) => {
-      const value = name => indexOf(name) < 0 ? '' : (row[indexOf(name)] || '').trim();
+      const value = (...names) => {
+        const index = indexOf(...names);
+        return index < 0 ? '' : (row[index] || '').trim();
+      };
       const id = value('id');
-      const name = value('name');
-      const price = Number(value('price'));
-      const cost = value('cost') === '' ? 0 : Number(value('cost'));
-      const stock = value('stock') === '' ? 0 : Number(value('stock'));
+      const name = value('nama', 'produk', 'barang', 'nama barang', 'nama produk', 'product', 'product name', 'item', 'item name');
+      const price = Number(value('harga', 'harga jual', 'price', 'selling price'));
+      const costValue = value('modal', 'cost', 'purchase price', 'cost price');
+      const stockValue = value('stok', 'stock', 'quantity', 'qty');
+      const cost = costValue === '' ? 0 : Number(costValue);
+      const stock = stockValue === '' ? 0 : Number(stockValue);
       if (!name || !Number.isFinite(price) || price < 0 || !Number.isFinite(cost) || cost < 0 || !Number.isInteger(stock) || stock < 0 || (id && (!Number.isSafeInteger(Number(id)) || Number(id) < 1))) {
         throw new Error(`Data produk pada baris ${rowIndex + 2} tidak valid.`);
       }
-      return { id, name, price, cost, stock, unit: value('unit'), barcode: value('barcode') };
+      const rawBarcode = value('barcode');
+      const barcodeText = rawBarcode.match(/^="([^"]*)"$/)?.[1] ?? (rawBarcode.startsWith("'") ? rawBarcode.slice(1) : rawBarcode);
+      const barcode = expandScientificNumber(barcodeText);
+      return { id, name, price, cost, stock, unit: value('satuan', 'unit'), barcode };
     });
     if (!confirm(`Impor ${imported.length} produk? Produk yang cocok akan diperbarui, lainnya ditambahkan.`)) return;
+    if (!data.settings.unlimitedProducts) {
+      const projectedProducts = [...data.products];
+      for (const item of imported) {
+        const existing = (item.id && projectedProducts.find(product => String(product.id) === item.id))
+          || (item.barcode && projectedProducts.find(product => String(product.barcode || '') === item.barcode))
+          || projectedProducts.find(product => product.name.trim().toLocaleLowerCase('id-ID') === item.name.toLocaleLowerCase('id-ID'));
+        if (!existing) projectedProducts.push({ id: item.id || `import-${projectedProducts.length}`, name: item.name, barcode: item.barcode });
+      }
+      if (projectedProducts.length > FREE_PRODUCT_LIMIT) {
+        showProductLimitNotice();
+        return;
+      }
+    }
     const seenIds = new Set(), seenBarcodes = new Set();
     imported.forEach(product => {
       if (product.id && seenIds.has(product.id)) throw new Error(`ID produk duplikat: ${product.id}`);
@@ -1593,7 +1858,7 @@ async function importProductsCSV(event) {
   }
 }
 function saveSettings(event) {
-  event.preventDefault(); data.settings = { shop: event.currentTarget.shop.value.trim(), address: event.currentTarget.address.value.trim(), admin: event.currentTarget.admin.value.trim() };
+  event.preventDefault(); data.settings = { ...data.settings, shop: event.currentTarget.shop.value.trim(), address: event.currentTarget.address.value.trim(), admin: event.currentTarget.admin.value.trim() };
   saveData(); document.querySelector('.brand h3').textContent = data.settings.shop.toUpperCase();
   document.querySelector('.brand p').textContent = 'Selamat datang, ' + data.settings.admin + '!';
   alert('Pengaturan berhasil disimpan.');
@@ -1621,6 +1886,9 @@ function updateDashboard() {
 document.querySelector('.brand h3').textContent = data.settings.shop.toUpperCase();
 document.querySelector('.brand p').textContent = 'Selamat datang, ' + data.settings.admin + '!';
 updateDashboard();
+document.addEventListener('keydown', event => {
+  if (event.code === 'Space' && event.target.closest?.('.cashier-product')) event.preventDefault();
+});
 document.querySelectorAll('.nav-item').forEach(item => {
   item.addEventListener('click', function() {
     const label = this.textContent.trim();
