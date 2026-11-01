@@ -885,7 +885,7 @@ function syncNavigation(feature) {
   const activeLabel = ({
     'Home': 'Home', 'Dashboard': 'Home',
     'Kasir': 'Kasir', 'Keranjang': 'Kasir',
-    'Riwayat': 'Riwayat', 'Profil': 'Profil', 'Pengaturan': 'Profil'
+    'Riwayat': 'Riwayat', 'Profil': 'Profil'
   })[feature] || '';
   document.querySelectorAll('.nav-item').forEach(item => {
     item.classList.toggle('active', item.textContent.trim() === activeLabel && activeLabel !== '');
@@ -917,9 +917,16 @@ function showFeature(title, html) {
   modal.classList.toggle('cashier-mode', title === 'Keranjang' || title === 'Kasir');
   document.getElementById('featureTitle').textContent = title;
   document.getElementById('featureContent').innerHTML = html;
-  document.getElementById('featureContent').querySelectorAll('input:not([type="file"])').forEach(input => {
-    input.autocomplete = 'off';
-    input.spellcheck = false;
+  document.getElementById('featureContent').querySelectorAll('input, textarea, select, form').forEach(element => {
+    if (element.matches('form')) element.autocomplete = 'off';
+    else {
+      element.autocomplete = 'off';
+      element.spellcheck = false;
+      element.setAttribute('autocorrect', 'off');
+      element.setAttribute('autocapitalize', 'off');
+      element.setAttribute('data-1p-ignore', 'true');
+      element.setAttribute('data-lpignore', 'true');
+    }
   });
   modal.classList.add('open');
   syncNavigation(title);
@@ -950,7 +957,7 @@ function openMenu(menu) {
     'Pembelian': renderPurchases(), 'Supplier': renderSuppliers(),
     'Pelanggan': renderCustomers(), 'Hutang': renderDebts(),
     'Laporan': renderReports(), 'Riwayat': renderHistory(),
-    'Pengaturan': renderSettings(), 'Profil': renderSettings()
+    'Pengaturan': renderSettings(), 'Profil': renderProfile()
   };
   showFeature(menu, contents[menu] || emptyMessage('Fitur tidak ditemukan.'));
 }
@@ -1350,7 +1357,7 @@ async function printReceipt(transactionId) {
   printReceiptSystem();
 }
 function renderProducts() {
-  const list = getSortedProducts().map(product => `<article class="product-list-item" onpointerdown="startProductPress(${product.id}, event)" onpointerup="cancelProductPress()" onpointerleave="cancelProductPress()" onpointercancel="cancelProductPress()" oncontextmenu="event.preventDefault(); editProduct(${product.id})">
+  const list = getSortedProducts().map(product => `<article class="product-list-item" onpointerdown="startProductPress(${product.id}, event)" onpointerup="cancelProductPress()" onpointerleave="cancelProductPress()" onpointercancel="cancelProductPress()" oncontextmenu="event.preventDefault(); showProductActions(${product.id})">
     <div class="product-list-icon"><i class="fa-solid fa-box"></i></div>
     <div class="product-list-detail"><strong>${escapeHTML(product.name)}</strong><small>${rupiah(product.price)}${product.unit ? ' · ' + escapeHTML(product.unit) : ''} · Stok ${product.stock}${product.barcode ? ' · Barcode ' + escapeHTML(product.barcode) : ''}</small></div>
     <i class="fa-solid fa-chevron-right product-list-arrow" aria-hidden="true"></i>
@@ -1379,16 +1386,31 @@ function filterProducts() {
   if (list) list.innerHTML = renderProductsList();
 }
 function renderProductsList() {
-  return getSortedProducts().map(product => `<article class="product-list-item" onpointerdown="startProductPress(${product.id}, event)" onpointerup="cancelProductPress()" onpointerleave="cancelProductPress()" onpointercancel="cancelProductPress()" oncontextmenu="event.preventDefault(); editProduct(${product.id})">
+  return getSortedProducts().map(product => `<article class="product-list-item" onpointerdown="startProductPress(${product.id}, event)" onpointerup="cancelProductPress()" onpointerleave="cancelProductPress()" onpointercancel="cancelProductPress()" oncontextmenu="event.preventDefault(); showProductActions(${product.id})">
     <div class="product-list-icon"><i class="fa-solid fa-box"></i></div><div class="product-list-detail"><strong>${escapeHTML(product.name)}</strong><small>${rupiah(product.price)}${product.unit ? ' · ' + escapeHTML(product.unit) : ''} · Stok ${product.stock}${product.barcode ? ' · Barcode ' + escapeHTML(product.barcode) : ''}</small></div><i class="fa-solid fa-chevron-right product-list-arrow" aria-hidden="true"></i>
   </article>`).join('') || emptyMessage('Produk tidak ditemukan.');
 }
 function startProductPress(id, event) {
   if (event.pointerType === 'mouse' && event.button !== 0) return;
   cancelProductPress();
-  productPressTimer = setTimeout(() => editProduct(id), 650);
+  productPressTimer = setTimeout(() => showProductActions(id), 650);
 }
 function cancelProductPress() { clearTimeout(productPressTimer); }
+function showProductActions(id) {
+  const product = data.products.find(item => item.id === id);
+  if (!product) return;
+  document.getElementById('productActionOverlay')?.remove();
+  document.getElementById('featureContent').insertAdjacentHTML('beforeend', `<div class="payment-overlay" id="productActionOverlay" onclick="if(event.target === this) this.remove()">
+    <section class="payment-box" role="dialog" aria-modal="true" aria-labelledby="productActionTitle">
+      <div class="feature-header"><h2 id="productActionTitle">${escapeHTML(product.name)}</h2><button class="feature-close" type="button" onclick="document.getElementById('productActionOverlay').remove()" aria-label="Tutup">&times;</button></div>
+      <p style="margin-bottom:14px;color:#718078;font-size:13px">Pilih tindakan untuk produk ini.</p>
+      <div class="purchase-actions">
+        <button class="feature-button secondary" type="button" onclick="editProduct(${id})"><i class="fa-solid fa-pen" aria-hidden="true"></i> Edit</button>
+        <button class="feature-button danger" type="button" onclick="deleteProduct(${id})"><i class="fa-solid fa-trash-can" aria-hidden="true"></i> Hapus</button>
+      </div>
+    </section>
+  </div>`);
+}
 function showProductEditor(id = null) {
   const product = data.products.find(item => item.id === id);
   document.getElementById('featureContent').innerHTML = `<form class="feature-form" autocomplete="off" onsubmit="saveProduct(event)">
@@ -1458,8 +1480,19 @@ function saveProduct(event) {
   saveData(); openMenu('Produk');
 }
 function deleteProduct(id) {
-  
-  if (!confirm('Hapus produk ini?')) return;
+  const product = data.products.find(item => item.id === id);
+  if (!product) return;
+  document.getElementById('productActionOverlay')?.remove();
+  document.getElementById('productDeleteOverlay')?.remove();
+  document.getElementById('featureContent').insertAdjacentHTML('beforeend', `<div class="payment-overlay" id="productDeleteOverlay" onclick="if(event.target === this) this.remove()">
+    <section class="payment-box" role="dialog" aria-modal="true" aria-labelledby="productDeleteTitle">
+      <div class="feature-header"><h2 id="productDeleteTitle">Hapus produk?</h2><button class="feature-close" type="button" onclick="document.getElementById('productDeleteOverlay').remove()" aria-label="Tutup">&times;</button></div>
+      <p style="margin-bottom:14px;color:#718078;font-size:13px">Produk <strong>${escapeHTML(product.name)}</strong> akan dihapus. Tindakan ini tidak dapat dibatalkan.</p>
+      <div class="purchase-actions"><button class="feature-button secondary" type="button" onclick="document.getElementById('productDeleteOverlay').remove()">Batal</button><button class="feature-button danger" type="button" onclick="confirmDeleteProduct(${id})">Ya, hapus</button></div>
+    </section>
+  </div>`);
+}
+function confirmDeleteProduct(id) {
   data.products = data.products.filter(product => product.id !== id);
   saveData(); openMenu('Produk');
 }
@@ -1840,8 +1873,11 @@ function filterReports() {
   const end = document.getElementById('reportEnd')?.value;
   document.getElementById('featureContent').innerHTML = renderReports(period, start, end);
 }
+function renderProfile() {
+  return `${renderAkunCard()}<form class="feature-form" onsubmit="saveProfile(event)"><h3>Informasi pengguna</h3><label for="profileAdmin">Nama admin</label><input id="profileAdmin" name="admin" placeholder="Nama admin" value="${escapeHTML(data.settings.admin)}" required><button type="submit">Simpan profil</button></form>`;
+}
 function renderSettings() {
-  return `${renderAkunCard()}<form class="feature-form" onsubmit="saveSettings(event)"><h3>Profil toko</h3><input name="shop" placeholder="Nama toko" value="${escapeHTML(data.settings.shop)}" required><input name="address" placeholder="Alamat toko (opsional)" value="${escapeHTML(data.settings.address || '')}"><input name="admin" placeholder="Nama admin" value="${escapeHTML(data.settings.admin)}" required><button type="submit">Simpan pengaturan</button></form>
+  return `<form class="feature-form" onsubmit="saveSettings(event)"><h3>Informasi toko</h3><label for="shopName">Nama toko</label><input id="shopName" name="shop" placeholder="Nama toko" value="${escapeHTML(data.settings.shop)}" required><label for="shopAddress">Alamat toko (opsional)</label><input id="shopAddress" name="address" placeholder="Alamat toko (opsional)" value="${escapeHTML(data.settings.address || '')}"><button type="submit">Simpan pengaturan</button></form>
     <section class="feature-card"><h3>Printer thermal</h3><p>Cetak langsung lewat Bluetooth LE (ESC/POS), atau gunakan menu cetak Android.</p>
       <select id="printMode" onchange="savePrintMode(this.value)" aria-label="Metode cetak"><option value="bt" ${(localStorage.getItem('pos_printMode') || (bluetoothSupported() ? 'bt' : 'system')) === 'bt' ? 'selected' : ''}>Bluetooth langsung</option><option value="system" ${(localStorage.getItem('pos_printMode') || (bluetoothSupported() ? 'bt' : 'system')) === 'system' ? 'selected' : ''}>Menu cetak Android</option></select>
       <button class="feature-button secondary" type="button" style="width:100%;margin-top:10px" onclick="connectBluetoothPrinter()">Hubungkan / pilih printer</button>
@@ -2132,10 +2168,18 @@ async function importProductsCSV(event) {
     input.value = '';
   }
 }
-function saveSettings(event) {
-  event.preventDefault(); data.settings = { ...data.settings, shop: event.currentTarget.shop.value.trim(), address: event.currentTarget.address.value.trim(), admin: event.currentTarget.admin.value.trim() };
-  saveData(); document.querySelector('.brand h3').textContent = data.settings.shop.toUpperCase();
+function saveProfile(event) {
+  event.preventDefault();
+  data.settings.admin = event.currentTarget.elements.namedItem('admin').value.trim();
+  saveData();
   document.querySelector('.brand p').textContent = 'Selamat datang, ' + data.settings.admin + '!';
+  alert('Profil berhasil disimpan.');
+}
+function saveSettings(event) {
+  event.preventDefault();
+  data.settings = { ...data.settings, shop: event.currentTarget.elements.namedItem('shop').value.trim(), address: event.currentTarget.elements.namedItem('address').value.trim() };
+  saveData();
+  document.querySelector('.brand h3').textContent = data.settings.shop.toUpperCase();
   alert('Pengaturan berhasil disimpan.');
 }
 function resetData() {
@@ -2224,6 +2268,17 @@ window.addEventListener('popstate', event => {
     return;
   }
   closeFeature(true);
+});
+document.addEventListener('focusin', event => {
+  const field = event.target;
+  if (!field.matches?.('input, textarea, select')) return;
+  field.autocomplete = 'off';
+  field.spellcheck = false;
+  field.setAttribute('autocorrect', 'off');
+  field.setAttribute('autocapitalize', 'off');
+  field.setAttribute('data-1p-ignore', 'true');
+  field.setAttribute('data-lpignore', 'true');
+  field.closest('form')?.setAttribute('autocomplete', 'off');
 });
 document.addEventListener('keydown', event => {
   if (event.code === 'Space' && event.target.closest?.('.cashier-product')) event.preventDefault();
