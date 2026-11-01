@@ -152,7 +152,7 @@ body { font-family: 'Inter', sans-serif; background: #0f2a3d; color: #26352D; }
         <span id="teksGoogle">Masuk dengan Google</span>
       </button>
       <a class="lewati" href="mobile.html">Nanti saja</a>
-      <p class="hint">Anda tetap bisa memakai aplikasi tanpa masuk. Produk hanya tersimpan di HP ini.</p>
+      <p class="hint">Anda tetap bisa memakai aplikasi tanpa masuk. Produk hanya tersimpan di perangkat ini.</p>
     </div>
 
     <!-- 3. LENGKAPI PROFIL (sekali saja) -->
@@ -214,7 +214,9 @@ import {
 
 import { firebaseConfig } from "./firebase-config.js";   // isi konfigurasi di firebase-config.js
 
-const HALAMAN_UTAMA = 'mobile.html';
+// HP -> mobile.html, komputer & tablet -> desktop.html (aturan sama dengan index.html)
+const HALAMAN_UTAMA = /Android.*Mobile|iPhone|iPod/i.test(navigator.userAgent) ? 'mobile.html' : 'desktop.html';
+document.querySelector('a.lewati').href = HALAMAN_UTAMA;
 const KUNCI_PROFIL_OK = 'pos_profil_ok';   // menyimpan uid yang profilnya sudah lengkap
 
 const $ = id => document.getElementById(id);

@@ -1,15 +1,20 @@
 /* Service worker Kasir Arridho Jaya
-   Naikkan VERSI setiap kali kamu mengubah landing.html / mobile.html
+   Naikkan VERSI setiap kali kamu mengubah index.html / desktop.html / mobile.html
    supaya HP pengguna mengambil file terbaru. */
-var VERSI = 'v6';
+var VERSI = 'v7';
 var CACHE = 'kasir-aj-' + VERSI;
+var HP = /Android.*Mobile|iPhone|iPod/i.test(self.navigator.userAgent);
+var HALAMAN_UTAMA = HP ? 'mobile.html' : 'desktop.html';
 
 var INTI = [
-  'landing.html',
+  './',
+  'index.html',
+  'desktop.html',
   'mobile.html',
   'login.html',
   'firebase-config.js',
-  'manifest.json',
+  'manifest-mobile.json',
+  'manifest-desktop.json',
   'icon-192.png',
   'icon-512.png',
   'icon-maskable-512.png'
@@ -58,7 +63,7 @@ self.addEventListener('fetch', function (e) {
         return res;
       }).catch(function () {
         return caches.match(req).then(function (hit) {
-          return hit || caches.match('mobile.html');
+          return hit || caches.match(HALAMAN_UTAMA);
         });
       })
     );
