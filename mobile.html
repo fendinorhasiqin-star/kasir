@@ -844,12 +844,7 @@ const FREE_PRODUCT_LIMIT = 50;
 const SINKRON_PRODUK_SIAP = true; // produk disinkronkan ke Firestore (pengguna/{uid}/produk) lewat modul di bawah
 const ACTIVATION_CODE = '1111--0000-9999-8888'; // Isi dengan kode aktivasi yang Anda tetapkan.
 const WHATSAPP_NUMBER = '6287875015256'; // Opsional: nomor internasional tanpa tanda +, spasi, atau strip.
-const defaultProducts = [
-  { id: 1, name: 'Beras 5 kg', price: 72000, stock: 18, cost: 65000 },
-  { id: 2, name: 'Minyak Goreng 1 L', price: 18000, stock: 24, cost: 15000 },
-  { id: 3, name: 'Gula Pasir 1 kg', price: 16000, stock: 15, cost: 13500 },
-  { id: 4, name: 'Mi Instan', price: 3500, stock: 40, cost: 2800 }
-];
+const defaultProducts = [];
 const loadData = (key, fallback) => {
   try { return JSON.parse(localStorage.getItem('pos_' + key)) || fallback; }
   catch (error) { return fallback; }
@@ -2304,10 +2299,11 @@ if (firebaseConfig.apiKey !== 'ISI_DI_SINI') {
       localStorage.removeItem(SNAP);
       return pushProducts();
     }
-    // akun lama: cloud menang. Produk lokal buatan sendiri (id = Date.now()) dipertahankan,
-    // produk contoh bawaan (id 1–4) dibuang.
+    // akun lama: cloud menang. Produk lokal yang belum ada di cloud dipertahankan,
+    // kecuali 4 produk contoh bawaan versi lama (id 1–4) yang dibuang.
+    const CONTOH = ['Beras 5 kg', 'Minyak Goreng 1 L', 'Gula Pasir 1 kg', 'Mi Instan'];
     const ids = new Set(cloud.map(p => String(p.id)));
-    const localOnly = data.products.filter(p => !ids.has(String(p.id)) && p.id > 1000);
+    const localOnly = data.products.filter(p => !ids.has(String(p.id)) && !(p.id <= 4 && CONTOH.includes(p.name)));
     data.products = [...cloud, ...localOnly];
     localStorage.setItem(SNAP, JSON.stringify(Object.fromEntries(cloud.map(p => [p.id, JSON.stringify(p)]))));
     saveData();                        // simpan ke localStorage (sekaligus memicu push produk lokal baru)
