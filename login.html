@@ -212,16 +212,7 @@ import {
   getFirestore, doc, getDoc, setDoc, serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 
-/* ============================================================
-   ISI DENGAN KONFIGURASI FIREBASE ANDA
-   Firebase Console > Project settings > Your apps > Web app > Config
-   ============================================================ */
-const firebaseConfig = {
-  apiKey: "ISI_DI_SINI",
-  authDomain: "ISI_DI_SINI.firebaseapp.com",
-  projectId: "ISI_DI_SINI",
-  appId: "ISI_DI_SINI"
-};
+import { firebaseConfig } from "./firebase-config.js";   // isi konfigurasi di firebase-config.js
 
 const HALAMAN_UTAMA = 'mobile.html';
 const KUNCI_PROFIL_OK = 'pos_profil_ok';   // menyimpan uid yang profilnya sudah lengkap
@@ -288,7 +279,11 @@ function tampilProfil(user) {
 /* Mode keluar: dibuka dari menu Profil di aplikasi (login.html?keluar=1) */
 const MODE_KELUAR = new URLSearchParams(location.search).has('keluar');
 if (MODE_KELUAR) {
-  try { localStorage.removeItem(KUNCI_PROFIL_OK); localStorage.removeItem('pos_akun'); } catch (e) {}
+  try {
+    localStorage.removeItem(KUNCI_PROFIL_OK); localStorage.removeItem('pos_akun');
+    localStorage.removeItem('pos_sync_snapshot');
+    localStorage.removeItem('pos_products');   // supaya produk akun ini tidak terunggah ke akun lain
+  } catch (e) {}
   signOut(auth).catch(() => {}).finally(() => location.replace(HALAMAN_UTAMA));
 }
 
@@ -339,7 +334,11 @@ $('btnGoogle').addEventListener('click', async () => {
 
 /* GANTI AKUN */
 $('btnKeluar').addEventListener('click', async () => {
-  try { localStorage.removeItem(KUNCI_PROFIL_OK); } catch (e) {}
+  try {
+    localStorage.removeItem(KUNCI_PROFIL_OK);
+    localStorage.removeItem('pos_sync_snapshot');
+    localStorage.removeItem('pos_products');
+  } catch (e) {}
   await signOut(auth);
 });
 

@@ -841,7 +841,7 @@ body {
 
 <script>
 const FREE_PRODUCT_LIMIT = 50;
-const SINKRON_PRODUK_SIAP = false; // ubah ke true HANYA setelah produk benar-benar disimpan ke akun (Firestore)
+const SINKRON_PRODUK_SIAP = true; // produk disinkronkan ke Firestore (pengguna/{uid}/produk) lewat modul di bawah
 const ACTIVATION_CODE = '1111--0000-9999-8888'; // Isi dengan kode aktivasi yang Anda tetapkan.
 const WHATSAPP_NUMBER = '6287875015256'; // Opsional: nomor internasional tanpa tanda +, spasi, atau strip.
 const defaultProducts = [
@@ -876,6 +876,7 @@ function saveData() {
   ['products', 'suppliers', 'customers', 'debts', 'transactions', 'purchases', 'settings'].forEach(key =>
     localStorage.setItem('pos_' + key, JSON.stringify(data[key]))
   );
+  window.cloudPushProducts?.();
 }
 function rupiah(value) {
   return 'Rp ' + Number(value || 0).toLocaleString('id-ID');
@@ -2178,7 +2179,7 @@ function renderAkunCard() {
     <p class="product-hint">Kata sandi Google Anda tidak pernah dilihat aplikasi ini.</p></section>`;
 }
 function keluarAkun() {
-  if (!confirm('Keluar dari akun? Data di HP ini tetap ada.')) return;
+  if (!confirm('Keluar dari akun? Produk tetap aman di akun dan akan muncul lagi saat Anda masuk. Daftar produk di HP ini akan dikosongkan.')) return;
   location.href = 'login.html?keluar=1';
 }
 function updateAkunBanner() {
@@ -2247,6 +2248,81 @@ document.querySelectorAll('.nav-item').forEach(item => {
     else openMenu(label === 'Kasir' ? 'Kasir' : label === 'Riwayat' ? 'Riwayat' : 'Profil');
   });
 });
+</script>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+import {
+  initializeFirestore, persistentLocalCache, persistentMultipleTabManager,
+  collection, doc, getDocs, writeBatch
+} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+import { firebaseConfig } from "./firebase-config.js";
+
+if (firebaseConfig.apiKey !== 'ISI_DI_SINI') {
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  // cache offline: tulisan saat offline diantre & terkirim otomatis saat online
+  const db = initializeFirestore(app, {
+    localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() })
+  });
+
+  const SNAP = 'pos_sync_snapshot';   // catatan produk yang sudah terkirim
+  let uid = null, timer = null;
+  const readSnap = () => { try { return JSON.parse(localStorage.getItem(SNAP) || '{}'); } catch { return {}; } };
+  const prodCol = () => collection(db, 'pengguna', uid, 'produk');
+
+  /* KIRIM: hanya produk yang berubah/terhapus sejak sinkron terakhir */
+  async function pushProducts() {
+    if (!uid) return;
+    const snap = readSnap(), next = {}, ops = [];
+    for (const p of data.products) {
+      const json = JSON.stringify(p);
+      next[p.id] = json;
+      if (snap[p.id] !== json) ops.push(['set', p]);
+    }
+    for (const id in snap) if (!(id in next)) ops.push(['del', id]);
+    if (!ops.length) return;
+
+    const commits = [];
+    for (let i = 0; i < ops.length; i += 400) {   // batas Firestore 500/batch
+      const batch = writeBatch(db);
+      ops.slice(i, i + 400).forEach(([t, x]) =>
+        t === 'set' ? batch.set(doc(prodCol(), String(x.id)), x) : batch.delete(doc(prodCol(), String(x))));
+      commits.push(batch.commit());
+    }
+    localStorage.setItem(SNAP, JSON.stringify(next));
+    await Promise.all(commits).catch(() => localStorage.removeItem(SNAP)); // gagal → kirim ulang penuh nanti
+  }
+
+  /* AMBIL: dijalankan sekali setelah login */
+  async function pullProducts() {
+    const qs = await getDocs(prodCol());
+    const cloud = qs.docs.map(d => d.data());
+
+    if (!cloud.length) {               // akun baru: unggah produk di HP ini
+      localStorage.removeItem(SNAP);
+      return pushProducts();
+    }
+    // akun lama: cloud menang. Produk lokal buatan sendiri (id = Date.now()) dipertahankan,
+    // produk contoh bawaan (id 1–4) dibuang.
+    const ids = new Set(cloud.map(p => String(p.id)));
+    const localOnly = data.products.filter(p => !ids.has(String(p.id)) && p.id > 1000);
+    data.products = [...cloud, ...localOnly];
+    localStorage.setItem(SNAP, JSON.stringify(Object.fromEntries(cloud.map(p => [p.id, JSON.stringify(p)]))));
+    saveData();                        // simpan ke localStorage (sekaligus memicu push produk lokal baru)
+    updateDashboard();
+    if (activeFeature === 'Produk' && document.getElementById('featureModal').classList.contains('open')) openMenu('Produk');
+  }
+
+  /* dipanggil dari saveData(), ditunda 1 detik agar tidak spam */
+  window.cloudPushProducts = () => { clearTimeout(timer); timer = setTimeout(() => pushProducts().catch(console.error), 1000); };
+
+  onAuthStateChanged(auth, user => {
+    uid = user ? user.uid : null;
+    if (uid) pullProducts().catch(console.error);
+  });
+}
 </script>
 
 </body>
