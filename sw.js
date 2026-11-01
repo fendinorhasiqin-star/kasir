@@ -1,7 +1,7 @@
 /* Service worker Kasir Arridho Jaya
    Naikkan VERSI setiap kali kamu mengubah index.html / desktop.html / mobile.html
    supaya HP pengguna mengambil file terbaru. */
-var VERSI = 'v7';
+var VERSI = 'v8';
 var CACHE = 'kasir-aj-' + VERSI;
 var HP = /Android.*Mobile|iPhone|iPod/i.test(self.navigator.userAgent);
 var HALAMAN_UTAMA = HP ? 'mobile.html' : 'desktop.html';
