@@ -1,7 +1,7 @@
 /* Service worker Kasir Arridho Jaya
    Naikkan VERSI setiap kali kamu mengubah landing.html / mobile.html
    supaya HP pengguna mengambil file terbaru. */
-var VERSI = 'v2';
+var VERSI = 'v3';
 var CACHE = 'kasir-aj-' + VERSI;
 
 var INTI = [
