@@ -14,8 +14,6 @@ var APP_URL = isPhone ? 'mobile.html' : 'desktop.html';
 /* Aplikasi terpasang -> langsung ke versi sesuai perangkat (sebelum halaman tampil, tanpa berkedip).
    Browser biasa -> tetap di halaman ini. */
 var terpasang = matchMedia('(display-mode: standalone)').matches
-             || matchMedia('(display-mode: fullscreen)').matches
-             || matchMedia('(display-mode: minimal-ui)').matches
              || navigator.standalone === true;
 if (terpasang) location.replace(APP_URL);
 (function () {

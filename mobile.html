@@ -15,8 +15,6 @@
 (function () {
   var terpasang =
     matchMedia('(display-mode: standalone)').matches ||
-    matchMedia('(display-mode: fullscreen)').matches ||
-    matchMedia('(display-mode: minimal-ui)').matches ||
     navigator.standalone === true;
   var pratinjauEditor = window.self !== window.top;
   if (!terpasang && !pratinjauEditor) location.replace('index.html');
