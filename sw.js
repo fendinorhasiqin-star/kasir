@@ -1,12 +1,14 @@
 /* Service worker Kasir Arridho Jaya
    Naikkan VERSI setiap kali kamu mengubah landing.html / mobile.html
    supaya HP pengguna mengambil file terbaru. */
-var VERSI = 'v1';
+var VERSI = 'v2';
 var CACHE = 'kasir-aj-' + VERSI;
 
 var INTI = [
   'landing.html',
   'mobile.html',
+  'login.html',
+  'firebase-config.js',
   'manifest.json',
   'icon-192.png',
   'icon-512.png',
