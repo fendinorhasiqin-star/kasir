@@ -531,6 +531,7 @@ body {
 .product-tools input, .product-tools select { width: 100%; min-height: 48px; padding: 11px 13px; border: 1px solid #DCE5DF; border-radius: 12px; background: white; color: #26352D; font: inherit; font-size: 13px; }
 .product-sort-label { margin-top: 2px; color: #718078; font-size: 12px; font-weight: 700; }
 .product-hint { color: #89958E; font-size: 11px; }
+.product-count { margin: 2px 2px 8px; color: #5F6F66; font-size: 13px; font-weight: 600; }
 .report-filters { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 7px 9px; }
 .report-filters .product-sort-label:first-child,
 .report-filters #reportPeriod { grid-column: 1 / -1; }
@@ -1373,6 +1374,7 @@ function renderProducts() {
     <label class="product-sort-label" for="productSort">Urutkan</label>
     <select id="productSort" onchange="filterProducts()" aria-label="Urutkan produk"><option value="az">Nama A–Z</option><option value="za">Nama Z–A</option><option value="newest">Terbaru</option><option value="price-low">Harga terendah</option><option value="price-high">Harga tertinggi</option></select>
     <p class="product-hint">Tekan dan tahan produk untuk mengedit.</p></div>
+    <p class="product-count" id="productCount" aria-live="polite">${productCountText()}</p>
     <div class="product-list" id="productList">${list}</div>
     <button class="product-add-button" type="button" onclick="showProductEditor()" aria-label="Tambah produk"><i class="fa-solid fa-plus"></i></button>`;
 }
@@ -1391,6 +1393,13 @@ function getSortedProducts() {
 function filterProducts() {
   const list = document.getElementById('productList');
   if (list) list.innerHTML = renderProductsList();
+  const count = document.getElementById('productCount');
+  if (count) count.textContent = productCountText();
+}
+function productCountText() {
+  const total = data.products.length;
+  const shown = getSortedProducts().length;
+  return shown === total ? `Total ${total} produk` : `Menampilkan ${shown} dari ${total} produk`;
 }
 function renderProductsList() {
   return getSortedProducts().map(product => `<article class="product-list-item" onpointerdown="startProductPress(${product.id}, event)" onpointerup="cancelProductPress()" onpointerleave="cancelProductPress()" onpointercancel="cancelProductPress()" oncontextmenu="event.preventDefault(); showProductActions(${product.id})">
