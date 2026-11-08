@@ -1366,7 +1366,7 @@ async function printReceipt(transactionId) {
 function renderProducts() {
   const list = getSortedProducts().map(product => `<article class="product-list-item" onpointerdown="startProductPress(${product.id}, event)" onpointerup="cancelProductPress()" onpointerleave="cancelProductPress()" onpointercancel="cancelProductPress()" oncontextmenu="event.preventDefault(); showProductActions(${product.id})">
     <div class="product-list-icon"><i class="fa-solid fa-box"></i></div>
-    <div class="product-list-detail"><strong>${escapeHTML(product.name)}</strong><small>${rupiah(product.price)}${product.unit ? ' · ' + escapeHTML(product.unit) : ''} · Stok ${product.stock}${product.barcode ? ' · Barcode ' + escapeHTML(product.barcode) : ''}</small></div>
+    <div class="product-list-detail"><strong>${escapeHTML(product.name)}</strong><small>${rupiah(product.price)}${product.unit ? ' · ' + escapeHTML(product.unit) : ''} · Stok ${product.stock}</small></div>
     <i class="fa-solid fa-chevron-right product-list-arrow" aria-hidden="true"></i>
   </article>`).join('') || emptyMessage('Produk tidak ditemukan.');
   return `<div class="product-tools"><input id="productSearch" type="search" placeholder="Cari nama atau barcode produk" oninput="filterProducts()" aria-label="Cari produk">
@@ -1394,7 +1394,7 @@ function filterProducts() {
 }
 function renderProductsList() {
   return getSortedProducts().map(product => `<article class="product-list-item" onpointerdown="startProductPress(${product.id}, event)" onpointerup="cancelProductPress()" onpointerleave="cancelProductPress()" onpointercancel="cancelProductPress()" oncontextmenu="event.preventDefault(); showProductActions(${product.id})">
-    <div class="product-list-icon"><i class="fa-solid fa-box"></i></div><div class="product-list-detail"><strong>${escapeHTML(product.name)}</strong><small>${rupiah(product.price)}${product.unit ? ' · ' + escapeHTML(product.unit) : ''} · Stok ${product.stock}${product.barcode ? ' · Barcode ' + escapeHTML(product.barcode) : ''}</small></div><i class="fa-solid fa-chevron-right product-list-arrow" aria-hidden="true"></i>
+    <div class="product-list-icon"><i class="fa-solid fa-box"></i></div><div class="product-list-detail"><strong>${escapeHTML(product.name)}</strong><small>${rupiah(product.price)}${product.unit ? ' · ' + escapeHTML(product.unit) : ''} · Stok ${product.stock}</small></div><i class="fa-solid fa-chevron-right product-list-arrow" aria-hidden="true"></i>
   </article>`).join('') || emptyMessage('Produk tidak ditemukan.');
 }
 function startProductPress(id, event) {
