@@ -601,6 +601,8 @@ body {
   #receiptPrint .receipt-header h2 { margin-bottom: 4px; }
   #receiptPrint .receipt-line { display: flex; justify-content: space-between; align-items: flex-start; gap: 4px; margin: 5px 0; }
   #receiptPrint .receipt-line span, #receiptPrint .receipt-line strong { min-width: 0; overflow-wrap: anywhere; }
+  #receiptPrint .receipt-item-name { font-weight: 700; }
+  #receiptPrint .receipt-item .receipt-line { margin: 1px 0 6px; }
   #receiptPrint .receipt-divider { border-top: 1px dashed #555; margin: 8px 0; }
 }
 .history-transaction { cursor: pointer; }
@@ -611,6 +613,8 @@ body {
 .receipt-preview .receipt-header { text-align: center; }
 .receipt-preview .receipt-line { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; margin: 5px 0; }
 .receipt-preview .receipt-divider { border-top: 1px dashed #555; margin: 8px 0; }
+.receipt-item-name { font-weight: 700; }
+.receipt-item .receipt-line { margin: 1px 0 6px; }
 .receipt-preview .receipt-empty { color: #718078; font-size: 11px; text-align: center; }
 .receipt-detail-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px; }
 .scanner-video { width: 100%; border-radius: 14px; background: #17251d; }
@@ -1813,7 +1817,7 @@ function receiptPaperHTML(transaction) {
   const items = Array.isArray(transaction.items) ? transaction.items : [];
   const hasCash = Number.isFinite(Number(transaction.cash)) && Number(transaction.cash) >= Number(transaction.total);
   const itemRows = items.length
-    ? items.map(item => `<div class="receipt-line"><span>${escapeHTML(item.name)} × ${item.qty}</span><span>${rupiah(item.price * item.qty)}</span></div>`).join('')
+    ? items.map(item => `<div class="receipt-item"><div class="receipt-item-name">${escapeHTML(item.name)}</div><div class="receipt-line"><span>${item.qty}${item.unit ? ' ' + escapeHTML(item.unit) : ''} x ${rupiah(item.price)}</span><span>${rupiah(item.price * item.qty)}</span></div></div>`).join('')
     : '<p class="receipt-empty">Rincian barang tidak tersedia untuk transaksi lama ini.</p>';
   return `<div class="receipt-header"><h2>${escapeHTML(data.settings.shop)}</h2>
       ${data.settings.address ? `<p>${escapeHTML(data.settings.address)}</p>` : ''}<p>${Number.isNaN(date.getTime()) ? '-' : date.toLocaleDateString('id-ID') + ' · ' + date.toLocaleTimeString('id-ID')}</p></div>
