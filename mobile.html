@@ -1008,9 +1008,19 @@ function renderCashier() {
       </nav>
     </footer>`;
 }
+function refreshKeepingScroll() {
+  const content = document.getElementById('featureContent');
+  const list = content.querySelector('.cashier-page-content');
+  const listTop = list ? list.scrollTop : 0;
+  const contentTop = content.scrollTop;
+  openMenu(activeFeature);
+  const newList = content.querySelector('.cashier-page-content');
+  if (newList) newList.scrollTop = listTop;
+  content.scrollTop = contentTop;
+}
 function removeFromCartById(id) {
   data.cart = data.cart.filter(item => item.id !== id);
-  openMenu(activeFeature);
+  refreshKeepingScroll();
 }
 function changeCartQuantity(id, change) {
   const item = data.cart.find(product => product.id === id);
@@ -1019,7 +1029,7 @@ function changeCartQuantity(id, change) {
   if (change > 0 && !ignoreStockLimit() && item.qty >= product.stock) return alert('Stok tidak mencukupi.');
   item.qty += change;
   if (item.qty < 1) data.cart = data.cart.filter(product => product.id !== id);
-  openMenu(activeFeature);
+  refreshKeepingScroll();
 }
 function editCartPrice(id) {
   const item = data.cart.find(product => product.id === id);
@@ -1048,7 +1058,7 @@ function saveCartPrice(event, id) {
   const price = Number(value);
   if (!value || !Number.isFinite(price) || price < 0) return alert('Harga harus berupa angka nol atau lebih.');
   item.price = price;
-  openMenu(activeFeature);
+  refreshKeepingScroll();
 }
 function searchCashierProducts() {
   const query = document.getElementById('cashierSearch').value.trim().toLocaleLowerCase('id-ID');
