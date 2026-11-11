@@ -603,6 +603,16 @@ body {
   #receiptPrint .receipt-line span, #receiptPrint .receipt-line strong { min-width: 0; overflow-wrap: anywhere; }
   #receiptPrint .receipt-divider { border-top: 1px dashed #555; margin: 8px 0; }
 }
+.history-transaction { cursor: pointer; }
+.receipt-detail-box { max-height: calc(100vh - 40px); overflow-y: auto; background: #E9EDEA; }
+.receipt-preview { padding: 16px 16px 18px; border-radius: 4px; background: #fff; color: #111; box-shadow: 0 1px 6px #0003; font: 12px/1.4 "Courier New", monospace; overflow-wrap: anywhere; }
+.receipt-preview h2 { margin: 0 0 4px; font-size: 16px; text-transform: uppercase; }
+.receipt-preview p { margin: 0 0 4px; }
+.receipt-preview .receipt-header { text-align: center; }
+.receipt-preview .receipt-line { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; margin: 5px 0; }
+.receipt-preview .receipt-divider { border-top: 1px dashed #555; margin: 8px 0; }
+.receipt-preview .receipt-empty { color: #718078; font-size: 11px; text-align: center; }
+.receipt-detail-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px; }
 .scanner-video { width: 100%; border-radius: 14px; background: #17251d; }
 .camera-overlay { position: fixed; inset: 0; z-index: 40; display: flex; align-items: center; justify-content: center; padding: 20px; background: #17251dcc; }
 .camera-box { width: 100%; max-width: 440px; padding: 18px; border-radius: 20px; background: #F8FAF9; }
@@ -1188,7 +1198,7 @@ function checkout(event) {
   });
   const transaction = {
     id: Date.now(), customer: form.elements.namedItem('customer').value.trim() || 'Pelanggan Umum',
-    total, date: new Date().toISOString(), items: data.cart.map(item => ({ ...item }))
+    total, cash, date: new Date().toISOString(), items: data.cart.map(item => ({ ...item }))
   };
   data.transactions.unshift(transaction);
   data.cart = [];
@@ -1766,7 +1776,7 @@ async function importDebtsCSV(event) {
   }
 }
 function renderHistory() {
-  const list = data.transactions.map(transaction => `<article class="feature-card history-transaction" onpointerdown="startTransactionPress(${transaction.id}, event)" onpointerup="cancelTransactionPress()" onpointerleave="cancelTransactionPress()" onpointercancel="cancelTransactionPress()" oncontextmenu="event.preventDefault()">
+  const list = data.transactions.map(transaction => `<article class="feature-card history-transaction" role="button" tabindex="0" onclick="openTransactionDetail(${transaction.id}, event)" onkeydown="if(event.key==='Enter'&&event.target===this){openTransactionDetail(${transaction.id}, event)}" onpointerdown="startTransactionPress(${transaction.id}, event)" onpointerup="cancelTransactionPress()" onpointerleave="cancelTransactionPress()" onpointercancel="cancelTransactionPress()" oncontextmenu="event.preventDefault()">
     <h3>${escapeHTML(transaction.customer)}</h3><p>${new Date(transaction.date).toLocaleString('id-ID')} · ${rupiah(transaction.total)}</p>
     <button class="feature-button danger history-delete-action" type="button" onclick="showTransactionDeleteConfirmation(${transaction.id})"><i class="fa-solid fa-trash-can" aria-hidden="true" style="margin-right:6px"></i>Hapus transaksi</button>
     <div class="history-delete-confirm" id="historyDeleteConfirm-${transaction.id}" role="group" aria-label="Konfirmasi hapus transaksi">
@@ -1774,16 +1784,66 @@ function renderHistory() {
       <div class="purchase-actions"><button class="feature-button danger" type="button" onclick="deleteTransaction(${transaction.id})">Ya, hapus</button><button class="feature-button secondary" type="button" onclick="cancelTransactionDelete(${transaction.id})">Batal</button></div>
     </div>
   </article>`).join('') || emptyMessage('Belum ada transaksi tersimpan.');
-  return `<div class="feature-card"><h3>Riwayat transaksi</h3><p>Tekan dan tahan transaksi untuk menampilkan opsi hapus.</p></div>${list}`;
+  return `<div class="feature-card"><h3>Riwayat transaksi</h3><p>Ketuk transaksi untuk melihat struk dan cetak ulang. Tekan dan tahan untuk menampilkan opsi hapus.</p></div>${list}`;
 }
 let transactionPressTimer;
+let transactionLongPressed = false;
 function startTransactionPress(id, event) {
   if (event.pointerType === 'mouse' && event.button !== 0) return;
   cancelTransactionPress();
+  transactionLongPressed = false;
   const transactionCard = event.currentTarget;
   transactionPressTimer = setTimeout(() => {
+    transactionLongPressed = true;
     transactionCard.classList.add('delete-option-visible');
   }, 650);
+}
+function receiptPaperHTML(transaction) {
+  const date = new Date(transaction.date);
+  const items = Array.isArray(transaction.items) ? transaction.items : [];
+  const hasCash = Number.isFinite(Number(transaction.cash)) && Number(transaction.cash) >= Number(transaction.total);
+  const itemRows = items.length
+    ? items.map(item => `<div class="receipt-line"><span>${escapeHTML(item.name)} × ${item.qty}</span><span>${rupiah(item.price * item.qty)}</span></div>`).join('')
+    : '<p class="receipt-empty">Rincian barang tidak tersedia untuk transaksi lama ini.</p>';
+  return `<div class="receipt-header"><h2>${escapeHTML(data.settings.shop)}</h2>
+      ${data.settings.address ? `<p>${escapeHTML(data.settings.address)}</p>` : ''}<p>${Number.isNaN(date.getTime()) ? '-' : date.toLocaleDateString('id-ID') + ' · ' + date.toLocaleTimeString('id-ID')}</p></div>
+    <div class="receipt-divider"></div>${itemRows}<div class="receipt-divider"></div>
+    <div class="receipt-line"><strong>Total</strong><strong>${rupiah(transaction.total)}</strong></div>
+    ${hasCash ? `<div class="receipt-line"><span>Tunai</span><span>${rupiah(Number(transaction.cash))}</span></div>
+    <div class="receipt-line"><span>Kembalian</span><span>${rupiah(Number(transaction.cash) - Number(transaction.total))}</span></div>` : ''}
+    <div class="receipt-divider"></div><p style="text-align:center">Terima kasih telah berbelanja</p>`;
+}
+function openTransactionDetail(id, event) {
+  if (transactionLongPressed) { transactionLongPressed = false; return; }
+  if (event && event.target.closest('button, .history-delete-confirm')) return;
+  const card = event?.currentTarget;
+  if (card && (card.classList.contains('delete-option-visible') || card.classList.contains('confirm-delete'))) return;
+  const transaction = data.transactions.find(item => item.id === id);
+  if (!transaction) return;
+  document.getElementById('transactionDetailOverlay')?.remove();
+  document.querySelectorAll('#receiptPrint').forEach(element => element.remove());
+  document.getElementById('featureContent').insertAdjacentHTML('beforeend', `<div class="payment-overlay" id="transactionDetailOverlay" onclick="if(event.target === this) closeTransactionDetail()">
+    <section class="payment-box receipt-detail-box" role="dialog" aria-modal="true" aria-label="Struk transaksi">
+      <div class="receipt-preview">${receiptPaperHTML(transaction)}</div>
+      <div class="receipt-detail-actions">
+        <button class="feature-button secondary" type="button" onclick="closeTransactionDetail()">Tutup</button>
+        <button class="feature-button" type="button" onclick="reprintTransaction(${transaction.id})"><i class="fa-solid fa-print" aria-hidden="true" style="margin-right:7px"></i>Cetak Ulang</button>
+      </div>
+      <div class="receipt-print" id="receiptPrint">${receiptPaperHTML(transaction)}</div>
+    </section>
+  </div>`);
+}
+function closeTransactionDetail() {
+  document.getElementById('transactionDetailOverlay')?.remove();
+}
+async function reprintTransaction(id) {
+  const transaction = data.transactions.find(item => item.id === id);
+  if (!transaction) return alert('Transaksi tidak ditemukan.');
+  try {
+    await printReceipt(transaction.id);
+  } catch (error) {
+    alert('Struk gagal dicetak. Periksa pengaturan atau koneksi printer.');
+  }
 }
 function cancelTransactionPress() { clearTimeout(transactionPressTimer); }
 function showTransactionDeleteConfirmation(id) {
