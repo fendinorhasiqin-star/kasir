@@ -901,6 +901,26 @@ function saveData() {
 function rupiah(value) {
   return 'Rp ' + Number(value || 0).toLocaleString('id-ID');
 }
+const MONEY_ATTRS = 'type="text" inputmode="numeric" autocomplete="off" class="money-input"';
+function formatMoney(value) {
+  const digits = String(value ?? '').replace(/\D/g, '');
+  return digits ? digits.replace(/\B(?=(\d{3})+(?!\d))/g, '.') : '';
+}
+function moneyNumber(value) {
+  return Number(String(value ?? '').replace(/\./g, '').trim());
+}
+document.addEventListener('input', event => {
+  const input = event.target;
+  if (!input || !input.matches || !input.matches('input.money-input')) return;
+  const caret = input.selectionStart ?? input.value.length;
+  const digitsBeforeCaret = input.value.slice(0, caret).replace(/\D/g, '').length;
+  const formatted = formatMoney(input.value);
+  if (formatted === input.value) return;
+  input.value = formatted;
+  let position = 0, seen = 0;
+  while (position < formatted.length && seen < digitsBeforeCaret) { if (/\d/.test(formatted[position])) seen++; position++; }
+  try { input.setSelectionRange(position, position); } catch (error) { /* abaikan */ }
+});
 function escapeHTML(value) {
   return String(value ?? '').replace(/[&<>"']/g, char => ({
     '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
@@ -1047,7 +1067,7 @@ function editCartPrice(id) {
       <div class="feature-header"><h2 id="cartPriceTitle">Ubah harga item</h2><button class="feature-close" type="button" onclick="closeCartPrice()" aria-label="Tutup">&times;</button></div>
       <form class="feature-form" onsubmit="saveCartPrice(event, ${id})">
         <label for="cartItemPrice">Harga jual per unit</label>
-        <input id="cartItemPrice" name="price" type="number" min="0" step="1" value="${item.price}" required>
+        <input id="cartItemPrice" name="price" ${MONEY_ATTRS} value="${formatMoney(item.price)}" required>
         <div class="feature-row"><button class="feature-button secondary" type="button" onclick="closeCartPrice()">Batal</button><button type="submit">Simpan harga</button></div>
       </form>
     </section>
@@ -1062,7 +1082,7 @@ function saveCartPrice(event, id) {
   const item = data.cart.find(product => product.id === id);
   if (!item) return closeCartPrice();
   const value = event.currentTarget.elements.namedItem('price').value.trim();
-  const price = Number(value);
+  const price = moneyNumber(value);
   if (!value || !Number.isFinite(price) || price < 0) return alert('Harga harus berupa angka nol atau lebih.');
   item.price = price;
   refreshKeepingScroll();
@@ -1099,7 +1119,7 @@ function openPayment() {
       <form class="feature-form" onsubmit="checkout(event)">
         <input name="customer" placeholder="Nama pelanggan (opsional)">
         <label for="cashReceived">Uang diterima</label>
-        <input id="cashReceived" name="cash" type="number" min="${total}" placeholder="Masukkan jumlah uang" oninput="updateChange()" required>
+        <input id="cashReceived" name="cash" ${MONEY_ATTRS} placeholder="Masukkan jumlah uang" oninput="updateChange()" required>
         <div class="payment-quick-amounts" aria-label="Pilihan nominal cepat">
           ${quickAmounts.map(amount => `<button type="button" class="feature-button secondary" aria-pressed="false" onclick="setPaymentAmount(${amount})">${rupiah(amount)}</button>`).join('')}
         </div>
@@ -1113,7 +1133,7 @@ function openPayment() {
 function setPaymentAmount(amount) {
   const cashInput = document.getElementById('cashReceived');
   if (cashInput) {
-    cashInput.value = amount;
+    cashInput.value = formatMoney(amount);
     document.querySelectorAll('.payment-quick-amounts button').forEach(button => {
       const selected = Number(button.getAttribute('onclick').match(/\d+/)?.[0]) === amount;
       button.classList.toggle('selected', selected);
@@ -1126,7 +1146,7 @@ function updateChange() {
   const cashInput = document.getElementById('cashReceived');
   const changeDisplay = document.getElementById('paymentChange');
   if (!cashInput || !changeDisplay) return;
-  const cash = Number(cashInput.value);
+  const cash = moneyNumber(cashInput.value);
   const total = data.cart.reduce((sum, item) => sum + item.price * item.qty, 0);
   if (!cashInput.value) {
     changeDisplay.innerHTML = 'Kembalian<strong>Masukkan nominal pembayaran</strong>';
@@ -1202,7 +1222,7 @@ function checkout(event) {
   if (!data.cart.length) return;
   const total = data.cart.reduce((sum, item) => sum + item.price * item.qty, 0);
   const form = event.currentTarget;
-  const cash = Number(form.elements.namedItem('cash').value);
+  const cash = moneyNumber(form.elements.namedItem('cash').value);
   if (!Number.isFinite(cash) || cash < total) return alert('Uang yang diterima belum mencukupi.');
   const unavailable = data.cart.some(item => {
     const product = data.products.find(product => product.id === item.id);
@@ -1460,8 +1480,8 @@ function showProductEditor(id = null) {
     <h3>${product ? 'Edit produk' : 'Tambah produk'}</h3><input type="hidden" name="id" value="${product?.id || ''}">
     <label for="productName">Nama barang</label><input id="productName" type="text" name="name" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Contoh: Beras 5 kg" value="${escapeHTML(product?.name || '')}" required>
     <label for="productUnit">Satuan</label><input id="productUnit" name="unit" placeholder="Contoh: pcs, kg, liter" value="${escapeHTML(product?.unit || '')}">
-    <label for="productPrice">Harga jual (Rp)</label><input id="productPrice" name="price" type="number" min="0" placeholder="Masukkan harga yang dibayar pelanggan" value="${product?.price ?? ''}" required>
-    <label for="productCost">Harga modal per unit (Rp)</label><input id="productCost" name="cost" type="number" min="0" placeholder="Harga beli dari supplier (opsional)" value="${product?.cost ?? ''}">
+    <label for="productPrice">Harga jual (Rp)</label><input id="productPrice" name="price" ${MONEY_ATTRS} placeholder="Masukkan harga yang dibayar pelanggan" value="${formatMoney(product?.price)}" required>
+    <label for="productCost">Harga modal per unit (Rp)</label><input id="productCost" name="cost" ${MONEY_ATTRS} placeholder="Harga beli dari supplier (opsional)" value="${formatMoney(product?.cost)}">
     <label for="productStock">Stok barang (unit)</label><input id="productStock" name="stock" type="number" min="0" placeholder="Jumlah stok saat ini" value="${product?.stock ?? ''}">
     <label for="productBarcode">Barcode (opsional)</label><input id="productBarcode" name="barcode" placeholder="Masukkan nomor barcode" value="${escapeHTML(product?.barcode || '')}">
     <button type="submit">${product ? 'Simpan perubahan' : 'Tambah produk'}</button><button class="feature-button secondary" type="button" onclick="openMenu('Produk')">Batal</button>
@@ -1512,8 +1532,8 @@ function saveProduct(event) {
   const values = {
     name: form.elements.namedItem('name').value.trim(),
     unit: form.elements.namedItem('unit').value.trim(),
-    price: Number(form.elements.namedItem('price').value),
-    cost: Number(form.elements.namedItem('cost').value) || 0,
+    price: moneyNumber(form.elements.namedItem('price').value),
+    cost: moneyNumber(form.elements.namedItem('cost').value) || 0,
     stock: Number(form.elements.namedItem('stock').value) || 0,
     barcode: form.elements.namedItem('barcode').value.trim()
   };
@@ -1628,7 +1648,7 @@ function renderPurchaseRow() {
   return `<div class="feature-card purchase-item-row" style="display:grid;gap:9px;margin:0 0 10px;padding:12px">
     <select name="product" required>${productOptions()}</select>
     <input name="qty" type="number" min="1" placeholder="Jumlah dibeli" required>
-    <input name="cost" type="number" min="0" placeholder="Harga modal per unit" required>
+    <input name="cost" ${MONEY_ATTRS} placeholder="Harga modal per unit" required>
     <button class="feature-button danger" type="button" onclick="this.closest('.purchase-item-row').remove(); ensurePurchaseRow()">Hapus produk</button>
   </div>`;
 }
@@ -1649,7 +1669,7 @@ function savePurchase(event) {
   const items = rows.map(row => {
     const product = data.products.find(item => item.id === Number(row.querySelector('[name="product"]').value));
     const qty = Number(row.querySelector('[name="qty"]').value);
-    const cost = Number(row.querySelector('[name="cost"]').value);
+    const cost = moneyNumber(row.querySelector('[name="cost"]').value);
     return product && Number.isInteger(qty) && qty > 0 && Number.isFinite(cost) && cost >= 0
       ? { product, qty, cost } : null;
   });
@@ -1711,10 +1731,10 @@ function renderDebts() {
         <span class="purchase-status ${remaining === 0 ? 'paid' : ''}">${remaining === 0 ? 'Lunas' : 'Belum lunas'}</span>
         <p class="product-hint">Tekan dan tahan catatan untuk menghapus.</p>
       </div>
-      ${remaining > 0 ? `<form class="feature-row" style="margin-top:10px" onsubmit="payDebt(event, ${debt.id})"><input name="payment" type="number" min="1" max="${remaining}" placeholder="Jumlah pembayaran" required><button class="feature-button" type="submit">Bayar</button></form>` : ''}
+      ${remaining > 0 ? `<form class="feature-row" style="margin-top:10px" onsubmit="payDebt(event, ${debt.id})"><input name="payment" ${MONEY_ATTRS} placeholder="Jumlah pembayaran" required><button class="feature-button" type="submit">Bayar</button></form>` : ''}
     </article>`;
   }).join('') || emptyMessage('Belum ada catatan hutang.');
-  return `<form class="feature-form" onsubmit="addDebt(event)"><h3>Catat hutang pelanggan</h3><input name="name" placeholder="Nama pelanggan" required><input name="amount" type="number" min="1" placeholder="Jumlah hutang" required><button type="submit">Simpan hutang</button></form>
+  return `<form class="feature-form" onsubmit="addDebt(event)"><h3>Catat hutang pelanggan</h3><input name="name" placeholder="Nama pelanggan" required><input name="amount" ${MONEY_ATTRS} placeholder="Jumlah hutang" required><button type="submit">Simpan hutang</button></form>
     <section class="feature-card"><h3>Import dan ekspor catatan hutang</h3><p>CSV menggunakan kolom: id, name, amount, remaining. Catatan lunas tetap disertakan saat ekspor.</p>
       <div class="purchase-actions"><button class="feature-button secondary" type="button" onclick="exportDebtsCSV()"><i class="fa-solid fa-download" aria-hidden="true"></i> Ekspor hutang</button></div>
       <form class="feature-form" style="padding:0;margin:12px 0 0;border:0" onsubmit="return false"><label for="debtsCSV" class="product-sort-label">Pilih file CSV untuk diimpor</label><input id="debtsCSV" type="file" accept=".csv,text/csv" onchange="importDebtsCSV(event)"></form>
@@ -1736,14 +1756,17 @@ function deleteDebt(id) {
   saveData(); openMenu('Hutang');
 }
 function addDebt(event) {
-  event.preventDefault(); const form = event.currentTarget, amount = Number(form.elements.namedItem('amount').value);
+  event.preventDefault(); const form = event.currentTarget, amount = moneyNumber(form.elements.namedItem('amount').value);
+  if (!Number.isFinite(amount) || amount < 1) return alert('Jumlah hutang harus lebih dari nol.');
   data.debts.unshift({ id: Date.now(), name: form.elements.namedItem('name').value.trim(), amount, remaining: amount });
   saveData(); openMenu('Hutang');
 }
 function payDebt(event, id) {
   event.preventDefault(); const debt = data.debts.find(item => item.id === id);
   if (!debt) return;
-  debt.remaining = Math.max(0, debt.remaining - Number(event.currentTarget.elements.namedItem('payment').value));
+  const payment = moneyNumber(event.currentTarget.elements.namedItem('payment').value);
+  if (!Number.isFinite(payment) || payment < 1) return alert('Jumlah pembayaran harus lebih dari nol.');
+  debt.remaining = Math.max(0, debt.remaining - payment);
   saveData(); openMenu('Hutang');
 }
 function exportDebtsCSV() {
