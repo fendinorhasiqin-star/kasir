@@ -1265,7 +1265,7 @@ function saveData() {
   ['products', 'suppliers', 'customers', 'debts', 'transactions', 'purchases', 'settings'].forEach(key =>
     localStorage.setItem('pos_' + key, JSON.stringify(data[key]))
   );
-  window.cloudPushProducts?.();
+  window.cloudPush?.();
 }
 /* ===== Notifikasi & dialog di dalam aplikasi (tanpa pop-up bawaan browser) ===== */
 function notify(message, type) {
@@ -3038,81 +3038,7 @@ function syncNavigation(feature) {
 })();
 </script>
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
-import {
-  initializeFirestore, persistentLocalCache, persistentMultipleTabManager,
-  collection, doc, getDocs, writeBatch
-} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
-import { firebaseConfig } from "./firebase-config.js";
-
-if (firebaseConfig.apiKey !== 'ISI_DI_SINI') {
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  // cache offline: tulisan saat offline diantre & terkirim otomatis saat online
-  const db = initializeFirestore(app, {
-    localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() })
-  });
-
-  const SNAP = 'pos_sync_snapshot';   // catatan produk yang sudah terkirim
-  let uid = null, timer = null;
-  const readSnap = () => { try { return JSON.parse(localStorage.getItem(SNAP) || '{}'); } catch { return {}; } };
-  const prodCol = () => collection(db, 'pengguna', uid, 'produk');
-
-  /* KIRIM: hanya produk yang berubah/terhapus sejak sinkron terakhir */
-  async function pushProducts() {
-    if (!uid) return;
-    const snap = readSnap(), next = {}, ops = [];
-    for (const p of data.products) {
-      const json = JSON.stringify(p);
-      next[p.id] = json;
-      if (snap[p.id] !== json) ops.push(['set', p]);
-    }
-    for (const id in snap) if (!(id in next)) ops.push(['del', id]);
-    if (!ops.length) return;
-
-    const commits = [];
-    for (let i = 0; i < ops.length; i += 400) {   // batas Firestore 500/batch
-      const batch = writeBatch(db);
-      ops.slice(i, i + 400).forEach(([t, x]) =>
-        t === 'set' ? batch.set(doc(prodCol(), String(x.id)), x) : batch.delete(doc(prodCol(), String(x))));
-      commits.push(batch.commit());
-    }
-    localStorage.setItem(SNAP, JSON.stringify(next));
-    await Promise.all(commits).catch(() => localStorage.removeItem(SNAP)); // gagal → kirim ulang penuh nanti
-  }
-
-  /* AMBIL: dijalankan sekali setelah login */
-  async function pullProducts() {
-    const qs = await getDocs(prodCol());
-    const cloud = qs.docs.map(d => d.data());
-
-    if (!cloud.length) {               // akun baru: unggah produk di HP ini
-      localStorage.removeItem(SNAP);
-      return pushProducts();
-    }
-    // akun lama: cloud menang. Produk lokal yang belum ada di cloud dipertahankan,
-    // kecuali 4 produk contoh bawaan versi lama (id 1–4) yang dibuang.
-    const CONTOH = ['Beras 5 kg', 'Minyak Goreng 1 L', 'Gula Pasir 1 kg', 'Mi Instan'];
-    const ids = new Set(cloud.map(p => String(p.id)));
-    const localOnly = data.products.filter(p => !ids.has(String(p.id)) && !(p.id <= 4 && CONTOH.includes(p.name)));
-    data.products = [...cloud, ...localOnly];
-    localStorage.setItem(SNAP, JSON.stringify(Object.fromEntries(cloud.map(p => [p.id, JSON.stringify(p)]))));
-    saveData();                        // simpan ke localStorage (sekaligus memicu push produk lokal baru)
-    updateDashboard();
-    if (activeFeature === 'Produk' && document.getElementById('featureModal').classList.contains('open')) openMenu('Produk');
-  }
-
-  /* dipanggil dari saveData(), ditunda 1 detik agar tidak spam */
-  window.cloudPushProducts = () => { clearTimeout(timer); timer = setTimeout(() => pushProducts().catch(console.error), 1000); };
-
-  onAuthStateChanged(auth, user => {
-    uid = user ? user.uid : null;
-    if (uid) pullProducts().catch(console.error);
-  });
-}
-</script>
+<script type="module" src="sync.js"></script>
 
 <script>
 /* ===== PRODUK: import/export di header + fokus selalu kembali ke kolom pencarian ===== */
