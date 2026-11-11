@@ -462,6 +462,9 @@ body {
 .feature-button.danger { background: #FCE8EF; color: #B8335D; }
 .feature-row { display: flex; align-items: center; gap: 10px; }
 .feature-row > :first-child { flex: 1; }
+.stock-adjust { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 8px; margin-top: 10px; }
+.stock-adjust input { grid-column: 1 / -1; width: 100%; min-width: 0; min-height: 42px; padding: 10px 12px; border: 1px solid #DCE5DF; border-radius: 10px; background: white; color: #26352D; font: inherit; font-size: 13px; }
+.stock-adjust button { min-width: 0; white-space: nowrap; }
 .feature-card p { margin-top: 7px; color: #718078; font-size: 12px; line-height: 1.5; }
 .feature-empty { padding: 20px; text-align: center; color: #89958E; font-size: 13px; }
 .feature-total { padding: 15px; margin: 12px 0; border-radius: 13px; background: #E5F5EA; color: #16834A; font-weight: 800; }
@@ -1545,7 +1548,7 @@ function renderStockList() {
   const products = data.products.filter(product => product.name.toLocaleLowerCase('id-ID').includes(query));
   return products.map(product => `<div class="feature-card"><h3>${escapeHTML(product.name)}</h3>
     <p>Stok saat ini: <strong>${product.stock}</strong> unit</p>
-    <form class="feature-row" style="margin-top:10px" onsubmit="adjustStock(event, ${product.id})">
+    <form class="stock-adjust" onsubmit="adjustStock(event, ${product.id})">
       <input name="amount" type="number" min="1" placeholder="Jumlah" required>
       <button class="feature-button secondary" name="change" value="add">+ Tambah</button>
       <button class="feature-button danger" name="change" value="subtract">− Kurangi</button>
