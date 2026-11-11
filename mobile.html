@@ -560,6 +560,7 @@ body {
 .product-list-detail { min-width: 0; flex: 1; }
 .product-list-detail strong, .product-list-detail small { display: block; overflow-wrap: anywhere; }
 .product-list-detail strong { font-size: 13px; }
+.price-strong { font-weight: 800; color: #26352D; }
 .product-list-detail small { margin-top: 5px; color: #718078; font-size: 12px; }
 .product-list-arrow { color: #A2ADA5; font-size: 12px; }
 .product-add-button { position: fixed; z-index: 22; right: max(20px, calc((100vw - 440px) / 2)); bottom: max(92px, calc(72px + env(safe-area-inset-bottom))); width: 56px; height: 56px; border: 0; border-radius: 50%; background: #16834A; color: white; box-shadow: 0 6px 18px #16834A55; font-size: 21px; cursor: pointer; }
@@ -1021,7 +1022,7 @@ function renderCashier() {
     <main class="cashier-page-content">
       <div class="cashier-search">
         <input id="cashierSearch" type="search" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Scan / ketik nama atau barcode" oninput="searchCashierProducts()" aria-label="Cari nama atau barcode produk">
-        <button class="camera-button" type="button" onclick="scanProductBarcode()" aria-label="Scan barcode"><i class="fa-solid fa-camera"></i></button>
+        <button class="camera-button" type="button" onclick="showQuickAddItem()" aria-label="Tambah barang cepat ke keranjang"><i class="fa-solid fa-plus"></i></button>
       </div>
       <div class="cashier-results" id="cashierResults"></div>${cartMarkup}
     </main>
@@ -1052,8 +1053,8 @@ function removeFromCartById(id) {
 function changeCartQuantity(id, change) {
   const item = data.cart.find(product => product.id === id);
   const product = data.products.find(product => product.id === id);
-  if (!item || !product) return;
-  if (change > 0 && !ignoreStockLimit() && item.qty >= product.stock) return alert('Stok tidak mencukupi.');
+  if (!item || (!product && !item.quick)) return;
+  if (change > 0 && !item.quick && !ignoreStockLimit() && item.qty >= product.stock) return alert('Stok tidak mencukupi.');
   item.qty += change;
   if (item.qty < 1) data.cart = data.cart.filter(product => product.id !== id);
   refreshKeepingScroll();
@@ -1087,12 +1088,47 @@ function saveCartPrice(event, id) {
   item.price = price;
   refreshKeepingScroll();
 }
+function showQuickAddItem() {
+  const search = document.getElementById('cashierSearch');
+  const name = search ? search.value.trim() : '';
+  document.getElementById('quickAddOverlay')?.remove();
+  document.getElementById('featureContent').insertAdjacentHTML('beforeend', `<div class="payment-overlay" id="quickAddOverlay" onclick="if(event.target === this) closeQuickAdd()">
+    <section class="payment-box" role="dialog" aria-modal="true" aria-labelledby="quickAddTitle">
+      <div class="feature-header"><h2 id="quickAddTitle">Tambah barang cepat</h2><button class="feature-close" type="button" onclick="closeQuickAdd()" aria-label="Tutup">&times;</button></div>
+      <form class="feature-form" onsubmit="saveQuickAdd(event)">
+        <label for="quickAddName">Nama barang</label>
+        <input id="quickAddName" name="name" placeholder="Nama barang" value="${escapeHTML(name)}" required>
+        <label for="quickAddPrice">Harga (Rp)</label>
+        <input id="quickAddPrice" name="price" ${MONEY_ATTRS} placeholder="Harga jual" required>
+        <label for="quickAddUnit">Satuan</label>
+        <input id="quickAddUnit" name="unit" placeholder="Contoh: pcs, kg, bks">
+        <div class="feature-row"><button class="feature-button secondary" type="button" onclick="closeQuickAdd()">Batal</button><button type="submit">Tambah ke keranjang</button></div>
+      </form>
+    </section>
+  </div>`);
+  document.getElementById(name ? 'quickAddPrice' : 'quickAddName').focus();
+}
+function closeQuickAdd() {
+  document.getElementById('quickAddOverlay')?.remove();
+}
+function saveQuickAdd(event) {
+  event.preventDefault();
+  const form = event.currentTarget;
+  const name = form.elements.namedItem('name').value.trim();
+  const price = moneyNumber(form.elements.namedItem('price').value);
+  const unit = form.elements.namedItem('unit').value.trim();
+  if (!name) return alert('Nama barang wajib diisi.');
+  if (!form.elements.namedItem('price').value.trim() || !Number.isFinite(price) || price < 0) return alert('Harga harus berupa angka nol atau lebih.');
+  // Barang cepat hanya masuk ke keranjang (tidak ke daftar Produk dan tidak mengurangi stok).
+  data.cart.push({ id: -(Date.now() + Math.floor(Math.random() * 1000)), quick: true, name, unit, price, cost: 0, qty: 1 });
+  openMenu(activeFeature);
+}
 function searchCashierProducts() {
   const query = document.getElementById('cashierSearch').value.trim().toLocaleLowerCase('id-ID');
   const results = document.getElementById('cashierResults');
   if (!query) { results.innerHTML = ''; return; }
   const matches = data.products.filter(product => `${product.name} ${product.barcode || ''}`.toLocaleLowerCase('id-ID').includes(query) && (product.stock > 0 || ignoreStockLimit()));
-  results.innerHTML = matches.length ? matches.map(product => `<button class="cashier-product" type="button" onclick="addProductToCart(${product.id})"><strong>${escapeHTML(product.name)}</strong><small>${rupiah(product.price)}${product.unit ? ' · ' + escapeHTML(product.unit) : ''} · Stok ${product.stock}</small></button>`).join('') : emptyMessage('Produk tidak ditemukan atau stok habis.');
+  results.innerHTML = matches.length ? matches.map(product => `<button class="cashier-product" type="button" onclick="addProductToCart(${product.id})"><strong>${escapeHTML(product.name)}</strong><small><b class="price-strong">${rupiah(product.price)}</b>${product.unit ? ' · ' + escapeHTML(product.unit) : ''} · Stok ${product.stock}</small></button>`).join('') : emptyMessage('Produk tidak ditemukan atau stok habis.');
 }
 function addProductToCart(id) {
   const product = data.products.find(item => item.id === id);
@@ -1225,11 +1261,13 @@ function checkout(event) {
   const cash = moneyNumber(form.elements.namedItem('cash').value);
   if (!Number.isFinite(cash) || cash < total) return alert('Uang yang diterima belum mencukupi.');
   const unavailable = data.cart.some(item => {
+    if (item.quick) return false;
     const product = data.products.find(product => product.id === item.id);
     return !product || (!ignoreStockLimit() && product.stock < item.qty);
   });
   if (unavailable) return alert('Stok produk berubah dan tidak mencukupi. Periksa kembali keranjang.');
   data.cart.forEach(item => {
+    if (item.quick) return;
     const product = data.products.find(product => product.id === item.id);
     product.stock = ignoreStockLimit() ? Math.max(0, product.stock - item.qty) : product.stock - item.qty;
   });
@@ -1414,7 +1452,7 @@ async function printReceipt(transactionId) {
 function renderProducts() {
   const list = getSortedProducts().map(product => `<article class="product-list-item" onpointerdown="startProductPress(${product.id}, event)" onpointerup="cancelProductPress()" onpointerleave="cancelProductPress()" onpointercancel="cancelProductPress()" oncontextmenu="event.preventDefault(); showProductActions(${product.id})">
     <div class="product-list-icon"><i class="fa-solid fa-box"></i></div>
-    <div class="product-list-detail"><strong>${escapeHTML(product.name)}</strong><small>${rupiah(product.price)}${product.unit ? ' · ' + escapeHTML(product.unit) : ''} · Stok ${product.stock}</small></div>
+    <div class="product-list-detail"><strong>${escapeHTML(product.name)}</strong><small><b class="price-strong">${rupiah(product.price)}</b>${product.unit ? ' · ' + escapeHTML(product.unit) : ''} · Stok ${product.stock}</small></div>
     <i class="fa-solid fa-chevron-right product-list-arrow" aria-hidden="true"></i>
   </article>`).join('') || emptyMessage('Produk tidak ditemukan.');
   return `<div class="product-tools"><input id="productSearch" type="search" placeholder="Cari nama atau barcode produk" oninput="filterProducts()" aria-label="Cari produk">
@@ -1450,7 +1488,7 @@ function productCountText() {
 }
 function renderProductsList() {
   return getSortedProducts().map(product => `<article class="product-list-item" onpointerdown="startProductPress(${product.id}, event)" onpointerup="cancelProductPress()" onpointerleave="cancelProductPress()" onpointercancel="cancelProductPress()" oncontextmenu="event.preventDefault(); showProductActions(${product.id})">
-    <div class="product-list-icon"><i class="fa-solid fa-box"></i></div><div class="product-list-detail"><strong>${escapeHTML(product.name)}</strong><small>${rupiah(product.price)}${product.unit ? ' · ' + escapeHTML(product.unit) : ''} · Stok ${product.stock}</small></div><i class="fa-solid fa-chevron-right product-list-arrow" aria-hidden="true"></i>
+    <div class="product-list-icon"><i class="fa-solid fa-box"></i></div><div class="product-list-detail"><strong>${escapeHTML(product.name)}</strong><small><b class="price-strong">${rupiah(product.price)}</b>${product.unit ? ' · ' + escapeHTML(product.unit) : ''} · Stok ${product.stock}</small></div><i class="fa-solid fa-chevron-right product-list-arrow" aria-hidden="true"></i>
   </article>`).join('') || emptyMessage('Produk tidak ditemukan.');
 }
 function startProductPress(id, event) {
