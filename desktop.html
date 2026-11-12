@@ -1978,6 +1978,7 @@ function showProductActions(id) {
   </div>`);
 }
 function showProductEditor(id = null) {
+  if (id === null && !wajibLogin()) return;
   const product = data.products.find(item => item.id === id);
   document.getElementById('featureContent').innerHTML = `<form class="feature-form" autocomplete="off" novalidate onsubmit="saveProduct(event)" onkeydown="productFormEnter(event)">
     <h3>${product ? 'Edit produk' : 'Tambah produk'}</h3><input type="hidden" name="id" value="${product?.id || ''}">
@@ -2039,6 +2040,7 @@ function saveProduct(event) {
   
   const form = event.currentTarget;
   const id = Number(form.elements.namedItem('id').value);
+  if (!id && !wajibLogin()) return;
   if (!id && !data.settings.unlimitedProducts && data.products.length >= FREE_PRODUCT_LIMIT) {
     showProductLimitNotice();
     return;
@@ -2779,7 +2781,7 @@ async function parseXLSX(file) {
   return rows.filter(Boolean);
 }
 async function importProductsCSV(event) {
-  
+  if (!wajibLogin()) { event.currentTarget.value = ''; return; }
   const input = event.currentTarget;
   const file = input.files[0];
   if (!file) return;
@@ -2876,6 +2878,19 @@ async function resetData() {
   location.reload();
 }
 /* ===== AKUN (login Google opsional) ===== */
+/* Menambah produk wajib login: kalau belum login, arahkan ke halaman login */
+function wajibLogin() {
+  if (akunSaatIni()) return true;
+  const pesan = 'Masuk dengan Google dulu sebelum menambah produk, supaya produk aman di akun dan tersinkron ke semua perangkat.';
+  if (typeof notify === 'function') {
+    notify(pesan, 'warning');
+    setTimeout(() => { location.href = 'login.html'; }, 1500);
+  } else {
+    alert(pesan);
+    location.href = 'login.html';
+  }
+  return false;
+}
 function akunSaatIni() {
   try {
     const uid = localStorage.getItem('pos_profil_ok');
