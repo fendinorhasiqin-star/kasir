@@ -1065,6 +1065,24 @@ body { padding: 0 !important; background: #F4F7F5; overflow-x: hidden; }
   .purchase-date-range { grid-template-columns:1fr 1fr; }
   .purchase-date-range button { grid-column:1 / -1; }
 }
+/* Laporan: ringkasan ala versi HP (kartu hijau + metrik) */
+.report-summary { padding:0; overflow:hidden; }
+.report-summary-hero { display:flex; align-items:center; justify-content:space-between; gap:16px; padding:24px 28px; background:linear-gradient(135deg, #16834A, #0D6638); color:#fff; }
+.report-summary-hero small { display:block; margin-bottom:8px; color:#ffffffc9; font-size:12.5px; }
+.report-summary-hero strong { display:block; font-size:clamp(26px, 3.2vw, 36px); letter-spacing:-.8px; overflow-wrap:anywhere; }
+.report-summary-hero i { width:52px; height:52px; flex:0 0 52px; display:grid; place-items:center; border-radius:15px; background:#ffffff24; font-size:22px; }
+.report-summary-grid { display:grid; grid-template-columns:repeat(4, minmax(0, 1fr)); gap:12px; padding:16px; }
+.report-summary-metric { min-width:0; padding:14px 16px; border-radius:13px; background:#F4F7F5; }
+.report-summary-metric small { display:block; color:#89958E; font-size:11.5px; }
+.report-summary-metric strong { display:block; margin-top:6px; color:#26352D; font-size:16px; overflow-wrap:anywhere; }
+.report-summary-metric.profit strong { color:#16834A; }
+.report-stock-value { display:flex; align-items:center; gap:16px; padding:18px 22px; }
+.report-stock-value-icon { width:50px; height:50px; flex:0 0 50px; display:grid; place-items:center; border-radius:14px; background:#E5F0FF; color:#2878D0; font-size:20px; }
+.report-stock-value-copy { min-width:0; }
+.report-stock-value-copy small { display:block; color:#89958E; font-size:12px; }
+.report-stock-value-copy strong { display:block; margin-top:5px; color:#26352D; font-size:22px; letter-spacing:-.4px; overflow-wrap:anywhere; }
+.report-stock-value-copy p { margin-top:3px; color:#89958E; font-size:11px; }
+@media (max-width: 900px) { .report-summary-grid { grid-template-columns:repeat(2, minmax(0, 1fr)); } }
 /* Pengaturan: printer thermal */
 .tidy-printer { max-width:760px; }
 .tidy-printer select { min-height:46px; padding:0 13px; border:1px solid #DCE5DF; border-radius:12px; background:#fff; font:inherit; font-size:13px; margin-top:10px; }
@@ -2820,8 +2838,6 @@ function renderReports(period = document.getElementById('reportPeriod')?.value |
   }));
   reportBestSellerList = [...bestSellers.values()].sort((a, b) => b.qty - a.qty);
   reportState = { period, start: customStart, end: customEnd };
-  const lowStock = data.products.filter(product => product.stock <= 5).sort((a, b) => a.stock - b.stock);
-  const lowStockMarkup = lowStock.length ? lowStock.map(product => `<p class="low-stock-item"><strong>${escapeHTML(product.name)}</strong><span>${product.stock === 0 ? 'Stok habis' : `Tersisa ${product.stock} unit`}</span></p>`).join('') : '<p>Semua produk memiliki stok lebih dari 5 unit.</p>';
   return `<div class="product-tools report-filters"><label class="product-sort-label" for="reportPeriod">Periode laporan</label>
       <select id="reportPeriod" onchange="filterReports()">
         <option value="today" ${period === 'today' ? 'selected' : ''}>Hari ini</option>
@@ -2833,12 +2849,21 @@ function renderReports(period = document.getElementById('reportPeriod')?.value |
       </select>
       ${period === 'custom' ? `<label class="product-sort-label" for="reportStart">Dari tanggal</label><input id="reportStart" type="date" value="${escapeHTML(customStart)}" onchange="filterReports()"><label class="product-sort-label" for="reportEnd">Sampai tanggal</label><input id="reportEnd" type="date" value="${escapeHTML(customEnd)}" onchange="filterReports()">` : ''}</div>
     ${!validRange ? '<div class="feature-card"><p>Tanggal awal harus sama dengan atau sebelum tanggal akhir.</p></div>' : ''}
-    <div class="feature-card"><h3>Ringkasan penjualan</h3><p>Total penjualan: <strong>${rupiah(totalSales)}</strong></p><p>Perkiraan keuntungan: <strong>${rupiah(totalProfit)}</strong></p><p>Jumlah transaksi: <strong>${transactions.length}</strong> · Rata-rata transaksi: <strong>${rupiah(transactions.length ? totalSales / transactions.length : 0)}</strong></p><p>Produk terjual: <strong>${units}</strong> unit</p></div>
+    <section class="feature-card report-summary" aria-label="Ringkasan penjualan">
+      <div class="report-summary-hero"><div><small>Total penjualan</small><strong>${rupiah(totalSales)}</strong></div><i class="fa-solid fa-chart-line" aria-hidden="true"></i></div>
+      <div class="report-summary-grid">
+        <div class="report-summary-metric profit"><small>Perkiraan keuntungan</small><strong>${rupiah(totalProfit)}</strong></div>
+        <div class="report-summary-metric"><small>Jumlah transaksi</small><strong>${transactions.length}</strong></div>
+        <div class="report-summary-metric"><small>Rata-rata transaksi</small><strong>${rupiah(transactions.length ? totalSales / transactions.length : 0)}</strong></div>
+        <div class="report-summary-metric"><small>Produk terjual</small><strong>${units} unit</strong></div>
+      </div>
+    </section>
+    <section class="feature-card report-stock-value" aria-label="Nilai stok saat ini">
+      <div class="report-stock-value-icon"><i class="fa-solid fa-boxes-stacked" aria-hidden="true"></i></div>
+      <div class="report-stock-value-copy"><small>Nilai stok saat ini</small><strong>${rupiah(data.products.reduce((sum, product) => sum + product.stock * product.cost, 0))}</strong><p>Berdasarkan stok × harga modal</p></div>
+    </section>
     <div class="feature-card"><h3>Grafik penjualan & keuntungan</h3>${chartMarkup}</div>
-    <div class="feature-card"><h3>Produk terlaris</h3><p>${reportBestSellerList.length ? `${reportBestSellerList.length} produk terjual pada periode ini.` : 'Belum ada produk terjual pada periode ini.'}</p><button class="feature-button secondary" type="button" style="width:100%;margin-top:12px" onclick="openBestSellers()">Lihat daftar produk terlaris <i class="fa-solid fa-arrow-right" style="margin-left:6px"></i></button></div>
-    <div class="feature-card"><h3>Stok menipis (≤ 5 unit)</h3>${lowStockMarkup}</div>
-    <div class="feature-card"><h3>Nilai stok saat ini</h3><p>${rupiah(data.products.reduce((sum, product) => sum + product.stock * product.cost, 0))}</p><p class="product-hint">Berdasarkan stok × harga modal</p></div>
-    <button class="feature-button secondary" onclick="openMenu('Riwayat')">Lihat riwayat transaksi</button>`;
+    <div class="feature-card"><h3>Produk terlaris</h3><p>${reportBestSellerList.length ? `${reportBestSellerList.length} produk terjual pada periode ini.` : 'Belum ada produk terjual pada periode ini.'}</p><button class="feature-button secondary" type="button" style="width:100%;margin-top:12px" onclick="openBestSellers()">Lihat daftar produk terlaris <i class="fa-solid fa-arrow-right" style="margin-left:6px"></i></button></div>`;
 }
 function openBestSellers() {
   showFeature('Produk Terlaris', renderBestSellersPage());
