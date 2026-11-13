@@ -474,6 +474,21 @@ body {
 .purchase-details summary { color: #16834A; font-weight: 700; cursor: pointer; }
 .purchase-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
 .purchase-actions button { min-height: 36px; padding: 8px 10px; font-size: 11px; }
+.purchase-items-list { display: grid; gap: 8px; max-height: 38vh; overflow-y: auto; padding: 2px 4px 2px 0; }
+.purchase-item-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto; gap: 7px !important; margin: 0 !important; padding: 9px !important; }
+.purchase-product-picker { position: relative; grid-column: 1 / -1; min-width: 0; }
+.purchase-product-picker input { width: 100%; min-width: 0; min-height: 38px; padding: 8px 10px; border: 1px solid #DCE5DF; border-radius: 10px; background: white; color: #26352D; font: inherit; font-size: 13px; }
+.purchase-product-options { position: absolute; top: calc(100% + 4px); left: 0; right: 0; z-index: 5; display: none; max-height: 220px; overflow-y: auto; padding: 4px; border: 1px solid #DCE5DF; border-radius: 10px; background: white; box-shadow: 0 8px 20px #0002; }
+.purchase-product-picker.open .purchase-product-options { display: grid; gap: 3px; }
+.purchase-product-options button { width: 100%; min-height: 38px; padding: 8px 10px; border: 0; border-radius: 7px; background: white; color: #26352D; text-align: left; font: inherit; font-size: 12px; cursor: pointer; }
+.purchase-product-options button:hover, .purchase-product-options button:focus { background: #E5F5EA; outline: none; }
+.purchase-item-row input { min-width: 0; min-height: 38px; padding: 8px 10px; }
+.purchase-item-row button { min-height: 38px; padding: 7px 9px; font-size: 11px; }
+.purchase-date-range { grid-column: 1 / -1; display: grid; grid-template-columns: 1fr 1fr; align-items: end; gap: 7px 9px; padding: 10px; border: 1px solid #EDF1EE; border-radius: 12px; background: white; }
+.purchase-date-range strong { grid-column: 1 / -1; color: #53645A; font-size: 12px; }
+.purchase-date-range label { display: grid; gap: 5px; color: #718078; font-size: 11px; font-weight: 700; }
+.product-tools .purchase-date-range input { width: 100%; min-width: 0; min-height: 40px; padding: 8px; border: 1px solid #DCE5DF; border-radius: 9px; background: white; color: #26352D; font: inherit; font-size: 12px; }
+.purchase-date-range button { grid-column: 1 / -1; min-height: 38px; padding: 8px 12px; }
 .cashier-page-header {
   min-height: 58px;
   padding: 10px 16px;
@@ -549,6 +564,22 @@ body {
 .profit-bar { background: #C8A64B; }
 .report-legend { display: flex; flex-wrap: wrap; gap: 8px 14px; color: #718078; font-size: 11px; }
 .report-scale-note { margin-top: 6px; color: #89958E; font-size: 10px; line-height: 1.4; }
+.report-summary { padding: 0; overflow: hidden; }
+.report-summary-hero { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 18px 16px; background: linear-gradient(135deg, #16834A, #0D6638); color: white; }
+.report-summary-hero small { display: block; margin-bottom: 7px; color: #ffffffc9; font-size: 11px; }
+.report-summary-hero strong { display: block; font-size: clamp(22px, 7vw, 29px); letter-spacing: -.7px; overflow-wrap: anywhere; }
+.report-summary-hero i { width: 42px; height: 42px; flex: 0 0 42px; display: grid; place-items: center; border-radius: 13px; background: #ffffff24; font-size: 18px; }
+.report-summary-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; padding: 11px; }
+.report-summary-metric { min-width: 0; padding: 11px; border-radius: 12px; background: #F4F7F5; }
+.report-summary-metric small { display: block; color: #89958E; font-size: 10px; }
+.report-summary-metric strong { display: block; margin-top: 5px; color: #26352D; font-size: 14px; overflow-wrap: anywhere; }
+.report-summary-metric.profit strong { color: #16834A; }
+.report-stock-value { display: flex; align-items: center; gap: 13px; padding: 15px; }
+.report-stock-value-icon { width: 44px; height: 44px; flex: 0 0 44px; display: grid; place-items: center; border-radius: 13px; background: #E5F0FF; color: #2878D0; font-size: 18px; }
+.report-stock-value-copy { min-width: 0; }
+.report-stock-value-copy small { display: block; color: #89958E; font-size: 11px; }
+.report-stock-value-copy strong { display: block; margin-top: 5px; color: #26352D; font-size: 20px; letter-spacing: -.4px; overflow-wrap: anywhere; }
+.report-stock-value-copy p { margin-top: 3px; color: #89958E; font-size: 10px; }
 .report-legend span:first-child { color: #16834A; }
 .report-legend span:last-child { color: #A7832F; }
 .low-stock-item { display: flex; justify-content: space-between; gap: 10px; padding: 9px 0; border-bottom: 1px solid #EDF1EE; }
@@ -620,7 +651,11 @@ body {
 .receipt-item-name { font-weight: 700; }
 .receipt-item .receipt-line { margin: 1px 0 6px; }
 .receipt-preview .receipt-empty { color: #718078; font-size: 11px; text-align: center; }
-.receipt-detail-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px; }
+.receipt-detail-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-top: 14px; }
+.receipt-detail-actions .feature-button { min-width: 0; padding: 10px 8px; font-size: 12px; }
+.receipt-detail-actions button:first-child { background: #0D6638; color: white; }
+.receipt-detail-actions button.danger { background: #B4234D; color: white; }
+.receipt-detail-actions .receipt-close-button { grid-column: 1 / -1; }
 .scanner-video { width: 100%; border-radius: 14px; background: #17251d; }
 .camera-overlay { position: fixed; inset: 0; z-index: 40; display: flex; align-items: center; justify-content: center; padding: 20px; background: #17251dcc; }
 .camera-box { width: 100%; max-width: 440px; padding: 18px; border-radius: 20px; background: #F8FAF9; }
@@ -632,7 +667,18 @@ body {
 .history-transaction.confirm-delete .history-delete-confirm { display: block; }
 .history-delete-confirm p { margin: 0 0 8px; color: #26352D; font-size: 12px; font-weight: 700; }
 .history-delete-confirm .purchase-actions { margin-top: 0; }
-.history-delete-confirm .feature-button { min-height: 38px; }
+ .history-delete-confirm .feature-button { min-height: 38px; }
+.debt-card { padding: 11px 12px; margin-bottom: 8px; }
+.debt-card-main { min-width: 0; }
+.debt-card-heading { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.debt-card-heading h3 { min-width: 0; margin: 0; overflow-wrap: anywhere; }
+.debt-card .purchase-status { flex: 0 0 auto; margin: 0; padding: 4px 8px; }
+.debt-card-values { display: flex; flex-wrap: wrap; gap: 4px 14px; margin-top: 5px; color: #718078; font-size: 11px; }
+.debt-card-values strong { color: #26352D; }
+.debt-card .product-hint { margin-top: 4px; font-size: 10px; }
+.debt-payment-form { display: flex; align-items: center; gap: 7px; margin-top: 9px; }
+.debt-payment-form input { min-width: 0; flex: 1; height: 38px; padding: 8px 10px; border: 1px solid #DCE5DF; border-radius: 9px; font: inherit; font-size: 12px; }
+.debt-payment-form button { min-height: 38px; padding: 7px 10px; }
 .product-limit-overlay { position: fixed; inset: 0; z-index: 50; display: flex; align-items: center; justify-content: center; padding: 18px; background: #17251dcc; }
 .product-limit-box { position: relative; width: 100%; max-width: 420px; padding: 24px 20px 20px; border-radius: 22px; background: #F8FAF9; box-shadow: 0 12px 40px #0003; text-align: center; }
 .product-limit-close { position: absolute; top: 14px; right: 14px; }
@@ -894,9 +940,9 @@ function saveStockSetting(value) {
   alert('Pengaturan stok disimpan: produk stok 0 ' + (data.settings.emptyStock === 1 ? 'tetap bisa dijual.' : 'tidak bisa dijual.'));
 }
 function saveData() {
-  ['products', 'suppliers', 'customers', 'debts', 'transactions', 'purchases', 'settings'].forEach(key =>
-    localStorage.setItem('pos_' + key, JSON.stringify(data[key]))
-  );
+  ['products', 'suppliers', 'customers', 'debts', 'transactions', 'purchases', 'settings'].forEach(key => {
+    localStorage.setItem('pos_' + key, JSON.stringify(data[key]));
+  });
   window.cloudPush?.();
 }
 function rupiah(value) {
@@ -909,6 +955,24 @@ function formatMoney(value) {
 }
 function moneyNumber(value) {
   return Number(String(value ?? '').replace(/\./g, '').trim());
+}
+function playAddToCartSound() {
+  try {
+    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+    if (!AudioContextClass) return;
+    const audio = new AudioContextClass();
+    const oscillator = audio.createOscillator();
+    const volume = audio.createGain();
+    oscillator.type = 'sine';
+    oscillator.frequency.value = 880;
+    volume.gain.setValueAtTime(0.08, audio.currentTime);
+    volume.gain.exponentialRampToValueAtTime(0.001, audio.currentTime + 0.12);
+    oscillator.connect(volume);
+    volume.connect(audio.destination);
+    oscillator.start();
+    oscillator.stop(audio.currentTime + 0.12);
+    oscillator.onended = () => audio.close();
+  } catch (error) { /* Abaikan jika audio tidak didukung atau diblokir browser. */ }
 }
 document.addEventListener('input', event => {
   const input = event.target;
@@ -990,8 +1054,8 @@ function backFeature() {
   restoringFeature = false;
 }
 function emptyMessage(text) { return `<div class="feature-empty">${text}</div>`; }
-function productOptions() {
-  return data.products.map(product => `<option value="${product.id}">${escapeHTML(product.name)} — ${rupiah(product.price)} (stok ${product.stock})</option>`).join('');
+function productOptions(selectedId = null) {
+  return data.products.map(product => `<option value="${product.id}" ${product.id === selectedId ? 'selected' : ''}>${escapeHTML(product.name)} — ${rupiah(product.price)} (stok ${product.stock})</option>`).join('');
 }
 function supplierOptions() {
   return data.suppliers.map(supplier => `<option value="${supplier.id}">${escapeHTML(supplier.name)}</option>`).join('');
@@ -1000,8 +1064,10 @@ function openMenu(menu) {
   const contents = {
     'Keranjang': renderCashier(), 'Kasir': renderCashier(),
     'Produk': renderProducts(), 'Stok Barang': renderStock(),
-    'Pembelian': renderPurchases(), 'Supplier': renderSuppliers(),
-    'Pelanggan': renderCustomers(), 'Hutang': renderDebts(),
+    'Tambah/Kurangi Stok': renderStockAdjustments(), 'Cek Stok Menipis': renderLowStock(),
+    'Pembelian': renderPurchases(), 'Riwayat Pembelian': renderPurchaseHistoryPage(), 'Supplier': renderSuppliers(),
+    'Pelanggan': renderCustomers(), 'Import/Ekspor Pelanggan': renderCustomerImportExport(), 'Hutang': renderDebts(), 'Import/Ekspor Hutang': renderDebtImportExport(),
+    'Import/Ekspor Produk': renderProductImportExportPage(),
     'Laporan': renderReports(), 'Riwayat': renderHistory(),
     'Pengaturan': renderSettings(), 'Profil': renderProfile()
   };
@@ -1055,6 +1121,7 @@ function changeCartQuantity(id, change) {
   const product = data.products.find(product => product.id === id);
   if (!item || (!product && !item.quick)) return;
   if (change > 0 && !item.quick && !ignoreStockLimit() && item.qty >= product.stock) return alert('Stok tidak mencukupi.');
+  if (change > 0) playAddToCartSound();
   item.qty += change;
   if (item.qty < 1) data.cart = data.cart.filter(product => product.id !== id);
   refreshKeepingScroll();
@@ -1121,6 +1188,7 @@ function saveQuickAdd(event) {
   if (!form.elements.namedItem('price').value.trim() || !Number.isFinite(price) || price < 0) return alert('Harga harus berupa angka nol atau lebih.');
   // Barang cepat hanya masuk ke keranjang (tidak ke daftar Produk dan tidak mengurangi stok).
   data.cart.push({ id: -(Date.now() + Math.floor(Math.random() * 1000)), quick: true, name, unit, price, cost: 0, qty: 1 });
+  playAddToCartSound();
   openMenu(activeFeature);
 }
 function searchCashierProducts() {
@@ -1138,6 +1206,7 @@ function addProductToCart(id) {
     if (!ignoreStockLimit() && existing.qty >= product.stock) return alert('Stok tidak mencukupi.');
     existing.qty++;
   } else data.cart.push({ id, name: product.name, unit: product.unit || '', price: product.price, cost: product.cost, qty: 1 });
+  playAddToCartSound();
   openMenu(activeFeature);
 }
 function openPayment() {
@@ -1159,7 +1228,7 @@ function openPayment() {
         <div class="payment-quick-amounts" aria-label="Pilihan nominal cepat">
           ${quickAmounts.map(amount => `<button type="button" class="feature-button secondary" aria-pressed="false" onclick="setPaymentAmount(${amount})">${rupiah(amount)}</button>`).join('')}
         </div>
-        <div class="payment-change" id="paymentChange" aria-live="polite">Kembalian<strong>Masukkan nominal pembayaran</strong></div>
+        <div class="payment-change" id="paymentChange" aria-live="polite">Kembalian</div>
         <button type="submit">Konfirmasi pembayaran</button>
       </form>
     </section>
@@ -1185,7 +1254,7 @@ function updateChange() {
   const cash = moneyNumber(cashInput.value);
   const total = data.cart.reduce((sum, item) => sum + item.price * item.qty, 0);
   if (!cashInput.value) {
-    changeDisplay.innerHTML = 'Kembalian<strong>Masukkan nominal pembayaran</strong>';
+    changeDisplay.innerHTML = 'Kembalian';
   } else if (cash < total) {
     changeDisplay.innerHTML = 'Kembalian<strong>Uang belum mencukupi</strong>';
   } else {
@@ -1246,6 +1315,7 @@ function addToCart(event) {
     if (!ignoreStockLimit() && existing.qty + qty > product.stock) return alert('Stok tidak mencukupi.');
     existing.qty += qty;
   } else data.cart.push({ id: product.id, name: product.name, unit: product.unit || '', price: product.price, cost: product.cost, qty });
+  playAddToCartSound();
   openMenu(activeFeature);
 }
 function removeFromCart(index) {
@@ -1600,8 +1670,21 @@ function confirmDeleteProduct(id) {
   saveData(); openMenu('Produk');
 }
 function renderStock() {
+  return `<section class="feature-card"><h3>Kelola stok barang</h3><p>Pilih tindakan yang ingin dilakukan.</p></section>
+    <button class="feature-button secondary" type="button" style="width:100%;margin-bottom:10px;text-align:left" onclick="openMenu('Tambah/Kurangi Stok')"><i class="fa-solid fa-boxes-stacked" aria-hidden="true" style="margin-right:9px"></i>Tambah / Kurangi Stok</button>
+    <button class="feature-button secondary" type="button" style="width:100%;text-align:left" onclick="openMenu('Cek Stok Menipis')"><i class="fa-solid fa-triangle-exclamation" aria-hidden="true" style="margin-right:9px"></i>Cek Stok Menipis</button>`;
+}
+function renderStockAdjustments() {
   return `<div class="product-tools"><input id="stockSearch" type="search" placeholder="Cari nama produk" oninput="filterStock()" aria-label="Cari produk di stok barang"></div>
     <div id="stockList">${renderStockList()}</div>`;
+}
+function renderLowStock() {
+  const products = data.products.filter(product => Number(product.stock) <= 5).sort((a, b) => a.stock - b.stock);
+  const list = products.map(product => `<article class="feature-card"><h3>${escapeHTML(product.name)}</h3>
+    <p>Stok saat ini: <strong>${product.stock}</strong> ${escapeHTML(product.unit || 'unit')}</p>
+    <span class="purchase-status">${Number(product.stock) === 0 ? 'Stok habis' : 'Stok menipis'}</span></article>`).join('');
+  return `<section class="feature-card"><h3>Cek stok menipis</h3><p>${products.length} produk memiliki stok 5 unit atau kurang.</p></section>
+    ${list || emptyMessage('Tidak ada produk dengan stok menipis.')}`;
 }
 function renderStockList() {
   const query = (document.getElementById('stockSearch')?.value || '').trim().toLocaleLowerCase('id-ID');
@@ -1624,7 +1707,7 @@ function adjustStock(event, id) {
   const product = data.products.find(item => item.id === id);
   const amount = Number(event.submitter.value === 'add' ? event.currentTarget.amount.value : -event.currentTarget.amount.value);
   if (product.stock + amount < 0) return alert('Stok tidak boleh kurang dari nol.');
-  product.stock += amount; saveData(); openMenu('Stok Barang');
+  product.stock += amount; saveData(); openMenu('Tambah/Kurangi Stok');
 }
 function renderSuppliers() {
   const list = data.suppliers.map(supplier => `<div class="feature-card feature-row"><div><h3>${escapeHTML(supplier.name)}</h3><p>${escapeHTML(supplier.phone || 'Tidak ada nomor')}</p></div><button class="feature-button danger" onclick="deleteEntry('suppliers', ${supplier.id}, 'Supplier')">Hapus</button></div>`).join('') || emptyMessage('Belum ada supplier.');
@@ -1633,10 +1716,14 @@ function renderSuppliers() {
 function renderCustomers() {
   const list = data.customers.map(customer => `<div class="feature-card feature-row"><div><h3>${escapeHTML(customer.name)}</h3><p>${escapeHTML(customer.phone || 'Tidak ada nomor')}</p></div><button class="feature-button danger" onclick="deleteEntry('customers', ${customer.id}, 'Pelanggan')">Hapus</button></div>`).join('') || emptyMessage('Belum ada pelanggan.');
   return `<form class="feature-form" onsubmit="saveContact(event, 'customers', 'Pelanggan')"><h3>Tambah pelanggan</h3><input name="name" placeholder="Nama pelanggan" required><input name="phone" placeholder="Nomor telepon"><button type="submit">Simpan pelanggan</button></form>
-    <section class="feature-card"><h3>Import dan ekspor data pelanggan</h3><p>Ekspor pelanggan sebagai CSV, atau impor file CSV dengan kolom: name, phone. Kolom id bersifat opsional. Pelanggan yang cocok berdasarkan ID, nomor telepon, atau nama akan diperbarui; lainnya ditambahkan.</p>
+    <button class="feature-button secondary" type="button" style="width:100%;margin-bottom:12px" onclick="openMenu('Import/Ekspor Pelanggan')"><i class="fa-solid fa-arrow-right-arrow-left" aria-hidden="true" style="margin-right:7px"></i>Import / Ekspor Data Pelanggan</button>
+    ${list}`;
+}
+function renderCustomerImportExport() {
+  return `<section class="feature-card"><h3>Import dan ekspor data pelanggan</h3><p>Ekspor pelanggan sebagai CSV, atau impor file CSV dengan kolom: name, phone. Kolom id bersifat opsional. Pelanggan yang cocok berdasarkan ID, nomor telepon, atau nama akan diperbarui; lainnya ditambahkan.</p>
       <div class="purchase-actions"><button class="feature-button secondary" type="button" onclick="exportCustomersCSV()"><i class="fa-solid fa-download" aria-hidden="true"></i> Ekspor pelanggan</button></div>
       <form class="feature-form" style="padding:0;margin:12px 0 0;border:0" onsubmit="return false"><label for="customersCSV" class="product-sort-label">Pilih file CSV untuk diimpor</label><input id="customersCSV" type="file" accept=".csv,text/csv" onchange="importCustomersCSV(event)"></form>
-    </section>${list}`;
+    </section>`;
 }
 function saveContact(event, key, title) {
   event.preventDefault(); const form = event.currentTarget;
@@ -1658,51 +1745,161 @@ function renderPurchases() {
   const totalPurchases = activePurchases.reduce((sum, purchase) => sum + Number(purchase.total || 0), 0);
   const unpaidTotal = activePurchases.filter(purchase => purchase.paymentStatus === 'unpaid').reduce((sum, purchase) => sum + Number(purchase.total || 0), 0);
   const summary = `<div class="feature-card"><h3>Ringkasan pembelian</h3><p>Total pembelian: <strong>${rupiah(totalPurchases)}</strong></p><p>Belum lunas: <strong>${rupiah(unpaidTotal)}</strong></p><p>${activePurchases.length} transaksi aktif</p></div>`;
-  const list = data.purchases.map(purchase => {
+  const today = new Date();
+  const localToday = new Date(today.getTime() - today.getTimezoneOffset() * 60000).toISOString().slice(0, 10);
+  const form = !data.products.length || !data.suppliers.length
+    ? '<div class="feature-card"><p>Tambahkan produk dan supplier terlebih dahulu.</p></div>'
+    : `<form class="feature-form" onsubmit="savePurchase(event)"><h3>Catat pembelian stok</h3>
+      <select name="supplier" required>${supplierOptions()}</select>
+      <input name="date" type="date" value="${localToday}" required aria-label="Tanggal pembelian">
+      <div id="purchaseItems" class="purchase-items-list">${renderPurchaseRow()}</div>
+      <button class="feature-button secondary" type="button" onclick="addPurchaseRow()">+ Tambah produk</button>
+      <select name="paymentStatus" aria-label="Status pembayaran"><option value="unpaid">Belum lunas</option><option value="paid">Lunas</option></select>
+      <div class="feature-total" id="purchaseTotal">Total pembelian: ${rupiah(0)}</div>
+      <button type="submit">Simpan pembelian & tambah stok</button></form>`;
+  return `${summary}${form}<button class="feature-button secondary" type="button" style="width:100%;margin:4px 0 14px" onclick="openMenu('Riwayat Pembelian')"><i class="fa-solid fa-clock-rotate-left" aria-hidden="true" style="margin-right:7px"></i>Buka riwayat pembelian</button>`;
+}
+function renderPurchaseHistoryPage() {
+  const supplierFilters = data.suppliers.map(supplier => `<option value="${supplier.id}">${escapeHTML(supplier.name)}</option>`).join('');
+  return `<div class="product-tools">
+      <input id="purchaseSearch" type="search" placeholder="Cari supplier atau produk" oninput="filterPurchases()" aria-label="Cari riwayat pembelian">
+      <select id="purchaseSupplierFilter" onchange="filterPurchases()" aria-label="Filter supplier"><option value="">Semua supplier</option>${supplierFilters}</select>
+      <select id="purchaseStatusFilter" onchange="filterPurchases()" aria-label="Filter status pembayaran"><option value="">Semua status</option><option value="paid">Lunas</option><option value="unpaid">Belum lunas</option><option value="cancelled">Dibatalkan</option></select>
+      <form class="purchase-date-range" onsubmit="applyPurchaseDateFilter(event)">
+        <strong>Rentang tanggal</strong>
+        <label for="purchaseStartFilter">Dari<input id="purchaseStartFilter" type="date"></label>
+        <label for="purchaseEndFilter">Sampai<input id="purchaseEndFilter" type="date"></label>
+        <button class="feature-button secondary" type="submit">Terapkan tanggal</button>
+      </form>
+    </div><div id="purchaseHistoryList">${renderPurchaseHistoryList()}</div>`;
+}
+function renderPurchaseHistoryList() {
+  const query = (document.getElementById('purchaseSearch')?.value || '').trim().toLocaleLowerCase('id-ID');
+  const supplierId = document.getElementById('purchaseSupplierFilter')?.value || '';
+  const status = document.getElementById('purchaseStatusFilter')?.value || '';
+  const start = document.getElementById('purchaseStartFilter')?.value || '';
+  const end = document.getElementById('purchaseEndFilter')?.value || '';
+  const filtered = data.purchases.filter(purchase => {
+    const items = getPurchaseItems(purchase);
+    const text = `${purchase.supplierName || ''} ${items.map(item => item.productName || '').join(' ')}`.toLocaleLowerCase('id-ID');
+    const date = String(purchase.date || '').slice(0, 10);
+    return (!query || text.includes(query)) && (!supplierId || String(purchase.supplierId) === supplierId)
+      && (!status || (status === 'cancelled' ? purchase.cancelled : !purchase.cancelled && purchase.paymentStatus === status))
+      && (!start || date >= start) && (!end || date <= end);
+  });
+  return filtered.map(purchase => {
     const date = new Date(purchase.date);
     const items = getPurchaseItems(purchase);
-    const status = purchase.paymentStatus === 'paid' ? 'Lunas' : purchase.paymentStatus === 'unpaid' ? 'Belum lunas' : 'Status belum dicatat';
+    const statusText = purchase.paymentStatus === 'paid' ? 'Lunas' : purchase.paymentStatus === 'unpaid' ? 'Belum lunas' : 'Status belum dicatat';
     const isLegacy = !purchase.productId && !Array.isArray(purchase.items);
     const heading = items.length === 1 ? `${escapeHTML(items[0].productName || 'Produk')} × ${items[0].qty}` : `${items.length || 1} produk dari ${escapeHTML(purchase.supplierName || 'supplier')}`;
     const itemDetails = items.map(item => `<p>${escapeHTML(item.productName || 'Produk')} × ${item.qty} · ${rupiah(item.cost ?? (item.qty ? item.total / item.qty : 0))}/unit · ${rupiah(item.total ?? item.qty * item.cost)}</p>`).join('');
     return `<article class="feature-card"><h3>${heading}</h3>
       <p>${escapeHTML(purchase.supplierName || 'Supplier tidak tercatat')} · ${Number.isNaN(date.getTime()) ? '-' : date.toLocaleDateString('id-ID')} · ${rupiah(purchase.total)}</p>
-      ${purchase.cancelled ? '<span class="purchase-status">Dibatalkan</span>' : `<span class="purchase-status ${purchase.paymentStatus === 'paid' ? 'paid' : ''}">${status}</span>`}
+      ${purchase.cancelled ? '<span class="purchase-status">Dibatalkan</span>' : `<span class="purchase-status ${purchase.paymentStatus === 'paid' ? 'paid' : ''}">${statusText}</span>`}
       <details class="purchase-details"><summary>Detail pembelian</summary>${itemDetails}<p>Tanggal pembelian: ${Number.isNaN(date.getTime()) ? '-' : date.toLocaleDateString('id-ID')}</p>
-      ${!purchase.cancelled && !isLegacy ? `<div class="purchase-actions"><button class="feature-button secondary" type="button" onclick="togglePurchasePayment(${purchase.id})">Tandai ${purchase.paymentStatus === 'paid' ? 'belum lunas' : 'lunas'}</button><button class="feature-button danger" type="button" onclick="cancelPurchase(${purchase.id})">Batalkan pembelian</button></div>` : ''}
+      ${!purchase.cancelled && !isLegacy ? `<div class="purchase-actions"><button class="feature-button secondary" type="button" onclick="editPurchase(${purchase.id})">Edit transaksi</button><button class="feature-button secondary" type="button" onclick="togglePurchasePayment(${purchase.id})">Tandai ${purchase.paymentStatus === 'paid' ? 'belum lunas' : 'lunas'}</button><button class="feature-button danger" type="button" onclick="cancelPurchase(${purchase.id})">Batalkan pembelian</button></div>` : ''}
       ${!purchase.cancelled && isLegacy ? '<p>Catatan lama: pengelolaan status dan pembatalan tidak tersedia untuk transaksi ini.</p>' : ''}</details>
     </article>`;
-  }).join('') || emptyMessage('Belum ada catatan pembelian.');
-  if (!data.products.length || !data.suppliers.length) return `${summary}<div class="feature-card"><p>Tambahkan produk dan supplier terlebih dahulu.</p></div>${list}`;
-  const today = new Date();
-  const localToday = new Date(today.getTime() - today.getTimezoneOffset() * 60000).toISOString().slice(0, 10);
-  return `${summary}<form class="feature-form" onsubmit="savePurchase(event)"><h3>Catat pembelian stok</h3>
-    <select name="supplier" required>${supplierOptions()}</select>
-    <input name="date" type="date" value="${localToday}" required aria-label="Tanggal pembelian">
-    <div id="purchaseItems">${renderPurchaseRow()}</div>
-    <button class="feature-button secondary" type="button" onclick="addPurchaseRow()">+ Tambah produk</button>
-    <select name="paymentStatus" aria-label="Status pembayaran"><option value="unpaid">Belum lunas</option><option value="paid">Lunas</option></select>
-    <button type="submit">Simpan pembelian & tambah stok</button></form>${list}`;
+  }).join('') || emptyMessage('Tidak ada riwayat pembelian yang cocok.');
 }
-function renderPurchaseRow() {
-  return `<div class="feature-card purchase-item-row" style="display:grid;gap:9px;margin:0 0 10px;padding:12px">
-    <select name="product" required>${productOptions()}</select>
-    <input name="qty" type="number" min="1" placeholder="Jumlah dibeli" required>
-    <input name="cost" ${MONEY_ATTRS} placeholder="Harga modal per unit" required>
-    <button class="feature-button danger" type="button" onclick="this.closest('.purchase-item-row').remove(); ensurePurchaseRow()">Hapus produk</button>
+function filterPurchases() {
+  const list = document.getElementById('purchaseHistoryList');
+  if (list) list.innerHTML = renderPurchaseHistoryList();
+}
+function applyPurchaseDateFilter(event) {
+  event.preventDefault();
+  const start = document.getElementById('purchaseStartFilter').value;
+  const end = document.getElementById('purchaseEndFilter').value;
+  if (start && end && start > end) return alert('Tanggal awal harus sama dengan atau sebelum tanggal akhir.');
+  filterPurchases();
+}
+function renderPurchaseRow(item = null) {
+  const itemCost = item?.cost ?? (item?.qty ? item.total / item.qty : '');
+  const selectedProduct = data.products.find(product => product.id === (item?.productId ?? null));
+  return `<div class="feature-card purchase-item-row">
+    <div class="purchase-product-picker">
+      <input type="search" autocomplete="off" placeholder="Cari produk berdasarkan nama…" value="${escapeHTML(selectedProduct?.name || '')}" onfocus="filterPurchaseProducts(this)" oninput="filterPurchaseProducts(this)" aria-label="Cari produk untuk pembelian">
+      <input type="hidden" name="product" value="${selectedProduct?.id ?? ''}">
+      <div class="purchase-product-options"></div>
+    </div>
+    <input name="qty" type="number" min="1" placeholder="Jumlah" aria-label="Jumlah dibeli" value="${item?.qty ?? ''}" oninput="updatePurchaseTotal()" required>
+    <input name="cost" ${MONEY_ATTRS} placeholder="Modal/unit" aria-label="Harga modal per unit" value="${formatMoney(itemCost)}" oninput="updatePurchaseTotal()" required>
+    <button class="feature-button danger" type="button" aria-label="Hapus produk" onclick="this.closest('.purchase-item-row').remove(); ensurePurchaseRow(); updatePurchaseTotal()"><i class="fa-solid fa-trash-can" aria-hidden="true"></i></button>
   </div>`;
 }
-function addPurchaseRow() {
-  document.getElementById('purchaseItems')?.insertAdjacentHTML('beforeend', renderPurchaseRow());
+function filterPurchaseProducts(input) {
+  const picker = input.closest('.purchase-product-picker');
+  const selectedId = picker.querySelector('[name="product"]').value;
+  const selectedProduct = data.products.find(product => String(product.id) === selectedId);
+  if (input.value.trim() !== (selectedProduct?.name || '')) picker.querySelector('[name="product"]').value = '';
+  const query = input.value.trim().toLocaleLowerCase('id-ID');
+  const matches = data.products.filter(product => product.name.toLocaleLowerCase('id-ID').includes(query)).slice(0, 40);
+  picker.classList.add('open');
+  picker.querySelector('.purchase-product-options').innerHTML = matches.length
+    ? matches.map(product => `<button type="button" onclick="selectPurchaseProduct(this, ${product.id})">${escapeHTML(product.name)} · stok ${product.stock}</button>`).join('')
+    : '<p class="feature-empty">Produk tidak ditemukan.</p>';
+}
+function selectPurchaseProduct(button, id) {
+  const product = data.products.find(item => item.id === id);
+  const picker = button.closest('.purchase-product-picker');
+  if (!product || !picker) return;
+  picker.querySelector('input[type="search"]').value = product.name;
+  picker.querySelector('[name="product"]').value = product.id;
+  picker.classList.remove('open');
+  updatePurchaseTotal();
+}
+function activePurchaseItemsContainer() {
+  return document.querySelector('#purchaseEditOverlay #purchaseItems') || document.getElementById('purchaseItems');
+}
+function updatePurchaseTotal() {
+  const container = activePurchaseItemsContainer();
+  const totalElement = document.querySelector('#purchaseEditOverlay #purchaseTotal') || document.getElementById('purchaseTotal');
+  if (!container || !totalElement) return;
+  const total = [...container.querySelectorAll('.purchase-item-row')].reduce((sum, row) => {
+    const qty = Number(row.querySelector('[name="qty"]').value) || 0;
+    const cost = moneyNumber(row.querySelector('[name="cost"]').value) || 0;
+    return sum + qty * cost;
+  }, 0);
+  totalElement.textContent = `Total pembelian: ${rupiah(total)}`;
+}
+function addPurchaseRow(item = null) {
+  activePurchaseItemsContainer()?.insertAdjacentHTML('beforeend', renderPurchaseRow(item));
+  updatePurchaseTotal();
 }
 function ensurePurchaseRow() {
-  const container = document.getElementById('purchaseItems');
+  const container = activePurchaseItemsContainer();
   if (container && !container.querySelector('.purchase-item-row')) container.innerHTML = renderPurchaseRow();
 }
+function editPurchase(id) {
+  const purchase = data.purchases.find(item => item.id === id && !item.cancelled);
+  if (!purchase || (!purchase.productId && !Array.isArray(purchase.items))) return;
+  const items = getPurchaseItems(purchase);
+  document.getElementById('purchaseEditOverlay')?.remove();
+  document.getElementById('featureContent').insertAdjacentHTML('beforeend', `<div class="payment-overlay" id="purchaseEditOverlay" onclick="if(event.target === this) closePurchaseEditor()">
+    <section class="payment-box" role="dialog" aria-modal="true" aria-labelledby="purchaseEditTitle">
+      <div class="feature-header"><h2 id="purchaseEditTitle">Edit pembelian</h2><button class="feature-close" type="button" onclick="closePurchaseEditor()" aria-label="Tutup">&times;</button></div>
+      <form class="feature-form" onsubmit="savePurchase(event)">
+        <input type="hidden" name="purchaseId" value="${purchase.id}">
+        <select name="supplier" required>${data.suppliers.map(supplier => `<option value="${supplier.id}" ${supplier.id === purchase.supplierId ? 'selected' : ''}>${escapeHTML(supplier.name)}</option>`).join('')}</select>
+        <input name="date" type="date" value="${escapeHTML(String(purchase.date || '').slice(0, 10))}" required aria-label="Tanggal pembelian">
+        <div id="purchaseItems" class="purchase-items-list">${items.map(item => renderPurchaseRow(item)).join('')}</div>
+        <button class="feature-button secondary" type="button" onclick="addPurchaseRow()">+ Tambah produk</button>
+        <select name="paymentStatus" aria-label="Status pembayaran"><option value="unpaid" ${purchase.paymentStatus === 'unpaid' ? 'selected' : ''}>Belum lunas</option><option value="paid" ${purchase.paymentStatus === 'paid' ? 'selected' : ''}>Lunas</option></select>
+        <div class="feature-total" id="purchaseTotal">Total pembelian: ${rupiah(purchase.total)}</div>
+        <button type="submit">Simpan perubahan</button><button class="feature-button secondary" type="button" onclick="closePurchaseEditor()">Batal</button>
+      </form>
+    </section>
+  </div>`);
+}
+function closePurchaseEditor() { document.getElementById('purchaseEditOverlay')?.remove(); }
 function savePurchase(event) {
   event.preventDefault();
-  
   const form = event.currentTarget;
+  const purchaseId = Number(form.elements.namedItem('purchaseId')?.value || 0);
+  const purchaseIndex = purchaseId ? data.purchases.findIndex(item => item.id === purchaseId && !item.cancelled) : -1;
+  const editingPurchase = purchaseIndex >= 0 ? data.purchases[purchaseIndex] : null;
+  if (purchaseId && !editingPurchase) return alert('Transaksi pembelian tidak ditemukan atau sudah dibatalkan.');
   const supplier = data.suppliers.find(item => item.id === Number(form.elements.namedItem('supplier').value));
   const purchaseDate = form.elements.namedItem('date').value;
   const rows = [...form.querySelectorAll('.purchase-item-row')];
@@ -1719,20 +1916,53 @@ function savePurchase(event) {
     if (duplicateProducts.has(item.product.id)) return alert('Produk yang sama tidak boleh ditambahkan lebih dari sekali. Gabungkan jumlahnya dalam satu baris.');
     duplicateProducts.add(item.product.id);
   }
-  const purchaseItems = items.map(({ product, qty, cost }) => ({
-    productId: product.id, productName: product.name, qty, cost,
-    total: qty * cost, previousCost: Number(product.cost) || 0
-  }));
-  items.forEach(({ product, qty, cost }) => {
-    product.stock += qty;
-    product.cost = cost;
+  const oldItems = editingPurchase ? getPurchaseItems(editingPurchase) : [];
+  if (editingPurchase && oldItems.some(item => !data.products.some(product => product.id === item.productId))) return alert('Ada produk lama yang sudah tidak ditemukan. Pembelian tidak dapat diedit dengan aman.');
+  const stockChanges = new Map();
+  oldItems.forEach(item => stockChanges.set(item.productId, (stockChanges.get(item.productId) || 0) - Number(item.qty || 0)));
+  items.forEach(({ product, qty }) => stockChanges.set(product.id, (stockChanges.get(product.id) || 0) + qty));
+  for (const [productId, change] of stockChanges) {
+    const product = data.products.find(item => item.id === productId);
+    if (!product || product.stock + change < 0) return alert(`Stok ${product?.name || 'produk'} tidak cukup untuk menyimpan perubahan pembelian.`);
+  }
+  const purchaseItems = items.map(({ product, qty, cost }) => {
+    const previousItem = oldItems.find(item => item.productId === product.id);
+    return { productId: product.id, productName: product.name, qty, cost, total: qty * cost,
+      previousCost: previousItem ? (Number(previousItem.previousCost) || 0) : (Number(product.cost) || 0) };
   });
-  const total = purchaseItems.reduce((sum, item) => sum + item.total, 0);
-  data.purchases.unshift({
-    id: Date.now(), supplierId: supplier.id, supplierName: supplier.name,
-    items: purchaseItems, total, paymentStatus: form.elements.namedItem('paymentStatus').value,
-    date: `${purchaseDate}T12:00:00`, createdAt: Date.now()
-  });
+  if (editingPurchase) {
+    const hasNewerPurchase = productId => data.purchases.slice(0, purchaseIndex).some(candidate =>
+      !candidate.cancelled && getPurchaseItems(candidate).some(item => item.productId === productId)
+    );
+    oldItems.forEach(oldItem => {
+      if (!items.some(item => item.product.id === oldItem.productId) && !hasNewerPurchase(oldItem.productId)) {
+        const product = data.products.find(item => item.id === oldItem.productId);
+        product.cost = Number(oldItem.previousCost) || 0;
+      }
+    });
+    items.forEach(({ product, cost }) => {
+      if (!hasNewerPurchase(product.id)) product.cost = cost;
+    });
+    stockChanges.forEach((change, productId) => {
+      data.products.find(item => item.id === productId).stock += change;
+    });
+    editingPurchase.supplierId = supplier.id;
+    editingPurchase.supplierName = supplier.name;
+    editingPurchase.items = purchaseItems;
+    editingPurchase.total = purchaseItems.reduce((sum, item) => sum + item.total, 0);
+    editingPurchase.paymentStatus = form.elements.namedItem('paymentStatus').value;
+    editingPurchase.date = `${purchaseDate}T12:00:00`;
+    closePurchaseEditor();
+  } else {
+    purchaseItems.forEach(item => {
+      const product = data.products.find(product => product.id === item.productId);
+      product.stock += item.qty;
+      product.cost = item.cost;
+    });
+    const total = purchaseItems.reduce((sum, item) => sum + item.total, 0);
+    data.purchases.unshift({ id: Date.now(), supplierId: supplier.id, supplierName: supplier.name, items: purchaseItems, total,
+      paymentStatus: form.elements.namedItem('paymentStatus').value, date: `${purchaseDate}T12:00:00`, createdAt: Date.now() });
+  }
   saveData(); openMenu('Pembelian');
 }
 function togglePurchasePayment(id) {
@@ -1764,22 +1994,24 @@ function cancelPurchase(id) {
 function renderDebts() {
   const list = data.debts.map(debt => {
     const remaining = Number(debt.remaining) || 0;
-    return `<article class="feature-card" oncontextmenu="event.preventDefault(); deleteDebt(${debt.id})">
-      <div onpointerdown="startDebtPress(${debt.id}, event)" onpointerup="cancelDebtPress()" onpointerleave="cancelDebtPress()" onpointercancel="cancelDebtPress()">
-        <h3>${escapeHTML(debt.name)}</h3><p>Total hutang: <strong>${rupiah(debt.amount)}</strong></p>
-        <p>Sisa hutang: <strong>${rupiah(remaining)}</strong></p>
-        <span class="purchase-status ${remaining === 0 ? 'paid' : ''}">${remaining === 0 ? 'Lunas' : 'Belum lunas'}</span>
-        <p class="product-hint">Tekan dan tahan catatan untuk menghapus.</p>
+    return `<article class="feature-card debt-card" oncontextmenu="event.preventDefault(); deleteDebt(${debt.id})">
+      <div class="debt-card-main" onpointerdown="startDebtPress(${debt.id}, event)" onpointerup="cancelDebtPress()" onpointerleave="cancelDebtPress()" onpointercancel="cancelDebtPress()">
+        <div class="debt-card-heading"><h3>${escapeHTML(debt.name)}</h3><span class="purchase-status ${remaining === 0 ? 'paid' : ''}">${remaining === 0 ? 'Lunas' : 'Belum lunas'}</span></div>
+        <div class="debt-card-values"><span>Total: <strong>${rupiah(debt.amount)}</strong></span><span>Sisa: <strong>${rupiah(remaining)}</strong></span></div>
+        <p class="product-hint">Tekan dan tahan untuk menghapus.</p>
       </div>
-      ${remaining > 0 ? `<form class="feature-row" style="margin-top:10px" onsubmit="payDebt(event, ${debt.id})"><input name="payment" ${MONEY_ATTRS} placeholder="Jumlah pembayaran" required><button class="feature-button" type="submit">Bayar</button></form>` : ''}
+      ${remaining > 0 ? `<form class="debt-payment-form" onsubmit="payDebt(event, ${debt.id})"><input name="payment" ${MONEY_ATTRS} placeholder="Jumlah pembayaran" aria-label="Jumlah pembayaran" required><button class="feature-button" type="submit">Bayar</button></form>` : ''}
     </article>`;
   }).join('') || emptyMessage('Belum ada catatan hutang.');
   return `<form class="feature-form" onsubmit="addDebt(event)"><h3>Catat hutang pelanggan</h3><input name="name" placeholder="Nama pelanggan" required><input name="amount" ${MONEY_ATTRS} placeholder="Jumlah hutang" required><button type="submit">Simpan hutang</button></form>
-    <section class="feature-card"><h3>Import dan ekspor catatan hutang</h3><p>CSV menggunakan kolom: id, name, amount, remaining. Catatan lunas tetap disertakan saat ekspor.</p>
+    <button class="feature-button secondary" type="button" style="width:100%;margin-bottom:12px" onclick="openMenu('Import/Ekspor Hutang')"><i class="fa-solid fa-arrow-right-arrow-left" aria-hidden="true" style="margin-right:7px"></i>Import / Ekspor Data Hutang</button>
+    <h3 style="font-size:15px;margin:18px 0 10px">Semua catatan hutang</h3>${list}`;
+}
+function renderDebtImportExport() {
+  return `<section class="feature-card"><h3>Import dan ekspor catatan hutang</h3><p>CSV menggunakan kolom: id, name, amount, remaining. Catatan lunas tetap disertakan saat ekspor.</p>
       <div class="purchase-actions"><button class="feature-button secondary" type="button" onclick="exportDebtsCSV()"><i class="fa-solid fa-download" aria-hidden="true"></i> Ekspor hutang</button></div>
       <form class="feature-form" style="padding:0;margin:12px 0 0;border:0" onsubmit="return false"><label for="debtsCSV" class="product-sort-label">Pilih file CSV untuk diimpor</label><input id="debtsCSV" type="file" accept=".csv,text/csv" onchange="importDebtsCSV(event)"></form>
-    </section>
-    <h3 style="font-size:15px;margin:18px 0 10px">Semua catatan hutang</h3>${list}`;
+    </section>`;
 }
 let debtPressTimer;
 function startDebtPress(id, event) {
@@ -1864,7 +2096,7 @@ function renderHistory() {
       <div class="purchase-actions"><button class="feature-button danger" type="button" onclick="deleteTransaction(${transaction.id})">Ya, hapus</button><button class="feature-button secondary" type="button" onclick="cancelTransactionDelete(${transaction.id})">Batal</button></div>
     </div>
   </article>`).join('') || emptyMessage('Belum ada transaksi tersimpan.');
-  return `<div class="feature-card"><h3>Riwayat transaksi</h3><p>Ketuk transaksi untuk melihat struk dan cetak ulang. Tekan dan tahan untuk menampilkan opsi hapus.</p></div>${list}`;
+  return list;
 }
 let transactionPressTimer;
 let transactionLongPressed = false;
@@ -1906,8 +2138,9 @@ function openTransactionDetail(id, event) {
     <section class="payment-box receipt-detail-box" role="dialog" aria-modal="true" aria-label="Struk transaksi">
       <div class="receipt-preview">${receiptPaperHTML(transaction)}</div>
       <div class="receipt-detail-actions">
-        <button class="feature-button secondary" type="button" onclick="closeTransactionDetail()">Tutup</button>
-        <button class="feature-button" type="button" onclick="reprintTransaction(${transaction.id})"><i class="fa-solid fa-print" aria-hidden="true" style="margin-right:7px"></i>Cetak Ulang</button>
+        <button class="feature-button" type="button" onclick="reprintTransaction(${transaction.id})"><i class="fa-solid fa-print" aria-hidden="true" style="margin-right:7px"></i>Cetak</button>
+        <button class="feature-button danger" type="button" onclick="confirmDeleteTransaction(${transaction.id})"><i class="fa-solid fa-trash-can" aria-hidden="true" style="margin-right:5px"></i>Hapus</button>
+        <button class="feature-button secondary receipt-close-button" type="button" onclick="closeTransactionDetail()">Tutup</button>
       </div>
       <div class="receipt-print" id="receiptPrint">${receiptPaperHTML(transaction)}</div>
     </section>
@@ -1915,6 +2148,26 @@ function openTransactionDetail(id, event) {
 }
 function closeTransactionDetail() {
   document.getElementById('transactionDetailOverlay')?.remove();
+}
+function confirmDeleteTransaction(id) {
+  const transaction = data.transactions.find(item => item.id === id);
+  if (!transaction) return;
+  document.getElementById('transactionDeleteConfirm')?.remove();
+  document.getElementById('featureContent').insertAdjacentHTML('beforeend', `<div class="payment-overlay" id="transactionDeleteConfirm" onclick="if(event.target === this) closeTransactionDeleteConfirm()">
+    <section class="payment-box" role="alertdialog" aria-modal="true" aria-labelledby="transactionDeleteTitle" aria-describedby="transactionDeleteMessage">
+      <div class="feature-header"><h2 id="transactionDeleteTitle">Hapus transaksi?</h2><button class="feature-close" type="button" onclick="closeTransactionDeleteConfirm()" aria-label="Batal">&times;</button></div>
+      <p id="transactionDeleteMessage" style="margin-bottom:16px;color:#718078;font-size:13px;line-height:1.5">Transaksi ${escapeHTML(transaction.customer)} senilai ${rupiah(transaction.total)} akan dihapus. Tindakan ini tidak dapat dibatalkan.</p>
+      <div class="purchase-actions"><button class="feature-button secondary" type="button" onclick="closeTransactionDeleteConfirm()">Batal</button><button class="feature-button danger" type="button" onclick="executeTransactionDelete(${transaction.id})">Ya, hapus</button></div>
+    </section>
+  </div>`);
+}
+function closeTransactionDeleteConfirm() {
+  document.getElementById('transactionDeleteConfirm')?.remove();
+}
+function executeTransactionDelete(id) {
+  if (!data.transactions.some(item => item.id === id)) return closeTransactionDeleteConfirm();
+  closeTransactionDetail();
+  deleteTransaction(id);
 }
 async function reprintTransaction(id) {
   const transaction = data.transactions.find(item => item.id === id);
@@ -1950,6 +2203,7 @@ function renderReports(period = document.getElementById('reportPeriod')?.value |
   const start = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   let end = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999);
   if (period === '7days') start.setDate(start.getDate() - 6);
+  if (period === '30days') start.setDate(start.getDate() - 29);
   if (period === 'month') start.setDate(1);
   if (period === 'custom') {
     start.setTime(new Date(`${customStart}T00:00:00`).getTime());
@@ -1991,24 +2245,33 @@ function renderReports(period = document.getElementById('reportPeriod')?.value |
   }));
   reportBestSellerList = [...bestSellers.values()].sort((a, b) => b.qty - a.qty);
   reportState = { period, start: customStart, end: customEnd };
-  const lowStock = data.products.filter(product => product.stock <= 5).sort((a, b) => a.stock - b.stock);
-  const lowStockMarkup = lowStock.length ? lowStock.map(product => `<p class="low-stock-item"><strong>${escapeHTML(product.name)}</strong><span>${product.stock === 0 ? 'Stok habis' : `Tersisa ${product.stock} unit`}</span></p>`).join('') : '<p>Semua produk memiliki stok lebih dari 5 unit.</p>';
   return `<div class="product-tools report-filters"><label class="product-sort-label" for="reportPeriod">Periode laporan</label>
       <select id="reportPeriod" onchange="filterReports()">
         <option value="today" ${period === 'today' ? 'selected' : ''}>Hari ini</option>
         <option value="7days" ${period === '7days' ? 'selected' : ''}>7 hari terakhir</option>
+        <option value="30days" ${period === '30days' ? 'selected' : ''}>30 hari terakhir</option>
         <option value="month" ${period === 'month' ? 'selected' : ''}>Bulan ini</option>
         <option value="all" ${period === 'all' ? 'selected' : ''}>Semua waktu</option>
         <option value="custom" ${period === 'custom' ? 'selected' : ''}>Pilih tanggal</option>
       </select>
       ${period === 'custom' ? `<label class="product-sort-label" for="reportStart">Dari tanggal</label><input id="reportStart" type="date" value="${escapeHTML(customStart)}" onchange="filterReports()"><label class="product-sort-label" for="reportEnd">Sampai tanggal</label><input id="reportEnd" type="date" value="${escapeHTML(customEnd)}" onchange="filterReports()">` : ''}</div>
     ${!validRange ? '<div class="feature-card"><p>Tanggal awal harus sama dengan atau sebelum tanggal akhir.</p></div>' : ''}
-    <div class="feature-card"><h3>Ringkasan penjualan</h3><p>Total penjualan: <strong>${rupiah(totalSales)}</strong></p><p>Perkiraan keuntungan: <strong>${rupiah(totalProfit)}</strong></p><p>Jumlah transaksi: <strong>${transactions.length}</strong> · Rata-rata transaksi: <strong>${rupiah(transactions.length ? totalSales / transactions.length : 0)}</strong></p><p>Produk terjual: <strong>${units}</strong> unit</p></div>
+    <section class="feature-card report-summary" aria-label="Ringkasan penjualan">
+      <div class="report-summary-hero"><div><small>Total penjualan</small><strong>${rupiah(totalSales)}</strong></div><i class="fa-solid fa-chart-line" aria-hidden="true"></i></div>
+      <div class="report-summary-grid">
+        <div class="report-summary-metric profit"><small>Perkiraan keuntungan</small><strong>${rupiah(totalProfit)}</strong></div>
+        <div class="report-summary-metric"><small>Jumlah transaksi</small><strong>${transactions.length}</strong></div>
+        <div class="report-summary-metric"><small>Rata-rata transaksi</small><strong>${rupiah(transactions.length ? totalSales / transactions.length : 0)}</strong></div>
+        <div class="report-summary-metric"><small>Produk terjual</small><strong>${units} unit</strong></div>
+      </div>
+    </section>
+    <section class="feature-card report-stock-value" aria-label="Nilai stok saat ini">
+      <div class="report-stock-value-icon"><i class="fa-solid fa-boxes-stacked" aria-hidden="true"></i></div>
+      <div class="report-stock-value-copy"><small>Nilai stok saat ini</small><strong>${rupiah(data.products.reduce((sum, product) => sum + product.stock * product.cost, 0))}</strong><p>Berdasarkan stok × harga modal</p></div>
+    </section>
     <div class="feature-card"><h3>Grafik penjualan & keuntungan</h3>${chartMarkup}</div>
     <div class="feature-card"><h3>Produk terlaris</h3><p>${reportBestSellerList.length ? `${reportBestSellerList.length} produk terjual pada periode ini.` : 'Belum ada produk terjual pada periode ini.'}</p><button class="feature-button secondary" type="button" style="width:100%;margin-top:12px" onclick="openBestSellers()">Lihat daftar produk terlaris <i class="fa-solid fa-arrow-right" style="margin-left:6px"></i></button></div>
-    <div class="feature-card"><h3>Stok menipis (≤ 5 unit)</h3>${lowStockMarkup}</div>
-    <div class="feature-card"><h3>Nilai stok saat ini</h3><p>${rupiah(data.products.reduce((sum, product) => sum + product.stock * product.cost, 0))}</p></div>
-    <button class="feature-button secondary" onclick="openMenu('Riwayat')">Lihat riwayat transaksi</button>`;
+  `;
 }
 function openBestSellers() {
   showFeature('Produk Terlaris', renderBestSellersPage());
@@ -2041,11 +2304,14 @@ function renderSettings() {
       <button class="feature-button secondary" type="button" style="width:100%;margin-top:10px" onclick="connectBluetoothPrinter()">Hubungkan / pilih printer</button>
       <button class="feature-button secondary" type="button" style="width:100%;margin-top:8px" onclick="printBluetoothTest()">Cetak tes Bluetooth</button>
       <p class="product-hint" id="printerStatus" aria-live="polite"></p></section>
-    <section class="feature-card"><h3>Import dan ekspor produk</h3><p>Ekspor produk sebagai CSV, atau impor file CSV/Excel (.xlsx). Kolom nama dapat memakai: nama, produk, barang, nama barang, atau product. Kolom harga dapat memakai: harga, harga jual, atau price. Kolom opsional mendukung Bahasa Indonesia maupun Inggris: id, satuan/unit, modal/cost, stok/stock, dan barcode. Produk yang cocok berdasarkan ID, barcode, atau nama akan diperbarui; produk lain ditambahkan.</p>
+    <button class="feature-button secondary" type="button" style="width:100%;margin-bottom:12px;text-align:left" onclick="openMenu('Import/Ekspor Produk')"><i class="fa-solid fa-arrow-right-arrow-left" aria-hidden="true" style="margin-right:7px"></i>Import / Ekspor Produk</button>
+`;
+}
+function renderProductImportExportPage() {
+  return `<section class="feature-card"><h3>Import dan ekspor produk</h3><p>Ekspor produk sebagai CSV, atau impor file CSV/Excel (.xlsx). Kolom nama dapat memakai: nama, produk, barang, nama barang, atau product. Kolom harga dapat memakai: harga, harga jual, atau price. Kolom opsional mendukung Bahasa Indonesia maupun Inggris: id, satuan/unit, modal/cost, stok/stock, dan barcode. Produk yang cocok berdasarkan ID, barcode, atau nama akan diperbarui; produk lain ditambahkan.</p>
       <div class="purchase-actions"><button class="feature-button secondary" type="button" onclick="exportProductsCSV()"><i class="fa-solid fa-download" aria-hidden="true"></i> Ekspor produk</button></div>
       <form class="feature-form" style="padding:0;margin:12px 0 0;border:0" onsubmit="return false"><label for="productsCSV" class="product-sort-label">Pilih file CSV atau Excel (.xlsx) untuk diimpor</label><input id="productsCSV" type="file" accept=".csv,.xlsx,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" onchange="importProductsCSV(event)"></form>
-    </section>
-`;
+    </section>`;
 }
 function csvEscape(value) {
   const text = String(value ?? '');
