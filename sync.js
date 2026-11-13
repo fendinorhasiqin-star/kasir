@@ -49,6 +49,7 @@ function start() {
   let uid = null, unsubs = [], flushTimer = null, refreshTimer = null;
   const snaps = {};          // name -> { id: hash } = versi terakhir yang sudah sinkron
   const ready = {};          // name -> true setelah snapshot dari server pertama diproses
+  window.cloudReady = () => !!ready['pengaturan'];   // dipakai admin.js: true setelah data akun (termasuk PIN) dimuat dari cloud
   const pendingRefresh = new Set();
   const warned = new Set();
 
