@@ -2729,6 +2729,47 @@ function updateDashboard() {
     <div class="price">${rupiah(transaction.total)}</div>
   </div>`).join('') : emptyMessage('Belum ada transaksi hari ini.');
 }
+function seedPreviewData() {
+  const previewEditor = window.self !== window.top;
+  if (!previewEditor) return;
+
+  const samples = [
+    ['Beras Premium 5 kg', 'karung', 78000, 65000],
+    ['Minyak Goreng 1 L', 'pcs', 18000, 14500],
+    ['Gula Pasir 1 kg', 'kg', 17000, 14000],
+    ['Telur Ayam', 'kg', 29000, 25000],
+    ['Mi Instan', 'pcs', 3500, 2800],
+    ['Kopi Bubuk', 'bks', 12000, 9000],
+    ['Tepung Terigu 1 kg', 'pcs', 13000, 10500],
+    ['Susu UHT 1 L', 'pcs', 19000, 15500]
+  ];
+  if (!data.products.length) {
+    data.products = samples.map(([name, unit, price, cost], index) => ({
+      id: index + 1, name, unit, price, cost, stock: 100 + Math.floor(Math.random() * 401)
+    }));
+  }
+
+  const now = new Date();
+  const previewTransactions = Array.from({ length: 30 }, (_, index) => {
+    const items = Array.from({ length: 1 + Math.floor(Math.random() * 3) }, () => {
+      const product = data.products[Math.floor(Math.random() * data.products.length)];
+      const qty = 100 + Math.floor(Math.random() * 151);
+      return { id: product.id, name: product.name, unit: product.unit, price: product.price, cost: product.cost, qty };
+    });
+    const total = items.reduce((sum, item) => sum + item.price * item.qty, 0);
+    const date = new Date(now);
+    const daysAgo = index < 20 ? 0 : Math.floor(Math.random() * 30);
+    date.setDate(date.getDate() - daysAgo);
+    date.setHours(8 + Math.floor(Math.random() * 12), Math.floor(Math.random() * 60), 0, 0);
+    return {
+      id: Date.now() - index,
+      customer: ['Pelanggan Umum', 'Budi Santoso', 'Siti Aminah', 'Andi'][Math.floor(Math.random() * 4)],
+      total, cash: Math.ceil(total / 10000) * 10000, date: date.toISOString(), items
+    };
+  });
+  data.transactions = [...previewTransactions, ...data.transactions]
+    .sort((a, b) => new Date(b.date) - new Date(a.date));
+}
 document.querySelector('.brand h3').textContent = data.settings.shop.toUpperCase();
 document.querySelector('.brand p').textContent = 'Selamat datang, ' + data.settings.admin + '!';
 updateDashboard();
