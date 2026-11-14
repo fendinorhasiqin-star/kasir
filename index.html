@@ -197,6 +197,23 @@
     .offline-callout .big-icon { width:58px; height:58px; display:grid; place-items:center; background:rgba(255,255,255,.14); border-radius:18px; font-size:1.8rem; }
     .offline-callout h3 { margin:0 0 4px; font-size:1.25rem; }
     .offline-callout p { margin:0; color:#d7f1e1; font-size:.9rem; }
+    .multi { padding:82px 0; background:linear-gradient(120deg,#06452e,#087a43); color:white; }
+    .multi .section-kicker { color:#ffd84d; }
+    .multi h2 { color:white; }
+    .multi .section-head p { color:#d9f0e2; }
+    .device-flow { display:grid; grid-template-columns:1fr auto 1fr auto 1fr; align-items:stretch; gap:14px; }
+    .device { padding:24px 20px; border-radius:22px; background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.2); text-align:center; }
+    .device-icon { width:60px; height:60px; margin:0 auto 12px; display:grid; place-items:center; border-radius:18px; background:rgba(255,255,255,.16); font-size:1.8rem; }
+    .device h3 { margin:0 0 6px; font-size:1.08rem; }
+    .device p { margin:0; color:#d9f0e2; font-size:.88rem; }
+    .device-cloud { background:white; color:var(--ink); border-color:white; box-shadow:0 18px 40px rgba(0,0,0,.18); }
+    .device-cloud .device-icon { background:var(--green-soft); }
+    .device-cloud p { color:var(--muted); }
+    .flow-arrow { align-self:center; color:#ffd84d; font-size:1.6rem; font-weight:900; text-align:center; }
+    .multi-points { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:28px; }
+    .multi-point { display:flex; gap:11px; align-items:flex-start; padding:16px 18px; border-radius:16px; background:rgba(255,255,255,.08); font-size:.9rem; color:#eaf7ef; }
+    .multi-point .check { background:#ffd84d; color:#172319; }
+    .multi-note { margin:22px auto 0; max-width:720px; text-align:center; color:#cfe8d9; font-size:.84rem; }
     .steps { display:grid; grid-template-columns:repeat(3,1fr); gap:20px; counter-reset:step; }
     .step { background:white; border:1px solid var(--line); border-radius:20px; padding:25px; }
     .step:before { counter-increment:step; content:"0" counter(step); color:var(--green); font-size:1.8rem; font-weight:950; }
@@ -247,6 +264,10 @@
       .feature-grid { grid-template-columns:1fr 1fr; gap:10px; }
       .feature { padding:17px; }
       .offline-callout { grid-template-columns:1fr; padding:22px; }
+      .multi { padding:60px 0; }
+      .device-flow { grid-template-columns:1fr; gap:8px; }
+      .flow-arrow { transform:rotate(90deg); font-size:1.3rem; }
+      .multi-points { grid-template-columns:1fr; gap:10px; }
       .steps { grid-template-columns:1fr; gap:12px; }
       .final-cta { padding:58px 0 85px; }
       .sticky-mobile { display:flex; position:fixed; z-index:30; bottom:12px; left:12px; right:12px; }
@@ -455,12 +476,12 @@
               <li><span class="check">✓</span> Data aman tersimpan di database online</li>
               <li><span class="check">✓</span> Tetap bisa digunakan untuk kasir saat offline</li>
               <li><span class="check">✓</span> Bisa dibuka dari HP, komputer, maupun tablet</li>
+              <li><span class="check">✓</span> Login dari beberapa perangkat: kasir pakai perangkat toko, owner pantau dari perangkatnya sendiri</li>
               <li><span class="check">✓</span> Pantau perkembangan toko dari jarak jauh</li>
               <li><span class="check">✓</span> Update fitur otomatis</li>
               <li><span class="check">✓</span> Bisa request fitur kepada admin</li>
               <li><span class="check">✓</span> Bisa konsultasi untuk penyesuaian dengan bisnis</li>
             </ul>
-            .</div>
             <a class="btn btn-yellow" href="#kontak" data-package="Warungku Online">Pilih Berlangganan</a>
           </article>
         </div>
@@ -480,12 +501,47 @@
           <article class="feature"><div class="f-icon">📦</div><h3>Manajemen Produk</h3><p>Kelola ribuan data produk dan informasi modal barang.</p></article>
           <article class="feature"><div class="f-icon">🛍️</div><h3>Pencatatan Pembelian</h3><p>Catat aktivitas kulakan dan pengeluaran barang toko.</p></article>
           <article class="feature"><div class="f-icon">🏬</div><h3>Kelola Banyak Toko</h3><p>Bantu memantau dan membandingkan performa beberapa cabang.</p></article>
-          <article class="feature"><div class="f-icon">📱</div><h3>Pantau dari Mana Saja</h3><p>Fitur pemantauan jarak jauh tersedia pada paket Online.</p></article>
+          <article class="feature"><div class="f-icon">📱</div><h3>Login Multi-Perangkat</h3><p>Kasir memakai perangkat toko, owner login dari perangkat sendiri untuk melihat transaksi toko. Tersedia pada paket Online.</p></article>
         </div>
         <div class="offline-callout">
           <div class="big-icon">📡</div>
           <div><h3>Internet boleh mati, transaksi tetap jalan!</h3><p>Warungku Online mendukung penggunaan kasir secara offline. Saat koneksi internet tersedia kembali, data otomatis disinkronkan dengan database online.</p></div>
         </div>
+      </div>
+    </section>
+
+    <section class="multi" id="multi-perangkat">
+      <div class="container">
+        <div class="section-head">
+          <div class="section-kicker">Keunggulan Warungku Online</div>
+          <h2>Satu Akun, Banyak Perangkat.<br>Toko Tetap Terpantau.</h2>
+          <p>Kasir bekerja di perangkat toko, kamu sebagai owner cukup login dari perangkatmu sendiri untuk melihat transaksi yang terjadi di toko.</p>
+        </div>
+        <div class="device-flow">
+          <article class="device">
+            <div class="device-icon">🏪</div>
+            <h3>Perangkat Toko</h3>
+            <p>Dipakai kasir atau karyawan untuk melayani pembeli dan mencatat transaksi.</p>
+          </article>
+          <div class="flow-arrow" aria-hidden="true">→</div>
+          <article class="device device-cloud">
+            <div class="device-icon">☁️</div>
+            <h3>Database Online</h3>
+            <p>Transaksi tersimpan aman dan tersinkron otomatis saat internet tersedia.</p>
+          </article>
+          <div class="flow-arrow" aria-hidden="true">→</div>
+          <article class="device">
+            <div class="device-icon">📱</div>
+            <h3>Perangkat Owner</h3>
+            <p>Login dengan akun yang sama dari HP, tablet, atau komputer milikmu, lalu lihat transaksi toko.</p>
+          </article>
+        </div>
+        <div class="multi-points">
+          <div class="multi-point"><span class="check">✓</span><span>Tidak perlu meminjam atau mengambil perangkat toko untuk cek penjualan</span></div>
+          <div class="multi-point"><span class="check">✓</span><span>Perangkat toko dan perangkat owner bisa dipakai bersamaan</span></div>
+          <div class="multi-point"><span class="check">✓</span><span>Ganti atau kehilangan perangkat? Login lagi, datamu kembali</span></div>
+        </div>
+        <p class="multi-note">Fitur login multi-perangkat tersedia pada paket Warungku Online. Paket Offline menyimpan data di satu perangkat.</p>
       </div>
     </section>
 
@@ -512,6 +568,7 @@
         </div>
         <div class="faq">
           <details><summary>Apakah Warungku Online harus selalu terhubung internet?</summary><p>Tidak. Warungku Online tetap bisa digunakan untuk transaksi kasir saat offline. Koneksi internet dibutuhkan untuk mengakses fitur online dan menyimpan atau menyinkronkan data ke database.</p></details>
+          <details><summary>Bisakah akun yang sama dipakai di beberapa perangkat?</summary><p>Bisa pada paket Online. Misalnya di toko memakai perangkat milik toko untuk kasir, sedangkan kamu sebagai owner login dari perangkatmu sendiri untuk melihat transaksi yang terjadi di toko. Data tersinkron saat perangkat terhubung internet. Pada paket Offline, data tersimpan di satu perangkat.</p></details>
           <details><summary>Apa perbedaan utama paket Offline dan Online?</summary><p>Paket Offline dibayar sekali dan datanya disimpan di perangkat. Paket Online berlangganan, memiliki database online, mendukung pemantauan jarak jauh, update fitur, serta request dan konsultasi penyesuaian fitur kepada admin.</p></details>
           <details><summary>Kalau HP hilang, apakah data paket Online tetap aman?</summary><p>Data paket Online tersimpan di database, selama anda login dari email yang sama, produk dan catatan lainnya akan kembali.</p></details>
           <details><summary>Apakah aplikasi bisa menampung banyak produk?</summary><p>Paket sekali bayar mendukung ribuan produk. Hubungi admin jika ingin memastikan kebutuhan jumlah produk atau penggunaan khusus bisnismu.</p></details>
