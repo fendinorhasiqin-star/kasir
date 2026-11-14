@@ -1,7 +1,7 @@
 /* Service worker Kasir Arridho Jaya
    Naikkan VERSI setiap kali kamu mengubah index.html / desktop.html / mobile.html
    supaya HP pengguna mengambil file terbaru. */
-var VERSI = 'v16';
+var VERSI = 'v17';
 var CACHE = 'kasir-aj-' + VERSI;
 var HP = /Android.*Mobile|iPhone|iPod/i.test(self.navigator.userAgent);
 var HALAMAN_UTAMA = HP ? 'mobile.html' : 'desktop.html';
@@ -14,7 +14,6 @@ var INTI = [
   'login.html',
   'firebase-config.js',
   'sync.js',
-  'admin.js',
   'manifest-mobile.json',
   'manifest-desktop.json',
   'icon-192.png',

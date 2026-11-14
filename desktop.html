@@ -1029,10 +1029,6 @@ body { padding: 0 !important; background: #F4F7F5; overflow-x: hidden; }
 .kp-btn:focus-visible { outline:3px solid #1f4fb455; outline-offset:2px; }
 
 /* ===== FITUR DARI VERSI HP, DISESUAIKAN UNTUK LAYAR KOMPUTER ===== */
-/* Kasir: tombol barang cepat */
-.ks-quick-add { width:100%; height:42px; margin-top:10px; border:1.5px dashed #16834A; background:#fff; color:#16834A; font-size:13.5px; }
-.ks-quick-add:hover { background:#E5F5EA; }
-.ks-quick-add i { margin-right:6px; }
 /* Produk: jumlah produk */
 .product-count { max-width:900px; margin:2px 2px 10px; color:#5F6F66; font-size:13px; font-weight:600; }
 /* Stok: tab + kartu stok menipis */
@@ -1581,44 +1577,6 @@ function saveCartPrice(event, id) {
   item.price = price;
   openMenu(activeFeature);
 }
-/* Tambah barang cepat: barang di luar daftar Produk, hanya masuk keranjang (tidak mengurangi stok) */
-function showQuickAddItem() {
-  const search = document.getElementById('cashierSearch');
-  const name = search ? search.value.trim() : '';
-  document.getElementById('quickAddOverlay')?.remove();
-  document.getElementById('featureContent').insertAdjacentHTML('beforeend', `<div class="payment-overlay" id="quickAddOverlay" onclick="if(event.target === this) closeQuickAdd()">
-    <section class="payment-box" role="dialog" aria-modal="true" aria-labelledby="quickAddTitle">
-      <div class="feature-header"><h2 id="quickAddTitle">Tambah barang cepat</h2><button class="feature-close" type="button" onclick="closeQuickAdd()" aria-label="Tutup">&times;</button></div>
-      <form class="feature-form" onsubmit="saveQuickAdd(event)">
-        <label for="quickAddName">Nama barang</label>
-        <input id="quickAddName" name="name" placeholder="Nama barang" value="${escapeHTML(name)}" required>
-        <label for="quickAddPrice">Harga (Rp)</label>
-        <input id="quickAddPrice" name="price" ${MONEY_ATTRS} placeholder="Harga jual" required>
-        <label for="quickAddUnit">Satuan</label>
-        <input id="quickAddUnit" name="unit" placeholder="Contoh: pcs, kg, bks">
-        <div class="feature-row"><button class="feature-button secondary" type="button" onclick="closeQuickAdd()">Batal</button><button type="submit">Tambah ke keranjang</button></div>
-      </form>
-    </section>
-  </div>`);
-  document.getElementById(name ? 'quickAddPrice' : 'quickAddName').focus();
-}
-function closeQuickAdd() {
-  document.getElementById('quickAddOverlay')?.remove();
-  document.getElementById('cashierSearch')?.focus();
-}
-function saveQuickAdd(event) {
-  event.preventDefault();
-  const form = event.currentTarget;
-  const name = form.elements.namedItem('name').value.trim();
-  const price = moneyNumber(form.elements.namedItem('price').value);
-  const unit = form.elements.namedItem('unit').value.trim();
-  if (!name) return notify('Nama barang wajib diisi.');
-  if (!form.elements.namedItem('price').value.trim() || !Number.isFinite(price) || price < 0) return notify('Harga harus berupa angka nol atau lebih.');
-  data.cart.push({ id: -(Date.now() + Math.floor(Math.random() * 1000)), quick: true, name, unit, price, cost: 0, qty: 1 });
-  playAddToCartSound();
-  openMenu(activeFeature);
-  document.getElementById('cashierSearch')?.focus();
-}
 /* ===== KASIR: cari produk & pembayaran (panel kanan) ===== */
 let cashierPay = { method: 'tunai', cash: 0, customer: '' };
 let pendingPayment = null;
@@ -1662,7 +1620,6 @@ function renderCashierSide(total) {
         <input class="ks-input ks-qty" id="cashierQty" type="number" min="1" step="1" value="1" inputmode="numeric" onkeydown="if(event.key==='Enter'){event.preventDefault();addFromSearchInput()}">
         <button class="ks-btn ks-btn-grow" type="button" onclick="addFromSearchInput()">+ Tambah</button>
       </div>
-      <button class="ks-btn ks-quick-add" type="button" onclick="showQuickAddItem()" title="Tambah barang yang tidak ada di daftar Produk (tidak mengurangi stok)"><i class="fa-solid fa-bolt" aria-hidden="true"></i> Barang cepat (tanpa stok)</button>
       <div class="cashier-results" id="cashierResults"></div>
     </div>
     <div class="ks-card ks-total-card">
@@ -3367,7 +3324,6 @@ function syncNavigation(feature) {
         && document.getElementById('featureModal').classList.contains('open')) { backFeature(); return; }
     if (event.key === 'Escape') {
       document.getElementById('cartPriceOverlay')?.remove();
-      document.getElementById('quickAddOverlay')?.remove();
       document.getElementById('purchaseEditOverlay')?.remove();
       document.getElementById('productActionOverlay')?.remove();
       document.getElementById('productDeleteOverlay')?.remove();
@@ -3384,7 +3340,6 @@ function syncNavigation(feature) {
 })();
 </script>
 
-<script src="admin.js"></script>
 <script type="module" src="sync.js"></script>
 
 <script>

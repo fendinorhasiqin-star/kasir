@@ -1125,7 +1125,7 @@ function renderCashier() {
     <main class="cashier-page-content">
       <div class="cashier-search">
         <input id="cashierSearch" type="search" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Scan / ketik nama atau barcode" oninput="searchCashierProducts()" aria-label="Cari nama atau barcode produk">
-        <button class="camera-button" type="button" onclick="showQuickAddItem()" aria-label="Tambah barang cepat ke keranjang"><i class="fa-solid fa-plus"></i></button>
+        <button class="camera-button" type="button" onclick="scanProductBarcode()" aria-label="Scan barcode produk"><i class="fa-solid fa-barcode"></i></button>
       </div>
       <div class="cashier-results" id="cashierResults"></div>${cartMarkup}
     </main>
@@ -1192,42 +1192,6 @@ function saveCartPrice(event, id) {
   if (!value || !Number.isFinite(price) || price < 0) return alert('Harga harus berupa angka nol atau lebih.');
   item.price = price;
   refreshKeepingScroll();
-}
-function showQuickAddItem() {
-  const search = document.getElementById('cashierSearch');
-  const name = search ? search.value.trim() : '';
-  document.getElementById('quickAddOverlay')?.remove();
-  document.getElementById('featureContent').insertAdjacentHTML('beforeend', `<div class="payment-overlay" id="quickAddOverlay" onclick="if(event.target === this) closeQuickAdd()">
-    <section class="payment-box" role="dialog" aria-modal="true" aria-labelledby="quickAddTitle">
-      <div class="feature-header"><h2 id="quickAddTitle">Tambah barang cepat</h2><button class="feature-close" type="button" onclick="closeQuickAdd()" aria-label="Tutup">&times;</button></div>
-      <form class="feature-form" onsubmit="saveQuickAdd(event)">
-        <label for="quickAddName">Nama barang</label>
-        <input id="quickAddName" name="name" placeholder="Nama barang" value="${escapeHTML(name)}" required>
-        <label for="quickAddPrice">Harga (Rp)</label>
-        <input id="quickAddPrice" name="price" ${MONEY_ATTRS} placeholder="Harga jual" required>
-        <label for="quickAddUnit">Satuan</label>
-        <input id="quickAddUnit" name="unit" placeholder="Contoh: pcs, kg, bks">
-        <div class="feature-row"><button class="feature-button secondary" type="button" onclick="closeQuickAdd()">Batal</button><button type="submit">Tambah ke keranjang</button></div>
-      </form>
-    </section>
-  </div>`);
-  document.getElementById(name ? 'quickAddPrice' : 'quickAddName').focus();
-}
-function closeQuickAdd() {
-  document.getElementById('quickAddOverlay')?.remove();
-}
-function saveQuickAdd(event) {
-  event.preventDefault();
-  const form = event.currentTarget;
-  const name = form.elements.namedItem('name').value.trim();
-  const price = moneyNumber(form.elements.namedItem('price').value);
-  const unit = form.elements.namedItem('unit').value.trim();
-  if (!name) return alert('Nama barang wajib diisi.');
-  if (!form.elements.namedItem('price').value.trim() || !Number.isFinite(price) || price < 0) return alert('Harga harus berupa angka nol atau lebih.');
-  // Barang cepat hanya masuk ke keranjang (tidak ke daftar Produk dan tidak mengurangi stok).
-  data.cart.push({ id: -(Date.now() + Math.floor(Math.random() * 1000)), quick: true, name, unit, price, cost: 0, qty: 1 });
-  playAddToCartSound();
-  openMenu(activeFeature);
 }
 function searchCashierProducts() {
   const query = document.getElementById('cashierSearch').value.trim().toLocaleLowerCase('id-ID');
@@ -2811,7 +2775,6 @@ document.querySelectorAll('.nav-item').forEach(item => {
 });
 </script>
 
-<script src="admin.js"></script>
 <script type="module" src="sync.js"></script>
 
 </body>
