@@ -8,8 +8,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="KASIR APPS">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
-<link rel="icon" type="image/svg+xml" href="logo.svg">
-<title>Masuk - Kasir AJ</title>
+<title>Masuk - KASIR APPS</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -38,8 +37,6 @@ body { font-family: 'Inter', sans-serif; background: #0f2a3d; color: #26352D; }
   background: #ffffff22; border: 1px solid #ffffff40; border-radius: 20px;
   display: grid; place-items: center; font-size: 30px;
 }
-.logo { background: none; border: 0; }
-.logo img { width: 100%; height: 100%; display: block; border-radius: 20px; }
 .hero h1 { font-size: 22px; font-weight: 800; letter-spacing: -.3px; }
 .hero p { font-size: 12px; opacity: .8; margin-top: 6px; }
 
@@ -126,8 +123,8 @@ body { font-family: 'Inter', sans-serif; background: #0f2a3d; color: #26352D; }
 <div class="app">
 
   <div class="hero">
-    <div class="logo"><img src="logo.svg" alt="KASIR APPS"></div>
-    <h1 id="namaToko">Kasir AJ</h1>
+    <div class="logo"><i class="fa-solid fa-store"></i></div>
+    <h1 id="namaToko">KASIR APPS</h1>
     <p>Aplikasi kasir untuk toko Anda</p>
   </div>
 
@@ -203,7 +200,7 @@ body { font-family: 'Inter', sans-serif; background: #0f2a3d; color: #26352D; }
     </div>
   </div>
 
-  <div class="footer">Kasir Arridho Jaya</div>
+  <div class="footer">KASIR APPS</div>
 </div>
 
 <script type="module">
@@ -225,11 +222,7 @@ const KUNCI_PROFIL_OK = 'pos_profil_ok';   // menyimpan uid yang profilnya sudah
 
 const $ = id => document.getElementById(id);
 
-/* Nama toko dari pengaturan yang sudah ada */
-try {
-  const s = JSON.parse(localStorage.getItem('pos_settings') || '{}');
-  if (s.shop) $('namaToko').textContent = s.shop;
-} catch (e) {}
+/* Nama di halaman masuk dibuat tetap KASIR APPS (sama dengan nama aplikasi di layar utama) */
 
 function tampil(nama) {
   ['Memuat', 'Masuk', 'Profil'].forEach(n => $('layar' + n).classList.toggle('show', n === nama));

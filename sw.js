@@ -1,7 +1,7 @@
 /* Service worker Kasir Arridho Jaya
    Naikkan VERSI setiap kali kamu mengubah index.html / desktop.html / mobile.html
    supaya HP pengguna mengambil file terbaru. */
-var VERSI = 'v21';
+var VERSI = 'v22';
 var CACHE = 'kasir-aj-' + VERSI;
 var HP = /Android.*Mobile|iPhone|iPod/i.test(self.navigator.userAgent);
 var HALAMAN_UTAMA = HP ? 'mobile.html' : 'desktop.html';
@@ -19,8 +19,7 @@ var INTI = [
   'icon-192.png',
   'icon-512.png',
   'icon-maskable-512.png',
-  'apple-touch-icon.png',
-  'logo.svg'
+  'apple-touch-icon.png'
 ];
 
 // Font & ikon dari CDN, disimpan supaya tampilan tetap utuh saat offline

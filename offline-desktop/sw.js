@@ -1,7 +1,7 @@
 /* Service worker Kasir Arridho Jaya (OFFLINE, offline-desktop)
    Semua file ada di folder ini, jadi setelah dibuka sekali aplikasi jalan tanpa internet.
    Naikkan VERSI setiap kali kamu mengubah index.html supaya perangkat mengambil file terbaru. */
-var VERSI = 'v3';
+var VERSI = 'v4';
 var CACHE = 'kasir-offline-desktop-' + VERSI;
 
 var INTI = [
@@ -12,7 +12,6 @@ var INTI = [
   "icon-512.png",
   "icon-maskable-512.png",
   "apple-touch-icon.png",
-  "logo.svg",
   "assets/fonts/inter.css",
   "assets/fonts/inter-latin-400-normal.woff2",
   "assets/fonts/inter-latin-500-normal.woff2",
