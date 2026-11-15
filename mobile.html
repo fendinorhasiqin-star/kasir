@@ -3,7 +3,7 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="theme-color" content="#0f2a3d">
 <link rel="manifest" href="manifest-mobile.json">
 <link rel="apple-touch-icon" href="icon-192.png">
@@ -295,7 +295,7 @@ body {
   transform: translateX(-50%);
   width: 100%;
   max-width: 480px;
-  height: 72px;
+  height: calc(72px + env(safe-area-inset-bottom));
   background: white;
   border-top: 1px solid #EDF1EE;
   display: flex;
@@ -308,6 +308,10 @@ body {
 .nav-item {
   border: none;
   background: none;
+  flex: 1;
+  min-width: 0;
+  height: 72px;
+  justify-content: center;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -392,7 +396,9 @@ body {
 }
 .feature-modal.cashier-mode .feature-panel {
   height: 100vh;
+  height: 100dvh;
   max-height: 100vh;
+  max-height: 100dvh;
   padding: 0;
   border-radius: 0;
   overflow: hidden;
@@ -545,7 +551,7 @@ body {
   transform: none;
   width: calc(100% + 24px);
   max-width: none;
-  height: 72px;
+  height: calc(72px + env(safe-area-inset-bottom));
   margin: 8px -12px 0;
   padding-bottom: env(safe-area-inset-bottom);
   border-radius: 0;
