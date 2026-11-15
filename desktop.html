@@ -5,16 +5,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#0f2a3d">
-<script>
-/* Penjaga: desktop.html hanya tampil kalau dibuka dari aplikasi yang sudah dipasang */
-(function () {
-  var terpasang =
-    matchMedia('(display-mode: standalone)').matches ||
-    navigator.standalone === true;
-  var pratinjauEditor = window.self !== window.top;
-  if (!terpasang && !pratinjauEditor) location.replace('index.html');
-})();
-</script>
 <link rel="manifest" href="manifest-desktop.json">
 <link rel="apple-touch-icon" href="icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">

@@ -11,14 +11,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Kasir AJ">
 <script>
-/* Penjaga: mobile.html hanya tampil kalau dibuka dari aplikasi yang sudah dipasang */
-(function () {
-  var terpasang =
-    matchMedia('(display-mode: standalone)').matches ||
-    navigator.standalone === true;
-  var pratinjauEditor = window.self !== window.top;
-  if (!terpasang && !pratinjauEditor) location.replace('index.html');
-})();
+/* Service worker: wajib ada supaya mobile.html bisa dipasang sebagai PWA */
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('sw.js').catch(function () {});
 }
