@@ -9,7 +9,7 @@
 
   /* Menu yang TIDAK bisa dibuka saat akses Karyawan. Ubah daftar ini sesuai kebutuhan. */
   var MENU_DIBLOKIR = [
-    'Laporan', 'Pembelian', 'Riwayat Pembelian', 'Supplier', 'Pengaturan',
+    'Laporan', 'Pembelian', 'Riwayat Pembelian', 'Supplier',
     'Produk', 'Import/Ekspor Produk', 'Stok Barang', 'Tambah/Kurangi Stok',
     'Cek Stok Menipis', 'Hutang', 'Import/Ekspor Hutang'
   ];
@@ -215,7 +215,7 @@
     pilih.appendChild(bOwner); pilih.appendChild(bKary);
     kotak.appendChild(pilih);
     kotak.appendChild(el('p', null, adaPin()
-      ? 'Karyawan tidak bisa membuka Laporan, Produk, Stok, Pembelian, Supplier, Hutang, dan Pengaturan, serta tidak melihat keuntungan.'
+      ? 'Karyawan tidak bisa membuka Laporan, Produk, Stok, Pembelian, Supplier, dan Hutang, serta tidak melihat keuntungan.'
       : 'Buat PIN dulu untuk mengatur akses. Selama belum diatur, akses tetap Owner.'));
     var pinAkses = inputPin('aksesPinAkses');
     var pesanAkses = el('div', 'akses-pesan');
@@ -264,7 +264,7 @@
   function jaga(menu) {
     if (boleh(menu)) return true;
     pasangGaya();
-    toast('Menu ini hanya untuk Owner. Ubah akses lewat Profil → Manajemen Akun.');
+    toast('Menu ini hanya untuk Owner. Ubah akses lewat Pengaturan → Manajemen Akun.');
     return false;
   }
 

@@ -2297,9 +2297,13 @@ function filterReports() {
   document.getElementById('featureContent').innerHTML = renderReports(period, start, end);
 }
 function renderProfile() {
-  return `${renderAkunCard()}${window.Akses ? Akses.renderKartu() : ''}<form class="feature-form" onsubmit="saveProfile(event)"><h3>Informasi pengguna</h3><label for="profileAdmin">Nama admin</label><input id="profileAdmin" name="admin" placeholder="Nama admin" value="${escapeHTML(data.settings.admin)}" required><button type="submit">Simpan profil</button></form>`;
+  return `${renderAkunCard()}<form class="feature-form" onsubmit="saveProfile(event)"><h3>Informasi pengguna</h3><label for="profileAdmin">Nama admin</label><input id="profileAdmin" name="admin" placeholder="Nama admin" value="${escapeHTML(data.settings.admin)}" required><button type="submit">Simpan profil</button></form>`;
 }
 function renderSettings() {
+  const kartu = window.Akses ? Akses.renderKartu() : '';
+  return window.Akses?.karyawan() ? kartu : kartu + renderSettingsToko();
+}
+function renderSettingsToko() {
   return `<form class="feature-form" onsubmit="saveSettings(event)"><h3>Informasi toko</h3><label for="shopName">Nama toko</label><input id="shopName" name="shop" placeholder="Nama toko" value="${escapeHTML(data.settings.shop)}" required><label for="shopAddress">Alamat toko (opsional)</label><input id="shopAddress" name="address" placeholder="Alamat toko (opsional)" value="${escapeHTML(data.settings.address || '')}"><button type="submit">Simpan pengaturan</button></form>
     <section class="feature-card"><h3>Apakah produk dengan stok kosong bisa dijual?</h3><p>Ya: penjualan tidak dibatasi stok. Stok tetap berkurang saat terjual (stok 1 jadi 0), tapi tidak pernah kurang dari 0. Tidak: produk berstok 0 tidak bisa dijual.</p>
       <select id="emptyStockSetting" onchange="saveStockSetting(this.value)" aria-label="Apakah produk dengan stok kosong bisa dijual" style="width:100%"><option value="1" ${getEmptyStock() === 1 ? 'selected' : ''}>Ya — tetap bisa dijual (stok minimal 0)</option><option value="0" ${getEmptyStock() === 0 ? 'selected' : ''}>Tidak — stok 0 tidak bisa dijual</option></select></section>
