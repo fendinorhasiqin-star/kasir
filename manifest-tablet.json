@@ -5,6 +5,7 @@
   "start_url": "tablet.html",
   "scope": "./",
   "display": "standalone",
+  "orientation": "portrait",
   "background_color": "#0f2a3d",
   "theme_color": "#0f2a3d",
   "lang": "id",
