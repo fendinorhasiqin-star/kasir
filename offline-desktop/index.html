@@ -1260,9 +1260,9 @@ body { padding: 0 !important; background: #F4F7F5; overflow-x: hidden; }
 </div>
 
 <script>
-const FREE_PRODUCT_LIMIT = 50;
+const FREE_PRODUCT_LIMIT = Infinity; // versi offline: produk tanpa batas
 const SINKRON_PRODUK_SIAP = false; // versi offline: tidak ada sinkronisasi / database online
-const ACTIVATION_CODE = '1111--0000-9999-8888'; // Isi dengan kode aktivasi yang Anda tetapkan.
+const ACTIVATION_CODE = ''; // versi offline: tidak perlu kode aktivasi
 const WHATSAPP_NUMBER = '6287875015256'; // Opsional: nomor internasional tanpa tanda +, spasi, atau strip.
 const defaultProducts = [];
 const loadData = (key, fallback) => {
