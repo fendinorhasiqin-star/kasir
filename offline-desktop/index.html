@@ -1467,6 +1467,7 @@ function supplierOptions() {
   return data.suppliers.map(supplier => `<option value="${supplier.id}">${escapeHTML(supplier.name)}</option>`).join('');
 }
 function openMenu(menu) {
+  if (window.Akses && !Akses.jaga(menu)) return;
   const contents = {
     'Keranjang': renderCashier(), 'Kasir': renderCashier(),
     'Produk': renderProducts(), 'Stok Barang': renderStock(), 'Cek Stok Menipis': renderLowStock(),
@@ -2825,6 +2826,10 @@ function renderProfile() {
       <button type="submit">Simpan profil</button></form>`;
 }
 function renderSettings() {
+  const kartu = window.Akses ? Akses.renderKartu() : '';
+  return window.Akses?.karyawan() ? kartu : kartu + renderSettingsToko();
+}
+function renderSettingsToko() {
   return `<form class="feature-form tidy-form" onsubmit="saveSettings(event)"><h3>Informasi toko</h3>
       <div class="tidy-two"><div class="tidy-field"><label for="shopName">Nama toko</label><input id="shopName" name="shop" placeholder="Nama toko" value="${escapeHTML(data.settings.shop)}" required></div>
       <div class="tidy-field"><label for="shopAddress">Alamat toko (opsional)</label><input id="shopAddress" name="address" placeholder="Alamat toko (opsional)" value="${escapeHTML(data.settings.address || '')}"></div></div>
@@ -3148,6 +3153,7 @@ function updateAkunBanner() {}
 function updateAkunBadge() {}
 
 function updateDashboard() {
+  window.Akses?.terapkan();
   updateAkunBanner();
   updateAkunBadge();
   const today = new Date().toDateString();
@@ -3280,5 +3286,6 @@ function syncNavigation(feature) {
   });
 })();
 </script>
+<script src="akses.js"></script>
 </body>
 </html>

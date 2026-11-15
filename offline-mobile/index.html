@@ -1086,6 +1086,7 @@ function supplierOptions() {
   return data.suppliers.map(supplier => `<option value="${supplier.id}">${escapeHTML(supplier.name)}</option>`).join('');
 }
 function openMenu(menu) {
+  if (window.Akses && !Akses.jaga(menu)) return;
   const contents = {
     'Keranjang': renderCashier(), 'Kasir': renderCashier(),
     'Produk': renderProducts(), 'Stok Barang': renderStock(),
@@ -2286,6 +2287,10 @@ function renderProfile() {
   return `${renderAkunCard()}<form class="feature-form" onsubmit="saveProfile(event)"><h3>Informasi pengguna</h3><label for="profileAdmin">Nama admin</label><input id="profileAdmin" name="admin" placeholder="Nama admin" value="${escapeHTML(data.settings.admin)}" required><button type="submit">Simpan profil</button></form>`;
 }
 function renderSettings() {
+  const kartu = window.Akses ? Akses.renderKartu() : '';
+  return window.Akses?.karyawan() ? kartu : kartu + renderSettingsToko();
+}
+function renderSettingsToko() {
   return `<form class="feature-form" onsubmit="saveSettings(event)"><h3>Informasi toko</h3><label for="shopName">Nama toko</label><input id="shopName" name="shop" placeholder="Nama toko" value="${escapeHTML(data.settings.shop)}" required><label for="shopAddress">Alamat toko (opsional)</label><input id="shopAddress" name="address" placeholder="Alamat toko (opsional)" value="${escapeHTML(data.settings.address || '')}"><button type="submit">Simpan pengaturan</button></form>
     <section class="feature-card"><h3>Apakah produk dengan stok kosong bisa dijual?</h3><p>Ya: penjualan tidak dibatasi stok. Stok tetap berkurang saat terjual (stok 1 jadi 0), tapi tidak pernah kurang dari 0. Tidak: produk berstok 0 tidak bisa dijual.</p>
       <select id="emptyStockSetting" onchange="saveStockSetting(this.value)" aria-label="Apakah produk dengan stok kosong bisa dijual" style="width:100%"><option value="1" ${getEmptyStock() === 1 ? 'selected' : ''}>Ya — tetap bisa dijual (stok minimal 0)</option><option value="0" ${getEmptyStock() === 0 ? 'selected' : ''}>Tidak — stok 0 tidak bisa dijual</option></select></section>
@@ -2610,6 +2615,7 @@ function updateAkunBanner() {}
 function updateAkunBadge() {}
 
 function updateDashboard() {
+  window.Akses?.terapkan();
   updateAkunBanner();
   const today = new Date().toDateString();
   const todaysTransactions = data.transactions.filter(transaction => new Date(transaction.date).toDateString() === today);
@@ -2708,5 +2714,6 @@ document.querySelectorAll('.nav-item').forEach(item => {
 </script>
 
 
+<script src="akses.js"></script>
 </body>
 </html>
