@@ -81,22 +81,48 @@
       return 'html.akses-karyawan [onclick*="openMenu(\'' + m + '\')"],html.akses-karyawan .side-item[data-menu="' + m + '"]';
     }).join(',');
     var css = daftar + ',html.akses-karyawan .info-item:has(#todayProfit){display:none!important}' +
+      /* kartu di halaman Pengaturan */
+      '.akses-kartu{display:flex;align-items:center;gap:12px}' +
+      '.akses-kartu .ikon{flex:none;width:42px;height:42px;border-radius:12px;background:#E5F5EA;color:#16834A;display:grid;place-items:center;font-size:18px}' +
+      '.akses-kartu .teks{flex:1;min-width:0}' +
+      '.akses-kartu .teks strong{display:block;font-size:14px}' +
+      '.akses-kartu .teks span{display:block;font-size:12px;color:#5b6b62;margin-top:2px}' +
+      '.akses-kartu button{flex:none;border:0;border-radius:10px;background:#16834A;color:#fff;font:inherit;font-size:13px;font-weight:700;padding:9px 14px;cursor:pointer}' +
+      /* dialog */
       '.akses-overlay{position:fixed;inset:0;z-index:99999;background:rgba(15,23,20,.55);display:flex;align-items:center;justify-content:center;padding:16px}' +
-      '.akses-box{background:#fff;color:#18221d;border-radius:18px;width:100%;max-width:400px;max-height:90vh;overflow:auto;padding:20px;font-family:inherit;box-shadow:0 20px 50px rgba(0,0,0,.25)}' +
-      '.akses-box h2{font-size:18px;margin:0 0 4px}.akses-box h3{font-size:14px;margin:18px 0 6px}' +
-      '.akses-box p{font-size:12.5px;color:#5b6b62;line-height:1.5;margin:4px 0}' +
-      '.akses-box label{display:block;font-size:12px;font-weight:600;margin:10px 0 4px}' +
-      '.akses-box input{width:100%;box-sizing:border-box;font:inherit;font-size:16px;letter-spacing:4px;padding:10px 12px;border:1px solid #cfd8d3;border-radius:10px}' +
-      '.akses-btn{display:block;width:100%;border:0;border-radius:10px;font:inherit;font-size:14px;font-weight:700;padding:11px;margin-top:12px;cursor:pointer;background:#16834A;color:#fff}' +
-      '.akses-btn.sekunder{background:#eef3f0;color:#18221d}' +
-      '.akses-btn[disabled]{opacity:.5;cursor:not-allowed}' +
-      '.akses-pilih{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}' +
-      '.akses-pilih button{border:1.5px solid #cfd8d3;background:#fff;border-radius:12px;padding:12px 8px;font:inherit;font-size:13px;font-weight:700;cursor:pointer}' +
+      '.akses-box{background:#fff;color:#18221d;border-radius:20px;width:100%;max-width:400px;max-height:92vh;overflow:auto;font-family:inherit;box-shadow:0 20px 50px rgba(0,0,0,.25)}' +
+      '.akses-kepala{display:flex;align-items:center;gap:8px;padding:16px 16px 12px 20px;border-bottom:1px solid #eef2ef}' +
+      '.akses-kepala h2{flex:1;font-size:17px;margin:0}' +
+      '.akses-ikon-btn{flex:none;width:34px;height:34px;border:0;border-radius:50%;background:#eef3f0;color:#18221d;font-size:14px;cursor:pointer;display:grid;place-items:center}' +
+      '.akses-isi{padding:16px 20px 20px}' +
+      '.akses-status{display:flex;align-items:center;gap:12px;background:#F4F8F5;border-radius:14px;padding:12px 14px}' +
+      '.akses-status .ikon{flex:none;width:38px;height:38px;border-radius:50%;background:#E5F5EA;color:#16834A;display:grid;place-items:center}' +
+      '.akses-status small{display:block;font-size:11.5px;color:#5b6b62}' +
+      '.akses-status strong{font-size:15px}' +
+      '.akses-judul{font-size:12px;font-weight:700;color:#5b6b62;text-transform:uppercase;letter-spacing:.04em;margin:20px 0 8px}' +
+      '.akses-info{background:#FFFBEF;border:1px solid #F2C14E;border-radius:12px;padding:12px 14px;font-size:13px;line-height:1.5;margin-top:14px}' +
+      '.akses-teks{font-size:12.5px;color:#5b6b62;line-height:1.5;margin:10px 0 0}' +
+      '.akses-pilih{display:grid;grid-template-columns:1fr 1fr;gap:8px}' +
+      '.akses-pilih button{display:flex;flex-direction:column;align-items:center;gap:4px;border:1.5px solid #d7dfda;background:#fff;color:#18221d;border-radius:14px;padding:12px 8px;font:inherit;font-size:13px;font-weight:700;cursor:pointer}' +
+      '.akses-pilih button i{font-size:17px;color:#89958E}' +
       '.akses-pilih button.aktif{border-color:#16834A;background:#E5F5EA;color:#0D6638}' +
-      '.akses-pilih button[disabled]{opacity:.5;cursor:not-allowed}' +
-      '.akses-pesan{font-size:12.5px;color:#b3261e;min-height:16px;margin-top:8px}' +
-      '.akses-pesan.ok{color:#0D6638}' +
-      '.akses-toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);z-index:99999;background:#18221d;color:#fff;font-size:13px;padding:10px 16px;border-radius:12px;max-width:90vw}';
+      '.akses-pilih button.aktif i{color:#16834A}' +
+      '.akses-konfirmasi{margin-top:14px}' +
+      '.akses-konfirmasi[hidden]{display:none}' +
+      '.akses-bidang{margin-top:14px}' +
+      '.akses-bidang:first-child{margin-top:0}' +
+      '.akses-bidang label{display:block;font-size:12.5px;font-weight:600;margin-bottom:6px}' +
+      '.akses-bidang input{width:100%;box-sizing:border-box;font:inherit;font-size:20px;letter-spacing:8px;text-align:center;padding:11px 12px;border:1.5px solid #d7dfda;border-radius:12px;background:#fff;color:#18221d}' +
+      '.akses-bidang input:focus{outline:0;border-color:#16834A;box-shadow:0 0 0 3px #E5F5EA}' +
+      '.akses-btn{display:block;width:100%;border:0;border-radius:12px;font:inherit;font-size:14px;font-weight:700;padding:12px;margin-top:14px;cursor:pointer;background:#16834A;color:#fff}' +
+      '.akses-btn.sekunder{background:#eef3f0;color:#18221d}' +
+      '.akses-pin-baris{display:flex;align-items:center;gap:12px;border:1px solid #e3e9e5;border-radius:14px;padding:12px 14px}' +
+      '.akses-pin-baris .teks{flex:1;min-width:0}' +
+      '.akses-pin-baris strong{display:block;font-size:14px}' +
+      '.akses-pin-baris span{font-size:12px;color:#0D6638}' +
+      '.akses-pin-baris button{flex:none;border:0;border-radius:10px;background:#eef3f0;color:#18221d;font:inherit;font-size:13px;font-weight:700;padding:9px 14px;cursor:pointer}' +
+      '.akses-pesan{font-size:12.5px;color:#b3261e;min-height:18px;margin-top:8px;text-align:center}' +
+      '.akses-toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);z-index:100000;background:#18221d;color:#fff;font-size:13px;padding:10px 16px;border-radius:12px;max-width:90vw}';
     var el = document.createElement('style');
     el.id = 'aksesGaya';
     el.textContent = css;
@@ -109,18 +135,33 @@
     document.body.appendChild(t);
     setTimeout(function () { t.remove(); }, 2600);
   }
+  /* Tombol navigasi bawah tidak selalu punya onclick, jadi disembunyikan lewat teksnya. */
+  function sembunyikanNav() {
+    var k = karyawan();
+    document.querySelectorAll('.nav-item').forEach(function (n) {
+      var blokir = k && MENU_DIBLOKIR.indexOf(n.textContent.trim()) !== -1;
+      if (blokir) n.style.display = 'none';
+      else if (n.style.display === 'none') n.style.display = '';
+    });
+  }
+  var pengamat = null;
   function terapkan() {
     pasangGaya();
     document.documentElement.classList.toggle('akses-karyawan', karyawan());
+    sembunyikanNav();
+    if (!pengamat && window.MutationObserver && document.body) {
+      pengamat = new MutationObserver(function () { if (karyawan()) sembunyikanNav(); });
+      pengamat.observe(document.body, { childList: true, subtree: true });
+    }
   }
 
-  /* ---------- kartu di halaman Profil ---------- */
+  /* ---------- kartu di halaman Pengaturan ---------- */
   function renderKartu() {
     var label = karyawan() ? 'Karyawan' : 'Owner';
-    return '<section class="feature-card akun-card"><h3>Manajemen Akun</h3>' +
-      '<p>Akses saat ini: <strong>' + label + '</strong>' + (adaPin() ? '' : ' (PIN belum dibuat)') + '</p>' +
-      '<button class="feature-button secondary" type="button" style="width:100%;margin-top:12px" onclick="Akses.buka()">' +
-      '<i class="fa-solid fa-user-shield" aria-hidden="true" style="margin-right:7px"></i>Manajemen Akun</button></section>';
+    return '<section class="feature-card akun-card akses-kartu">' +
+      '<div class="ikon"><i class="fa-solid fa-user-shield" aria-hidden="true"></i></div>' +
+      '<div class="teks"><strong>Manajemen Akun</strong><span>Akses: ' + label + ' · ' + (adaPin() ? 'PIN aktif' : 'PIN belum dibuat') + '</span></div>' +
+      '<button type="button" onclick="Akses.buka()">Kelola</button></section>';
   }
 
   /* ---------- dialog ---------- */
@@ -130,20 +171,42 @@
     if (teks != null) e.textContent = teks;
     return e;
   }
-  function inputPin(id) {
+  function ikon(nama) {
+    var i = el('i', 'fa-solid fa-' + nama);
+    i.setAttribute('aria-hidden', 'true');
+    return i;
+  }
+  function tombol(kelas, teks, aksi) {
+    var b = el('button', kelas, teks);
+    b.type = 'button';
+    if (aksi) b.addEventListener('click', aksi);
+    return b;
+  }
+  function bidangPin(id, judul) {
+    var w = el('div', 'akses-bidang');
+    var l = el('label', null, judul); l.htmlFor = id;
     var i = el('input');
     i.type = 'password'; i.inputMode = 'numeric'; i.maxLength = 6; i.id = id;
     i.autocomplete = 'off'; i.placeholder = '••••';
     i.addEventListener('input', function () { i.value = i.value.replace(/\D/g, '').slice(0, 6); });
-    return i;
-  }
-  function baris(judul, input) {
-    var w = document.createElement('div');
-    var l = el('label', null, judul); l.htmlFor = input.id;
-    w.appendChild(l); w.appendChild(input);
+    w.appendChild(l); w.appendChild(i);
+    w.input = i;
     return w;
   }
   function pinValid(p) { return /^\d{4,6}$/.test(p); }
+  function enterUntuk(input, aksi) {
+    input.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); aksi(); } });
+  }
+  function kepala(judul, kiri) {
+    var k = el('div', 'akses-kepala');
+    if (kiri) k.appendChild(kiri);
+    k.appendChild(el('h2', null, judul));
+    var x = tombol('akses-ikon-btn', null, tutup);
+    x.setAttribute('aria-label', 'Tutup');
+    x.appendChild(ikon('xmark'));
+    k.appendChild(x);
+    return k;
+  }
 
   var overlay = null;
   function tutup() {
@@ -159,89 +222,51 @@
     kotak.setAttribute('aria-modal', 'true');
     overlay.appendChild(kotak);
     document.body.appendChild(overlay);
-    gambar(kotak);
+    layarUtama(kotak);
   }
 
-  function gambar(kotak) {
+  /* Layar 1: status + pilihan akses */
+  function layarUtama(kotak) {
     kotak.textContent = '';
-    kotak.appendChild(el('h2', null, 'Manajemen Akun'));
-    kotak.appendChild(el('p', null, 'Atur PIN dan akses perangkat ini sebagai Owner atau Karyawan.'));
+    kotak.appendChild(kepala('Manajemen Akun'));
+    var isi = el('div', 'akses-isi');
+    kotak.appendChild(isi);
 
-    /* --- Atur PIN --- */
-    kotak.appendChild(el('h3', null, 'Atur PIN'));
-    var pesanPin = el('div', 'akses-pesan');
-    var pinLama = adaPin() ? inputPin('aksesPinLama') : null;
-    var pinBaru = inputPin('aksesPinBaru');
-    var pinUlang = inputPin('aksesPinUlang');
-    if (!adaPin()) kotak.appendChild(el('p', null, 'Buat PIN 4–6 angka. Setelah PIN dibuat, mengubah akses Owner/Karyawan harus memasukkan PIN.'));
-    if (pinLama) kotak.appendChild(baris('PIN saat ini', pinLama));
-    kotak.appendChild(baris(adaPin() ? 'PIN baru' : 'PIN', pinBaru));
-    kotak.appendChild(baris('Ulangi PIN', pinUlang));
-    var tombolPin = el('button', 'akses-btn', adaPin() ? 'Ubah PIN' : 'Buat PIN');
-    tombolPin.type = 'button';
-    kotak.appendChild(tombolPin);
-    kotak.appendChild(pesanPin);
-    tombolPin.addEventListener('click', function () {
-      pesanPin.className = 'akses-pesan';
-      var baru = pinBaru.value, ulang = pinUlang.value;
-      if (!pinValid(baru)) { pesanPin.textContent = 'PIN harus 4–6 angka.'; return; }
-      if (baru !== ulang) { pesanPin.textContent = 'Ulangi PIN tidak sama.'; return; }
-      var s = pengaturan();
-      if (!s) { pesanPin.textContent = 'Data belum siap, coba lagi.'; return; }
-      var kunci = sisaKunci();
-      if (pinLama && kunci) { pesanPin.textContent = 'Terlalu banyak salah. Coba lagi ' + kunci + ' detik.'; return; }
-      var cek = pinLama ? cocokPin(pinLama.value) : Promise.resolve(true);
-      cek.then(function (ok) {
-        if (!ok) { catatGagal(); pesanPin.textContent = 'PIN saat ini salah.'; return null; }
-        resetGagal();
-        var garam = acak();
-        return hash(garam, baru).then(function (h) {
-          s.aksesPin = { garam: garam, hash: h };
-          simpan();
-          toast('PIN berhasil disimpan.');
-          gambar(kotak);
-        });
-      });
-    });
+    var status = el('div', 'akses-status');
+    var ik = el('div', 'ikon'); ik.appendChild(ikon(karyawan() ? 'user' : 'user-shield'));
+    var tk = el('div');
+    tk.appendChild(el('small', null, 'Akses perangkat ini'));
+    tk.appendChild(el('strong', null, karyawan() ? 'Karyawan' : 'Owner'));
+    status.appendChild(ik); status.appendChild(tk);
+    isi.appendChild(status);
 
-    /* --- Akses --- */
-    kotak.appendChild(el('h3', null, 'Akses perangkat ini'));
-    var pilih = el('div', 'akses-pilih');
-    var bOwner = el('button', null, 'Owner');
-    var bKary = el('button', null, 'Karyawan');
-    [bOwner, bKary].forEach(function (b) { b.type = 'button'; });
-    (karyawan() ? bKary : bOwner).classList.add('aktif');
-    if (!adaPin()) { bOwner.disabled = true; bKary.disabled = true; }
-    pilih.appendChild(bOwner); pilih.appendChild(bKary);
-    kotak.appendChild(pilih);
-    kotak.appendChild(el('p', null, adaPin()
-      ? 'Karyawan tidak bisa membuka Laporan, Produk, Stok, Pembelian, Supplier, dan Hutang, serta tidak melihat keuntungan.'
-      : 'Buat PIN dulu untuk mengatur akses. Selama belum diatur, akses tetap Owner.'));
-    var pinAkses = inputPin('aksesPinAkses');
-    var pesanAkses = el('div', 'akses-pesan');
-    var tombolAkses = el('button', 'akses-btn', 'Konfirmasi dengan PIN');
-    tombolAkses.type = 'button';
-    var tujuan = null;
-    var area = document.createElement('div');
-    area.hidden = true;
-    area.appendChild(baris('Masukkan PIN untuk mengubah akses', pinAkses));
-    area.appendChild(tombolAkses);
-    kotak.appendChild(area);
-    kotak.appendChild(pesanAkses);
-
-    function pilihTujuan(nilai) {
-      if (nilai === peran()) { area.hidden = true; tujuan = null; pesanAkses.textContent = ''; return; }
-      tujuan = nilai; area.hidden = false; pinAkses.value = ''; pesanAkses.textContent = '';
-      pinAkses.focus();
+    if (!adaPin()) {
+      isi.appendChild(el('div', 'akses-info', 'Buat PIN dulu supaya akses Owner/Karyawan bisa diatur. Selama PIN belum dibuat, perangkat ini tetap Owner dengan semua menu terbuka.'));
+      isi.appendChild(tombol('akses-btn', 'Buat PIN', function () { layarPin(kotak); }));
+      return;
     }
-    bOwner.addEventListener('click', function () { pilihTujuan('owner'); });
-    bKary.addEventListener('click', function () { pilihTujuan('karyawan'); });
-    tombolAkses.addEventListener('click', function () {
-      pesanAkses.className = 'akses-pesan';
+
+    isi.appendChild(el('div', 'akses-judul', 'Ubah akses'));
+    var pilih = el('div', 'akses-pilih');
+    var bOwner = tombol(null, null); bOwner.appendChild(ikon('user-shield')); bOwner.appendChild(document.createTextNode('Owner'));
+    var bKary = tombol(null, null); bKary.appendChild(ikon('user')); bKary.appendChild(document.createTextNode('Karyawan'));
+    (karyawan() ? bKary : bOwner).classList.add('aktif');
+    pilih.appendChild(bOwner); pilih.appendChild(bKary);
+    isi.appendChild(pilih);
+    isi.appendChild(el('p', 'akses-teks', karyawan()
+      ? 'Karyawan hanya bisa memakai Kasir, Riwayat, dan Pelanggan. Keuntungan tidak terlihat.'
+      : 'Owner bisa membuka semua menu. Pilih Karyawan untuk membatasi perangkat ini.'));
+
+    var area = el('div', 'akses-konfirmasi');
+    area.hidden = true;
+    var bidang = bidangPin('aksesPinAkses', 'Masukkan PIN untuk konfirmasi');
+    var pesan = el('div', 'akses-pesan');
+    var tujuan = null;
+    function konfirmasi() {
       var kunci = sisaKunci();
-      if (kunci) { pesanAkses.textContent = 'Terlalu banyak salah. Coba lagi ' + kunci + ' detik.'; return; }
-      cocokPin(pinAkses.value).then(function (ok) {
-        if (!ok) { catatGagal(); pesanAkses.textContent = 'PIN salah.'; return; }
+      if (kunci) { pesan.textContent = 'Terlalu banyak salah. Coba lagi ' + kunci + ' detik.'; return; }
+      cocokPin(bidang.input.value).then(function (ok) {
+        if (!ok) { catatGagal(); pesan.textContent = 'PIN salah.'; bidang.input.value = ''; bidang.input.focus(); return; }
         resetGagal();
         try { localStorage.setItem(KUNCI_PERAN, tujuan); } catch (e) { /* abaikan */ }
         terapkan();
@@ -249,15 +274,81 @@
         tutup();
         /* Menu yang kini tidak boleh dibuka: kembali ke beranda. */
         if (typeof activeFeature !== 'undefined' && !boleh(activeFeature) && typeof closeFeature === 'function') closeFeature();
-        else if (typeof openMenu === 'function' && typeof activeFeature !== 'undefined' && activeFeature === 'Profil') openMenu('Profil');
+        else if (typeof openMenu === 'function' && typeof activeFeature !== 'undefined' && activeFeature === 'Pengaturan') openMenu('Pengaturan');
         if (typeof updateDashboard === 'function') updateDashboard();
       });
-    });
+    }
+    enterUntuk(bidang.input, konfirmasi);
+    area.appendChild(bidang);
+    area.appendChild(tombol('akses-btn', 'Konfirmasi', konfirmasi));
+    area.appendChild(pesan);
+    isi.appendChild(area);
 
-    var tutupBtn = el('button', 'akses-btn sekunder', 'Tutup');
-    tutupBtn.type = 'button';
-    tutupBtn.addEventListener('click', tutup);
-    kotak.appendChild(tutupBtn);
+    function pilihTujuan(nilai) {
+      if (nilai === peran()) { area.hidden = true; tujuan = null; return; }
+      tujuan = nilai; area.hidden = false; pesan.textContent = ''; bidang.input.value = '';
+      bOwner.classList.toggle('aktif', nilai === 'owner');
+      bKary.classList.toggle('aktif', nilai === 'karyawan');
+      bidang.input.focus();
+    }
+    bOwner.addEventListener('click', function () { pilihTujuan('owner'); });
+    bKary.addEventListener('click', function () { pilihTujuan('karyawan'); });
+
+    isi.appendChild(el('div', 'akses-judul', 'Keamanan'));
+    var baris = el('div', 'akses-pin-baris');
+    var tb = el('div', 'teks');
+    tb.appendChild(el('strong', null, 'PIN'));
+    tb.appendChild(el('span', null, 'Sudah diatur'));
+    baris.appendChild(tb);
+    baris.appendChild(tombol(null, 'Ubah PIN', function () { layarPin(kotak); }));
+    isi.appendChild(baris);
+  }
+
+  /* Layar 2: buat / ubah PIN */
+  function layarPin(kotak) {
+    var ubah = adaPin();
+    kotak.textContent = '';
+    var kembali = tombol('akses-ikon-btn', null, function () { layarUtama(kotak); });
+    kembali.setAttribute('aria-label', 'Kembali');
+    kembali.appendChild(ikon('chevron-left'));
+    kotak.appendChild(kepala(ubah ? 'Ubah PIN' : 'Buat PIN', kembali));
+    var isi = el('div', 'akses-isi');
+    kotak.appendChild(isi);
+    isi.appendChild(el('p', 'akses-teks', ubah
+      ? 'Masukkan PIN saat ini, lalu PIN baru (4–6 angka).'
+      : 'Buat PIN 4–6 angka. Setelah ini, mengubah akses Owner/Karyawan harus memasukkan PIN.'));
+    var lama = ubah ? bidangPin('aksesPinLama', 'PIN saat ini') : null;
+    var baru = bidangPin('aksesPinBaru', ubah ? 'PIN baru' : 'PIN');
+    var ulang = bidangPin('aksesPinUlang', 'Ulangi PIN');
+    if (lama) isi.appendChild(lama);
+    isi.appendChild(baru);
+    isi.appendChild(ulang);
+    var pesan = el('div', 'akses-pesan');
+    function simpanPin() {
+      var b = baru.input.value;
+      if (!pinValid(b)) { pesan.textContent = 'PIN harus 4–6 angka.'; return; }
+      if (b !== ulang.input.value) { pesan.textContent = 'Ulangi PIN tidak sama.'; return; }
+      var s = pengaturan();
+      if (!s) { pesan.textContent = 'Data belum siap, coba lagi.'; return; }
+      var kunci = lama ? sisaKunci() : 0;
+      if (kunci) { pesan.textContent = 'Terlalu banyak salah. Coba lagi ' + kunci + ' detik.'; return; }
+      var cek = lama ? cocokPin(lama.input.value) : Promise.resolve(true);
+      cek.then(function (ok) {
+        if (!ok) { catatGagal(); pesan.textContent = 'PIN saat ini salah.'; return null; }
+        resetGagal();
+        var garam = acak();
+        return hash(garam, b).then(function (h) {
+          s.aksesPin = { garam: garam, hash: h };
+          simpan();
+          toast('PIN berhasil disimpan.');
+          layarUtama(kotak);
+        });
+      });
+    }
+    [lama, baru, ulang].forEach(function (f) { if (f) enterUntuk(f.input, simpanPin); });
+    isi.appendChild(tombol('akses-btn', 'Simpan PIN', simpanPin));
+    isi.appendChild(pesan);
+    (lama || baru).input.focus();
   }
 
   /* Dipanggil di awal openMenu: false = menu ditolak. */
