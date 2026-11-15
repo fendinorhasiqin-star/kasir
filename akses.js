@@ -112,7 +112,7 @@
       '.akses-bidang{margin-top:14px}' +
       '.akses-bidang:first-child{margin-top:0}' +
       '.akses-bidang label{display:block;font-size:12.5px;font-weight:600;margin-bottom:6px}' +
-      '.akses-bidang input{width:100%;box-sizing:border-box;font:inherit;font-size:20px;letter-spacing:8px;text-align:center;padding:11px 12px;border:1.5px solid #d7dfda;border-radius:12px;background:#fff;color:#18221d}' +
+      '.akses-bidang input{-webkit-text-security:disc;width:100%;box-sizing:border-box;font:inherit;font-size:20px;letter-spacing:8px;text-align:center;padding:11px 12px;border:1.5px solid #d7dfda;border-radius:12px;background:#fff;color:#18221d}' +
       '.akses-bidang input:focus{outline:0;border-color:#16834A;box-shadow:0 0 0 3px #E5F5EA}' +
       '.akses-btn{display:block;width:100%;border:0;border-radius:12px;font:inherit;font-size:14px;font-weight:700;padding:12px;margin-top:14px;cursor:pointer;background:#16834A;color:#fff}' +
       '.akses-btn.sekunder{background:#eef3f0;color:#18221d}' +
@@ -186,8 +186,12 @@
     var w = el('div', 'akses-bidang');
     var l = el('label', null, judul); l.htmlFor = id;
     var i = el('input');
-    i.type = 'password'; i.inputMode = 'numeric'; i.maxLength = 6; i.id = id;
+    /* Bukan type=password supaya browser tidak menawarkan simpan ke pengelola kata sandi. */
+    i.type = 'text'; i.inputMode = 'numeric'; i.maxLength = 6; i.id = id;
+    i.name = 'kode-' + Math.random().toString(36).slice(2, 8);
     i.autocomplete = 'off'; i.placeholder = '••••';
+    i.setAttribute('autocapitalize', 'off'); i.setAttribute('autocorrect', 'off'); i.spellcheck = false;
+    i.setAttribute('data-1p-ignore', 'true'); i.setAttribute('data-lpignore', 'true'); i.setAttribute('data-form-type', 'other');
     i.addEventListener('input', function () { i.value = i.value.replace(/\D/g, '').slice(0, 6); });
     w.appendChild(l); w.appendChild(i);
     w.input = i;
