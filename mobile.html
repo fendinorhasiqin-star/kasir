@@ -1099,6 +1099,7 @@ function supplierOptions() {
   return data.suppliers.map(supplier => `<option value="${supplier.id}">${escapeHTML(supplier.name)}</option>`).join('');
 }
 function openMenu(menu) {
+  if (window.Akses && !Akses.jaga(menu)) return;
   const contents = {
     'Keranjang': renderCashier(), 'Kasir': renderCashier(),
     'Produk': renderProducts(), 'Stok Barang': renderStock(),
@@ -2296,7 +2297,7 @@ function filterReports() {
   document.getElementById('featureContent').innerHTML = renderReports(period, start, end);
 }
 function renderProfile() {
-  return `${renderAkunCard()}<form class="feature-form" onsubmit="saveProfile(event)"><h3>Informasi pengguna</h3><label for="profileAdmin">Nama admin</label><input id="profileAdmin" name="admin" placeholder="Nama admin" value="${escapeHTML(data.settings.admin)}" required><button type="submit">Simpan profil</button></form>`;
+  return `${renderAkunCard()}${window.Akses ? Akses.renderKartu() : ''}<form class="feature-form" onsubmit="saveProfile(event)"><h3>Informasi pengguna</h3><label for="profileAdmin">Nama admin</label><input id="profileAdmin" name="admin" placeholder="Nama admin" value="${escapeHTML(data.settings.admin)}" required><button type="submit">Simpan profil</button></form>`;
 }
 function renderSettings() {
   return `<form class="feature-form" onsubmit="saveSettings(event)"><h3>Informasi toko</h3><label for="shopName">Nama toko</label><input id="shopName" name="shop" placeholder="Nama toko" value="${escapeHTML(data.settings.shop)}" required><label for="shopAddress">Alamat toko (opsional)</label><input id="shopAddress" name="address" placeholder="Alamat toko (opsional)" value="${escapeHTML(data.settings.address || '')}"><button type="submit">Simpan pengaturan</button></form>
@@ -2680,6 +2681,7 @@ function tutupAkunBanner() {
 
 function updateDashboard() {
   updateAkunBanner();
+  window.Akses?.terapkan();
   const today = new Date().toDateString();
   const todaysTransactions = data.transactions.filter(transaction => new Date(transaction.date).toDateString() === today);
   const sales = todaysTransactions.reduce((sum, transaction) => sum + transaction.total, 0);
@@ -2776,6 +2778,7 @@ document.querySelectorAll('.nav-item').forEach(item => {
 });
 </script>
 
+<script src="akses.js"></script>
 <script type="module" src="sync.js"></script>
 
 </body>
