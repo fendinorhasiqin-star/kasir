@@ -317,17 +317,21 @@ body {
   align-items: center;
   gap: 5px;
   color: #A2ADA5;
+  font-family: inherit;
   font-size: 10px;
+  font-weight: 600;
+  line-height: 1.2;
   cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .nav-item i {
   font-size: 19px;
 }
 
-  .nav-item.active {
+.nav-item.active {
   color: #16834A;
-  font-weight: 700;
+  font-weight: 800;
 }
 
 .nav-item.cashier-nav-item {
@@ -782,12 +786,17 @@ body {
 .bh-stats{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .bh-st{border-radius:18px;padding:14px;min-width:0}
 .bh-st.a{background:#E5F5EA}.bh-st.b{background:#FBF1D6}
+.bh-st .hd{display:flex;align-items:center;gap:10px}
+.bh-st .ic{width:38px;height:38px;border-radius:12px;background:#fff;display:flex;align-items:center;justify-content:center;font-size:17px;flex:none;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.bh-st.a .ic{color:#16834A}.bh-st.b .ic{color:#B8860B}
 .bh-st .l{font-weight:600;font-size:14px;color:#6B7A71}
 .bh-st .v{font-size:19px;font-weight:800;margin:10px 0 8px;white-space:nowrap}
-.bh-trend{display:inline-block;background:#fff;color:#16834A;font-size:11px;font-weight:600;border-radius:999px;padding:4px 8px}
+.bh-trend i{font-size:10px;margin-right:2px}.bh-trend b{font-weight:800}
+.bh-trend{display:inline-block;white-space:nowrap;background:#fff;color:#16834A;font-size:11px;font-weight:600;border-radius:999px;padding:4px 8px}
 .bh-trend.down{color:#C0392B}
 .bh-st small{display:block;margin-top:8px;font-size:12px;color:#6B7A71}
-.bh-foot{display:flex;justify-content:space-between;gap:6px;border-top:1px solid #E3EAE5;margin-top:14px;padding-top:12px;font-size:11px;color:#6B7A71}
+.bh-foot b{font-weight:500}.bh-foot i{margin-right:2px}
+.bh-foot{display:flex;flex-wrap:wrap;justify-content:space-between;gap:6px;border-top:1px solid #E3EAE5;margin-top:14px;padding-top:12px;font-size:11px;color:#6B7A71}
 .bh-chart{margin:16px 0;background:#fff;border-radius:24px;padding:16px}
 .bh-chart-h{display:flex;justify-content:space-between;align-items:center}
 .bh-chart-h h3{font-size:17px}.bh-chart-h a{color:#16834A;font-weight:700;font-size:13px;cursor:pointer}
@@ -889,7 +898,7 @@ body {
   <header class="header bh-hero">
     <div class="bh-top">
       <div class="logo"><i class="fa-solid fa-store"></i></div>
-      <div class="brand"><h3>TOKO SEMBAKO</h3><p>Selamat datang, Admin!</p></div>
+      <div class="brand"><h3>TOKO SEMBAKO</h3></div>
       <div class="profile" onclick="openMenu('Profil')" role="button" aria-label="Profil"><i class="fa-solid fa-user"></i></div>
     </div>
     <h1 id="sapaan">Selamat Datang</h1>
@@ -904,10 +913,10 @@ body {
         <button data-k="hari" onclick="renderBeranda('hari')">Hari Ini</button><button data-k="minggu" class="on" onclick="renderBeranda('minggu')">Minggu Ini</button><button data-k="bulan" onclick="renderBeranda('bulan')">Bulan Ini</button>
       </div>
       <div class="bh-stats">
-        <div class="bh-st a"><div class="l">Omzet</div><div class="v" id="pOmzet">Rp 0</div><span class="bh-trend" id="pOmzetT"></span><small>Total penjualan yang tercatat</small></div>
-        <div class="bh-st b"><div class="l">Laba Kotor</div><div class="v" id="pLaba">Rp 0</div><span class="bh-trend" id="pLabaT"></span><small>Setelah dikurangi modal barang</small></div>
+        <div class="bh-st a"><div class="hd"><span class="ic"><i class="fa-solid fa-piggy-bank"></i></span><div class="l">Omzet</div></div><div class="v" id="pOmzet">Rp 0</div><span class="bh-trend" id="pOmzetT"></span><small>Total penjualan yang tercatat</small></div>
+        <div class="bh-st b"><div class="hd"><span class="ic"><i class="fa-solid fa-arrow-trend-up"></i></span><div class="l">Laba Kotor</div></div><div class="v" id="pLaba">Rp 0</div><span class="bh-trend" id="pLabaT"></span><small>Setelah dikurangi modal barang</small></div>
       </div>
-      <div class="bh-foot"><span id="pTx">0 transaksi</span><span id="pItem">0 produk terjual</span></div>
+      <div class="bh-foot"><span><i class="fa-solid fa-receipt"></i> <b id="pTx">0 transaksi</b></span><span><i class="fa-solid fa-box"></i> <b id="pItem">0 produk terjual</b></span><span id="pVs"></span></div>
     </section>
 
     <section class="bh-chart">
@@ -928,41 +937,15 @@ body {
     </div>
 
 
-    <div class="section-title">
-      <h3>Transaksi Terbaru</h3>
-      <span onclick="openMenu('Riwayat')" style="cursor:pointer">Lihat Semua</span>
-    </div>
-
-        <section class="transaction-list" id="latestTransactions"></section>
-
   </main>
 
-  <nav class="bottom-nav">
-    <button class="nav-item active">
-      <i class="fa-solid fa-house"></i>
-      Home
-    </button>
-
-    <button class="nav-item" onclick="openMenu('Riwayat')">
-      <i class="fa-solid fa-receipt"></i>
-      Riwayat
-    </button>
-
-    <button class="nav-item cashier-nav-item" onclick="openMenu('Kasir')">
-      <i class="fa-solid fa-cart-shopping"></i>
-      Kasir
-    </button>
-
-    <button class="nav-item" onclick="openMenu('Laporan')">
-      <i class="fa-solid fa-chart-column"></i>
-      Laporan
-    </button>
-
-    <button class="nav-item" onclick="openMenu('Lainnya')">
-      <i class="fa-solid fa-table-cells-large"></i>
-      Lainnya
-    </button>
-    </nav>
+    <nav class="bottom-nav" aria-label="Navigasi utama">
+    <button class="nav-item active" type="button" data-nav="Home" aria-current="page"><i class="fa-solid fa-house" aria-hidden="true"></i>Home</button>
+    <button class="nav-item" type="button" data-nav="Riwayat"><i class="fa-solid fa-receipt" aria-hidden="true"></i>Riwayat</button>
+    <button class="nav-item cashier-nav-item" type="button" data-nav="Kasir"><i class="fa-solid fa-cart-shopping" aria-hidden="true"></i>Kasir</button>
+    <button class="nav-item" type="button" data-nav="Laporan"><i class="fa-solid fa-chart-column" aria-hidden="true"></i>Laporan</button>
+    <button class="nav-item" type="button" data-nav="Lainnya"><i class="fa-solid fa-table-cells-large" aria-hidden="true"></i>Lainnya</button>
+  </nav>
 
   <div class="feature-modal" id="featureModal" onclick="if(event.target === this) closeFeature()">
     <section class="feature-panel" role="dialog" aria-modal="true" aria-labelledby="featureTitle">
@@ -971,12 +954,12 @@ body {
         <button class="feature-close" type="button" onclick="backFeature()" aria-label="Kembali">&#8592;</button>
       </div>
             <div id="featureContent"></div>
-      <nav class="bottom-nav feature-bottom-nav" aria-label="Navigasi utama">
-        <button class="nav-item" type="button"><i class="fa-solid fa-house"></i>Home</button>
-        <button class="nav-item" type="button"><i class="fa-solid fa-receipt"></i>Riwayat</button>
-        <button class="nav-item cashier-nav-item" type="button"><i class="fa-solid fa-cart-shopping"></i>Kasir</button>
-        <button class="nav-item" type="button"><i class="fa-solid fa-chart-column"></i>Laporan</button>
-        <button class="nav-item" type="button"><i class="fa-solid fa-table-cells-large"></i>Lainnya</button>
+            <nav class="bottom-nav feature-bottom-nav" aria-label="Navigasi utama">
+        <button class="nav-item" type="button" data-nav="Home"><i class="fa-solid fa-house" aria-hidden="true"></i>Home</button>
+        <button class="nav-item" type="button" data-nav="Riwayat"><i class="fa-solid fa-receipt" aria-hidden="true"></i>Riwayat</button>
+        <button class="nav-item cashier-nav-item" type="button" data-nav="Kasir"><i class="fa-solid fa-cart-shopping" aria-hidden="true"></i>Kasir</button>
+        <button class="nav-item" type="button" data-nav="Laporan"><i class="fa-solid fa-chart-column" aria-hidden="true"></i>Laporan</button>
+        <button class="nav-item" type="button" data-nav="Lainnya"><i class="fa-solid fa-table-cells-large" aria-hidden="true"></i>Lainnya</button>
       </nav>
     </section>
   </div>
@@ -1078,7 +1061,9 @@ function syncNavigation(feature) {
     'Kasir': 'Kasir', 'Keranjang': 'Kasir',
     'Riwayat': 'Riwayat', 'Laporan': 'Laporan', 'Lainnya': 'Lainnya', 'Profil': 'Lainnya'  })[feature] || 'Lainnya';
   document.querySelectorAll('.nav-item').forEach(item => {
-    item.classList.toggle('active', item.textContent.trim() === activeLabel && activeLabel !== '');
+    const on = item.textContent.trim() === activeLabel && activeLabel !== '';
+    item.classList.toggle('active', on);
+    if (on) item.setAttribute('aria-current', 'page'); else item.removeAttribute('aria-current');
   });
 }
 function closeFeature(fromHistory = false) {
@@ -1175,12 +1160,12 @@ function renderCashier() {
     </main>
     <footer class="cashier-bottom">
       <div class="cashier-total"><div><small>${itemCount} barang</small><strong>${rupiah(total)}</strong></div><button class="feature-button cashier-pay" type="button" onclick="openPayment()" ${!data.cart.length ? 'disabled' : ''}>Bayar ›</button></div>
-      <nav class="bottom-nav cashier-bottom-nav" aria-label="Navigasi utama">
-        <button class="nav-item" type="button" onclick="closeFeature()"><i class="fa-solid fa-house"></i>Home</button>
-        <button class="nav-item" type="button" onclick="openMenu('Riwayat')"><i class="fa-solid fa-receipt"></i>Riwayat</button>
-        <button class="nav-item cashier-nav-item active" type="button" onclick="openMenu('Kasir')"><i class="fa-solid fa-cart-shopping"></i>Kasir</button>
-        <button class="nav-item" type="button" onclick="openMenu('Laporan')"><i class="fa-solid fa-chart-column"></i>Laporan</button>
-        <button class="nav-item" type="button" onclick="openMenu('Lainnya')"><i class="fa-solid fa-table-cells-large"></i>Lainnya</button>
+            <nav class="bottom-nav cashier-bottom-nav" aria-label="Navigasi utama">
+        <button class="nav-item" type="button" data-nav="Home"><i class="fa-solid fa-house" aria-hidden="true"></i>Home</button>
+        <button class="nav-item" type="button" data-nav="Riwayat"><i class="fa-solid fa-receipt" aria-hidden="true"></i>Riwayat</button>
+        <button class="nav-item cashier-nav-item active" type="button" data-nav="Kasir" aria-current="page"><i class="fa-solid fa-cart-shopping" aria-hidden="true"></i>Kasir</button>
+        <button class="nav-item" type="button" data-nav="Laporan"><i class="fa-solid fa-chart-column" aria-hidden="true"></i>Laporan</button>
+        <button class="nav-item" type="button" data-nav="Lainnya"><i class="fa-solid fa-table-cells-large" aria-hidden="true"></i>Lainnya</button>
       </nav>
     </footer>`;
 }
@@ -2209,16 +2194,7 @@ function histVisible() {
   const by = { baru: (a, b) => new Date(b.date) - new Date(a.date), lama: (a, b) => new Date(a.date) - new Date(b.date), besar: (a, b) => b.total - a.total, kecil: (a, b) => a.total - b.total };
   return list.sort(by[histSort] || by.baru);
 }
-function histSummaryHTML(list) {
-  const omzet = list.reduce((s, t) => s + t.total, 0), laba = list.reduce((s, t) => s + transactionProfit(t), 0);
-  const item = list.reduce((s, t) => s + (t.items || []).reduce((x, i) => x + (i.qty || 1), 0), 0);
-  const avg = list.length ? Math.round(omzet / list.length) : 0, margin = omzet ? laba / omzet * 100 : 0;
-  const fmt = v => v.toLocaleString('id-ID', { maximumFractionDigits: 1 });
-  return `<section class="hst-omzet"><small>Omzet</small><h2>${rupiah(omzet)}</h2>
-    <span class="hst-chip">dari ${list.length} transaksi</span><span class="hst-chip">${item} item terjual</span><span class="hst-chip">rata-rata ${rupiah(avg)} per transaksi</span></section>
-    <section class="hst-laba"><div><div class="l"><i class="fa-solid fa-arrow-trend-up" aria-hidden="true"></i> Laba Kotor</div><strong>${rupiah(laba)}</strong><small>Margin dari omzet</small></div>
-    <div class="hst-ring" style="--p:${Math.max(0, Math.min(100, margin))}"><span>${fmt(margin)}%</span></div></section>`;
-}
+function histSummaryHTML() { return ''; } // kartu Omzet & Laba Kotor dipindah ke menu Laporan
 function histCardHTML(t, nums) {
   const d = new Date(t.date), items = t.items || [], qty = items.reduce((s, i) => s + (i.qty || 1), 0);
   const waktu = isNaN(d) ? '-' : d.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }) + ' \u00b7 ' + d.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
@@ -2759,7 +2735,6 @@ function saveProfile(event) {
   event.preventDefault();
   data.settings.admin = event.currentTarget.elements.namedItem('admin').value.trim();
   saveData();
-  document.querySelector('.brand p').textContent = 'Selamat datang, ' + data.settings.admin + '!';
   alert('Profil berhasil disimpan.');
 }
 function saveSettings(event) {
@@ -2874,9 +2849,9 @@ function hitungPeriode(a, b) {
 }
 function setTren(id, now, prev, label) {
   const el = document.getElementById(id); if (!el) return;
-  if (!prev) { el.textContent = 'Baru'; el.className = 'bh-trend'; return; }
+  if (!prev) { el.innerHTML = '<i class="fa-solid fa-arrow-up"></i> <b>Baru</b>'; el.className = 'bh-trend'; return; }
   const pct = Math.round((now - prev) / prev * 100);
-  el.textContent = (pct >= 0 ? '\u2191 ' : '\u2193 ') + Math.abs(pct) + '% dari ' + label;
+  el.innerHTML = '<i class="fa-solid fa-arrow-' + (pct >= 0 ? 'up' : 'down') + '"></i> <b>' + Math.abs(pct) + '%</b> dari ' + label;
   el.className = 'bh-trend' + (pct < 0 ? ' down' : '');
 }
 function renderBeranda(k) {
@@ -2890,6 +2865,9 @@ function renderBeranda(k) {
   setTren('pLabaT', x.laba, y.laba, label);
   document.getElementById('pTx').textContent = x.tx + ' transaksi';
   document.getElementById('pItem').textContent = x.item + ' produk terjual';
+  { const hr = ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'], bl = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+    const vs = periodeAktif === 'hari' ? 'vs kemarin' : periodeAktif === 'minggu' ? 'vs ' + hr[r.ps.getDay()] + '\u2013' + hr[r.pe.getDay()] + ' minggu lalu' : 'vs ' + r.ps.getDate() + '\u2013' + r.pe.getDate() + ' ' + bl[r.ps.getMonth()];
+    document.getElementById('pVs').innerHTML = '<i class="fa-solid fa-arrows-left-right"></i> ' + vs; }
   document.querySelectorAll('#bhSeg button').forEach(b => b.classList.toggle('on', b.dataset.k === periodeAktif));
   const n = new Date(), nama = ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'], arr = [];
   for (let i = 6; i >= 0; i--) {
@@ -2914,12 +2892,6 @@ function updateDashboard() {
   const sales = todaysTransactions.reduce((sum, transaction) => sum + transaction.total, 0);
   const profit = todaysTransactions.reduce((sum, transaction) => sum + (transaction.items || []).reduce((total, item) => total + (item.price - (item.cost || 0)) * item.qty, 0), 0);
   renderBeranda();
-  const latest = data.transactions.slice(0, 3);
-  document.getElementById('latestTransactions').innerHTML = latest.length ? latest.map(transaction => `<div class="transaction">
-    <div class="transaction-icon"><i class="fa-solid fa-receipt"></i></div>
-    <div class="transaction-detail"><strong>${escapeHTML(transaction.customer)}</strong><small>${new Date(transaction.date).toLocaleString('id-ID')}</small></div>
-    <div class="price">${rupiah(transaction.total)}</div>
-  </div>`).join('') : emptyMessage('Belum ada transaksi hari ini.');
 }
 function seedPreviewData() {
   const previewEditor = window.self !== window.top;
@@ -2963,7 +2935,6 @@ function seedPreviewData() {
     .sort((a, b) => new Date(b.date) - new Date(a.date));
 }
 document.querySelector('.brand h3').textContent = data.settings.shop.toUpperCase();
-document.querySelector('.brand p').textContent = 'Selamat datang, ' + data.settings.admin + '!';
 updateDashboard();
 window.addEventListener('popstate', event => {
   if (!document.getElementById('featureModal').classList.contains('open')) return;
@@ -2991,15 +2962,11 @@ document.addEventListener('focusin', event => {
 document.addEventListener('keydown', event => {
   if (event.code === 'Space' && event.target.closest?.('.cashier-product')) event.preventDefault();
 });
-document.querySelectorAll('.nav-item').forEach(item => {
-  item.addEventListener('click', function() {
-    const label = this.textContent.trim();
-    document.querySelectorAll('.nav-item').forEach(nav => {
-      nav.classList.toggle('active', nav.textContent.trim() === label);
-    });
-    if (label === 'Home') closeFeature();
-    else openMenu(label === 'Kasir' ? 'Kasir' : label === 'Riwayat' ? 'Riwayat' : label === 'Laporan' ? 'Laporan' : 'Lainnya');
-  });
+document.addEventListener('click', event => {
+  const item = event.target.closest('.nav-item[data-nav]');
+  if (!item) return;
+  const label = item.dataset.nav;
+  if (label === 'Home') closeFeature(); else openMenu(label);
 });
 </script>
 
