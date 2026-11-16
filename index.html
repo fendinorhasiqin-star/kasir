@@ -155,6 +155,25 @@
     .receipt-print { background:#0a7040; }
     .receipt-delete { background:#bb1e4c; }
     .receipt-close { margin-top:7px; background:#dff3e5; color:#087a43; }
+    .cart-mockup { height:100%; position:relative; overflow:hidden; border:1px solid #e5ece8; border-radius:28px; background:#f6f9f7; box-shadow:0 28px 65px rgba(4,77,49,.18); color:#173126; }
+    .cart-header { display:flex; justify-content:space-between; align-items:center; padding:12px 16px; background:#16834a; border-bottom:3px solid #c9a84c; color:white; font-size:.95rem; font-weight:850; }
+    .cart-header span { font-size:.72rem; font-weight:600; opacity:.92; }
+    .cart-body { display:grid; gap:6px; padding:10px 12px; }
+    .cart-search { display:flex; gap:7px; margin-bottom:3px; }
+    .cart-search-field { flex:1; height:34px; display:flex; align-items:center; padding:0 12px; border:1px solid #e1e9e4; border-radius:12px; background:white; color:#9aa8a0; font-size:.72rem; }
+    .cart-scan { width:34px; height:34px; display:grid; place-items:center; border:1px solid #e1e9e4; border-radius:12px; background:white; font-size:1rem; }
+    .cart-item { padding:6px 11px; border:1px solid #e8eeea; border-left:4px solid #c9a84c; border-radius:13px; background:white; }
+    .cart-item-top { display:flex; justify-content:space-between; align-items:center; font-size:.78rem; font-weight:850; }
+    .cart-item-top span { font-size:.8rem; opacity:.55; }
+    .cart-item-bottom { display:flex; justify-content:space-between; align-items:center; gap:6px; margin-top:4px; }
+    .cart-price { padding:3px 8px; border:1px dashed #c9d6cd; border-radius:8px; background:#f4f8f5; font-size:.64rem; font-weight:700; white-space:nowrap; }
+    .cart-qty { display:flex; align-items:center; gap:7px; font-size:.78rem; font-weight:850; }
+    .cart-qty i { width:22px; height:22px; display:grid; place-items:center; border:1px solid #dce5df; border-radius:7px; color:#16834a; font-style:normal; font-size:.85rem; }
+    .cart-line { min-width:64px; text-align:right; font-size:.76rem; font-weight:850; }
+    .cart-total { position:absolute; right:12px; bottom:73px; left:12px; display:flex; justify-content:space-between; align-items:center; padding:10px 12px; border-radius:16px; background:#16834a; color:white; }
+    .cart-total small { display:block; color:#cfeadb; font-size:.64rem; }
+    .cart-total strong { font-size:1.15rem; font-weight:900; letter-spacing:-.4px; }
+    .cart-pay { padding:10px 20px; border-radius:11px; background:#c9a84c; color:#2b2410; font-size:.78rem; font-weight:850; }
     .pay-mockup { height:100%; position:relative; overflow:hidden; border-radius:28px; background:#d9e5dd; color:#173126; padding:14px; }
     .pay-bg-title { display:flex; justify-content:space-between; align-items:center; margin:0 2px 15px; font-size:1.25rem; font-weight:900; }
     .pay-bg-list { display:grid; gap:9px; opacity:.6; }
@@ -406,29 +425,57 @@
               </div>
             </div>
             <div class="hero-slide" data-slide="2" aria-hidden="true">
+              <div class="cart-mockup">
+                <div class="cart-header"><span style="font-size:.95rem;opacity:1;font-weight:850">🛒 Keranjang</span><span>Fendi</span></div>
+                <div class="cart-body">
+                  <div class="cart-search"><div class="cart-search-field">Scan / ketik nama atau barcode</div><div class="cart-scan">▥</div></div>
+                  <div class="cart-item">
+                    <div class="cart-item-top">Beras Premium 5 kg<span>🗑</span></div>
+                    <div class="cart-item-bottom"><span class="cart-price">Rp 68.000 · karung</span><div class="cart-qty"><i>−</i>2<i>+</i></div><span class="cart-line">Rp 136.000</span></div>
+                  </div>
+                  <div class="cart-item">
+                    <div class="cart-item-top">Minyak Goreng 1 L<span>🗑</span></div>
+                    <div class="cart-item-bottom"><span class="cart-price">Rp 18.000 · pcs</span><div class="cart-qty"><i>−</i>2<i>+</i></div><span class="cart-line">Rp 36.000</span></div>
+                  </div>
+                  <div class="cart-item">
+                    <div class="cart-item-top">Telur Ayam<span>🗑</span></div>
+                    <div class="cart-item-bottom"><span class="cart-price">Rp 29.000 · kg</span><div class="cart-qty"><i>−</i>1<i>+</i></div><span class="cart-line">Rp 29.000</span></div>
+                  </div>
+                  <div class="cart-item">
+                    <div class="cart-item-top">Kopi Sachet Kapal Api<span>🗑</span></div>
+                    <div class="cart-item-bottom"><span class="cart-price">Rp 14.000 · renteng</span><div class="cart-qty"><i>−</i>2<i>+</i></div><span class="cart-line">Rp 28.000</span></div>
+                  </div>
+                </div>
+                <div class="cart-total"><div><small>7 barang</small><strong>Rp 229.000</strong></div><span class="cart-pay">Bayar ›</span></div>
+                <div class="dashboard-nav">
+                  <span><b>⌂</b>Home</span><span><b>▤</b>Riwayat</span><span class="cashier"><b>🛒</b>Kasir</span><span><b>▥</b>Laporan</span><span><b>●</b>Profil</span>
+                </div>
+              </div>
+            </div>
+            <div class="hero-slide" data-slide="3" aria-hidden="true">
               <div class="pay-mockup">
                 <div class="pay-bg-title"><span>Kasir</span><span class="history-back">←</span></div>
                 <div class="pay-bg-list">
                   <div class="pay-bg-item"><strong>Beras Premium 5 kg</strong><span>2 x Rp 68.000</span></div>
-                  <div class="pay-bg-item"><strong>Minyak Goreng 1 L</strong><span>1 x Rp 18.000</span></div>
+                  <div class="pay-bg-item"><strong>Minyak Goreng 1 L</strong><span>2 x Rp 18.000</span></div>
                 </div>
                 <div class="pay-overlay">
                   <div class="pay-box">
                     <div class="pay-head"><strong>Pembayaran</strong><span class="pay-close">×</span></div>
-                    <div class="pay-total"><small>Total pembayaran</small><strong>Rp 124.000</strong></div>
+                    <div class="pay-total"><small>Total pembayaran</small><strong>Rp 229.000</strong></div>
                     <div class="pay-form">
                       <div class="pay-field">Siti Aminah</div>
                       <div class="pay-label">Uang diterima</div>
-                      <div class="pay-field">150.000</div>
-                      <div class="pay-quick"><span>Rp 130.000</span><span class="selected">Rp 150.000</span><span>Rp 200.000</span></div>
-                      <div class="pay-change">Kembalian<strong>Rp 26.000</strong></div>
+                      <div class="pay-field">250.000</div>
+                      <div class="pay-quick"><span>Rp 230.000</span><span class="selected">Rp 250.000</span><span>Rp 300.000</span></div>
+                      <div class="pay-change">Kembalian<strong>Rp 21.000</strong></div>
                       <div class="pay-confirm">Konfirmasi pembayaran</div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-            <div class="hero-slide" data-slide="3" aria-hidden="true">
+            <div class="hero-slide" data-slide="4" aria-hidden="true">
               <div class="history-mockup">
                 <div class="history-title"><span>Riwayat</span><span class="history-back">←</span></div>
                 <div class="history-list">
@@ -465,6 +512,7 @@
               <button class="carousel-arrow carousel-prev" type="button" aria-label="Slide sebelumnya">‹</button>
               <button class="carousel-dot active" type="button" aria-label="Tampilkan slide laporan" aria-current="true"></button>
               <button class="carousel-dot" type="button" aria-label="Tampilkan slide dashboard" aria-current="false"></button>
+              <button class="carousel-dot" type="button" aria-label="Tampilkan slide keranjang" aria-current="false"></button>
               <button class="carousel-dot" type="button" aria-label="Tampilkan slide pembayaran" aria-current="false"></button>
               <button class="carousel-dot" type="button" aria-label="Tampilkan slide struk riwayat" aria-current="false"></button>
               <button class="carousel-arrow carousel-next" type="button" aria-label="Slide berikutnya">›</button>
