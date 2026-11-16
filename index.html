@@ -368,6 +368,19 @@
       .feature-grid { grid-template-columns:1fr; }
       .price { font-size:2.4rem; }
     }
+
+    /* Testimoni */
+    .testi { display:grid; grid-template-columns:1.05fr 1fr; gap:44px; align-items:center; max-width:1000px; margin:0 auto; }
+    .testi-photo { margin:0; border-radius:var(--radius); overflow:hidden; box-shadow:var(--shadow); border:1px solid var(--line); background:#fff; }
+    .testi-photo img { display:block; width:100%; height:auto; }
+    .testi-body .quote-mark { font-size:4rem; line-height:.6; color:var(--green); font-weight:900; font-family:Georgia,serif; }
+    .testi-body blockquote { margin:10px 0 18px; font-size:1.28rem; line-height:1.55; font-weight:700; color:var(--green-dark); letter-spacing:-.2px; }
+    .testi-who { display:flex; align-items:center; gap:12px; font-size:.92rem; color:#3e554a; }
+    .testi-who strong { display:block; color:var(--green-dark); font-weight:850; }
+    .testi-who .avatar { width:42px; height:42px; border-radius:50%; display:grid; place-items:center; background:var(--green-soft); font-size:1.2rem; }
+    .testi-tags { display:flex; flex-wrap:wrap; gap:8px; margin-top:20px; }
+    .testi-tags span { padding:6px 12px; border-radius:999px; background:#e2f5e9; color:var(--green-dark); font-size:.78rem; font-weight:800; }
+    @media (max-width:820px) { .testi { grid-template-columns:1fr; gap:26px; } .testi-body blockquote { font-size:1.12rem; } }
   </style>
 </head>
 <body>
@@ -714,6 +727,27 @@
           <div class="multi-point"><span class="check">✓</span><span>HP hilang atau ganti HP? Masuk lagi, datamu kembali</span></div>
         </div>
         <p class="multi-note">Fitur ini hanya ada di paket Online. Paket Offline menyimpan data di satu HP atau komputer saja.</p>
+      </div>
+    </section>
+
+    <section class="section" id="testimoni">
+      <div class="container">
+        <div class="section-head">
+          <div class="section-kicker">Dipakai di warung</div>
+          <h2>Langsung Dipakai di Meja Kasir</h2>
+          <p>Cukup tablet, printer struk, dan Warungku. Pembeli dilayani lebih cepat, catatan jualan rapi.</p>
+        </div>
+        <div class="testi">
+          <figure class="testi-photo">
+            <img src="testimoni-kasir.jpg" width="960" height="720" loading="lazy" alt="Kasir warung memakai aplikasi Warungku di tablet, dengan printer struk di sebelahnya">
+          </figure>
+          <div class="testi-body">
+            <div class="quote-mark" aria-hidden="true">&ldquo;</div>
+            <blockquote>Tinggal scan atau ketik nama barang, total langsung muncul. Struk keluar, jualan tercatat otomatis.</blockquote>
+            <div class="testi-who"><div class="avatar" aria-hidden="true">🛒</div><div><strong>Kasir warung</strong>Pengguna Warungku di tablet</div></div>
+            <div class="testi-tags"><span>Tablet</span><span>Printer struk</span><span>Scan barcode</span></div>
+          </div>
+        </div>
       </div>
     </section>
 
