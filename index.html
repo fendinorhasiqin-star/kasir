@@ -372,7 +372,18 @@
     /* Testimoni */
     .testi { display:grid; grid-template-columns:1.05fr 1fr; gap:44px; align-items:center; max-width:1000px; margin:0 auto; }
     .testi-photo { margin:0; border-radius:var(--radius); overflow:hidden; box-shadow:var(--shadow); border:1px solid var(--line); background:#fff; }
-    .testi-photo img { display:block; width:100%; height:auto; }
+    .testi-photo img { display:block; }
+    .testi-photo { position:relative; }
+    .testi-slides { position:relative; aspect-ratio:4/3; background:#e9f3ed; }
+    .testi-slide { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:0; transition:opacity .6s ease; }
+    .testi-slide.active { opacity:1; }
+    .testi-arrow { position:absolute; top:50%; transform:translateY(-50%); width:38px; height:38px; display:grid; place-items:center; padding:0 0 3px; border:0; border-radius:50%; background:rgba(255,255,255,.88); color:var(--green-dark); font-size:1.6rem; line-height:1; cursor:pointer; box-shadow:0 4px 14px rgba(0,0,0,.18); }
+    .testi-arrow:hover { background:#fff; }
+    .testi-prev { left:12px; } .testi-next { right:12px; }
+    .testi-dots { position:absolute; left:0; right:0; bottom:12px; display:flex; justify-content:center; gap:7px; }
+    .testi-dot { width:8px; height:8px; padding:0; border:0; border-radius:99px; background:rgba(255,255,255,.7); box-shadow:0 1px 4px rgba(0,0,0,.35); cursor:pointer; transition:width .25s, background .25s; }
+    .testi-dot.active { width:22px; background:#fff; }
+    @media (prefers-reduced-motion: reduce) { .testi-slide { transition:none; } }
     .testi-body .quote-mark { font-size:4rem; line-height:.6; color:var(--green); font-weight:900; font-family:Georgia,serif; }
     .testi-body blockquote { margin:10px 0 18px; font-size:1.28rem; line-height:1.55; font-weight:700; color:var(--green-dark); letter-spacing:-.2px; }
     .testi-who { display:flex; align-items:center; gap:12px; font-size:.92rem; color:#3e554a; }
@@ -738,8 +749,17 @@
           <p>Cukup tablet, printer struk, dan Warungku. Pembeli dilayani lebih cepat, catatan jualan rapi.</p>
         </div>
         <div class="testi">
-          <figure class="testi-photo">
-            <img src="testimoni-kasir.jpg" width="960" height="720" loading="lazy" alt="Kasir warung memakai aplikasi Warungku di tablet, dengan printer struk di sebelahnya">
+          <figure class="testi-photo" id="testiSlider" aria-roledescription="carousel" aria-label="Foto penggunaan Warungku di warung">
+            <div class="testi-slides">
+              <img class="testi-slide active" src="testimoni-kasir.jpg" width="960" height="720" alt="Kasir warung memakai aplikasi Warungku di tablet, dengan printer struk di sebelahnya">
+              <img class="testi-slide" src="testimoni-kasir-2.jpg" width="960" height="720" loading="lazy" alt="Kasir warung memindai barcode bungkus snack memakai kamera tablet Warungku" aria-hidden="true">
+            </div>
+            <button type="button" class="testi-arrow testi-prev" aria-label="Foto sebelumnya">&#8249;</button>
+            <button type="button" class="testi-arrow testi-next" aria-label="Foto berikutnya">&#8250;</button>
+            <div class="testi-dots" role="tablist" aria-label="Pilih foto">
+              <button type="button" class="testi-dot active" aria-label="Foto 1" aria-selected="true"></button>
+              <button type="button" class="testi-dot" aria-label="Foto 2" aria-selected="false"></button>
+            </div>
           </figure>
           <div class="testi-body">
             <div class="quote-mark" aria-hidden="true">&ldquo;</div>
@@ -914,6 +934,39 @@
         window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`, "_blank", "noopener");
       });
     });
+
+    /* Slider foto testimoni */
+    (function () {
+      const box = document.getElementById("testiSlider");
+      if (!box) return;
+      const slides = [...box.querySelectorAll(".testi-slide")];
+      const dots = [...box.querySelectorAll(".testi-dot")];
+      let i = 0, timer = null, hovering = false;
+      function show(n) {
+        i = (n + slides.length) % slides.length;
+        slides.forEach((el, k) => { el.classList.toggle("active", k === i); el.setAttribute("aria-hidden", k === i ? "false" : "true"); });
+        dots.forEach((el, k) => { el.classList.toggle("active", k === i); el.setAttribute("aria-selected", k === i ? "true" : "false"); });
+      }
+      function start() {
+        stop();
+        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+        timer = setInterval(() => { if (!hovering) show(i + 1); }, 5000);
+      }
+      function stop() { if (timer) clearInterval(timer); timer = null; }
+      box.querySelector(".testi-prev").addEventListener("click", () => { show(i - 1); start(); });
+      box.querySelector(".testi-next").addEventListener("click", () => { show(i + 1); start(); });
+      dots.forEach((el, k) => el.addEventListener("click", () => { show(k); start(); }));
+      box.addEventListener("mouseenter", () => { hovering = true; });
+      box.addEventListener("mouseleave", () => { hovering = false; });
+      let x0 = null;
+      box.addEventListener("touchstart", e => { x0 = e.touches[0].clientX; }, { passive: true });
+      box.addEventListener("touchend", e => {
+        if (x0 === null) return;
+        const dx = e.changedTouches[0].clientX - x0; x0 = null;
+        if (Math.abs(dx) > 40) { show(dx < 0 ? i + 1 : i - 1); start(); }
+      }, { passive: true });
+      start();
+    })();
   </script>
 </body>
 </html>
