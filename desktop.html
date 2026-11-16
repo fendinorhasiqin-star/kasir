@@ -3094,7 +3094,9 @@ async function importProductsCSV(event) {
     const requiredNameIndex = indexOf('nama', 'produk', 'barang', 'nama barang', 'nama produk', 'product', 'product name', 'item', 'item name');
     const requiredPriceIndex = indexOf('harga', 'harga jual', 'price', 'selling price');
     if (requiredNameIndex < 0 || requiredPriceIndex < 0) throw new Error('File wajib memiliki kolom nama/produk/barang atau product, serta harga atau price.');
-    const imported = rows.slice(1).map((row, rowIndex) => {
+    let skipped = 0;
+    let imported = rows.slice(1).map((row, rowIndex) => {
+      if (!row || row.every(cell => !String(cell ?? '').trim())) return null;
       const value = (...names) => {
         const index = indexOf(...names);
         return index < 0 ? '' : (row[index] || '').trim();
@@ -3108,14 +3110,23 @@ async function importProductsCSV(event) {
       const cost = costValue === '' ? 0 : Number(costValue);
       const stock = stockValue === '' ? 1 : Number(stockValue);
       if (!name || !Number.isFinite(price) || price < 0 || !Number.isFinite(cost) || cost < 0 || !Number.isInteger(stock) || stock < 0 || (id && (!Number.isSafeInteger(Number(id)) || Number(id) < 1))) {
-        throw new Error(`Data produk pada baris ${rowIndex + 2} tidak valid.`);
+        skipped++;
+        return null;
       }
       const rawBarcode = value('barcode');
       const barcodeText = rawBarcode.match(/^="([^"]*)"$/)?.[1] ?? (rawBarcode.startsWith("'") ? rawBarcode.slice(1) : rawBarcode);
       const barcode = expandScientificNumber(barcodeText);
       return { id, name, price, cost, stock, unit: value('satuan', 'unit'), barcode };
+    }).filter(Boolean);
+    const seenIds = new Set(), seenBarcodes = new Set();
+    imported = imported.filter(product => {
+      if ((product.id && seenIds.has(product.id)) || (product.barcode && seenBarcodes.has(product.barcode))) { skipped++; return false; }
+      if (product.id) seenIds.add(product.id);
+      if (product.barcode) seenBarcodes.add(product.barcode);
+      return true;
     });
-    if (!(await askConfirm(`Impor ${imported.length} produk? Produk yang cocok akan diperbarui, lainnya ditambahkan.`, { title: 'Impor produk', okText: 'Impor' }))) return;
+    if (!imported.length) throw new Error('Tidak ada baris produk yang valid untuk diimpor.');
+    if (!(await askConfirm(`Impor ${imported.length} produk?${skipped ? ` ${skipped} baris tidak valid akan dilewati.` : ''} Produk yang cocok akan diperbarui, lainnya ditambahkan.`, { title: 'Impor produk', okText: 'Impor' }))) return;
     if (!data.settings.unlimitedProducts) {
       const projectedProducts = [...data.products];
       for (const item of imported) {
@@ -3129,13 +3140,6 @@ async function importProductsCSV(event) {
         return;
       }
     }
-    const seenIds = new Set(), seenBarcodes = new Set();
-    imported.forEach(product => {
-      if (product.id && seenIds.has(product.id)) throw new Error(`ID produk duplikat: ${product.id}`);
-      if (product.barcode && seenBarcodes.has(product.barcode)) throw new Error(`Barcode duplikat: ${product.barcode}`);
-      if (product.id) seenIds.add(product.id);
-      if (product.barcode) seenBarcodes.add(product.barcode);
-    });
     imported.forEach(item => {
       const existing = (item.id && data.products.find(product => String(product.id) === item.id))
         || (item.barcode && data.products.find(product => String(product.barcode || '') === item.barcode))
@@ -3149,7 +3153,7 @@ async function importProductsCSV(event) {
     });
         saveData();
     openMenu('Produk');
-    notify(`${imported.length} produk berhasil diimpor.`);
+    notify(`${imported.length} produk berhasil diimpor.${skipped ? ` ${skipped} baris tidak valid dilewati.` : ''}`);
   } catch (error) {
     notify(error.message || 'File CSV tidak dapat dibaca.');
   } finally {
