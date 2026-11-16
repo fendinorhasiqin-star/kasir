@@ -621,11 +621,17 @@ body {
 .payment-overlay { position: fixed; inset: 0; z-index: 30; display: flex; align-items: center; justify-content: center; padding: 20px; background: #17251dcc; }
 .payment-box { width: 100%; max-width: 440px; padding: 20px; border-radius: 20px; background: #F8FAF9; box-shadow: 0 12px 40px #0003; }
 .payment-box h3 { margin-bottom: 14px; }
-.payment-change { padding: 12px 14px; border-radius: 12px; background: #E5F5EA; color: #16834A; font-size: 13px; font-weight: 700; }
+.payment-total { padding: 14px 16px; margin: 12px 0; border-radius: 14px; background: #fff; border: 1px solid #DCE5DF; text-align: center; }
+.payment-total small { display: block; color: #718078; font-size: 12px; font-weight: 700; }
+.payment-total strong { display: block; margin-top: 2px; font-size: 28px; font-weight: 800; color: #26352D; letter-spacing: -.5px; }
+.payment-change { padding: 12px 14px; border-radius: 12px; background: #F1F5F2; color: #718078; font-size: 13px; font-weight: 700; }
+.payment-change.ok { background: #E5F5EA; color: #16834A; }
+.payment-change.low { background: #FFF1E0; color: #B35A00; }
 .payment-change strong { display: block; margin-top: 4px; font-size: 18px; }
 .payment-quick-amounts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
 .payment-quick-amounts button { min-width: 0; padding: 10px 6px; font-size: 12px; }
-.payment-quick-amounts button.selected { background: #16834A; color: white; box-shadow: 0 0 0 2px #16834A30; }
+.payment-quick-amounts button.feature-button { background: #fff; color: #16834A; border: 1.5px solid #16834A; }
+.payment-quick-amounts button.feature-button.selected { background: #16834A; color: #fff; box-shadow: none; }
 .payment-success { text-align: center; padding: 12px 4px 4px; }
 .payment-success-icon { color: #16834A; font-size: 58px; margin: 8px 0 14px; }
 .payment-success h3 { margin-bottom: 8px; font-size: 22px; }
@@ -1211,7 +1217,7 @@ function openPayment() {
   document.getElementById('featureContent').insertAdjacentHTML('beforeend', `<div class="payment-overlay" id="paymentOverlay" onclick="if(event.target === this) closePayment()">
     <section class="payment-box" role="dialog" aria-modal="true" aria-labelledby="paymentTitle">
       <div class="feature-header"><h2 id="paymentTitle">Pembayaran</h2><button class="feature-close" type="button" onclick="closePayment()" aria-label="Tutup">&times;</button></div>
-      <div class="feature-total">Total pembayaran: ${rupiah(total)}</div>
+      <div class="payment-total"><small>Total pembayaran</small><strong>${rupiah(total)}</strong></div>
       <form class="feature-form" onsubmit="checkout(event)">
         <input name="customer" placeholder="Nama pelanggan (opsional)">
         <label for="cashReceived">Uang diterima</label>
@@ -1243,6 +1249,8 @@ function updateChange() {
   if (!cashInput || !changeDisplay) return;
   const cash = moneyNumber(cashInput.value);
   const total = data.cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+  changeDisplay.classList.toggle('ok', !!cashInput.value && cash >= total);
+  changeDisplay.classList.toggle('low', !!cashInput.value && cash < total);
   if (!cashInput.value) {
     changeDisplay.innerHTML = 'Kembalian';
   } else if (cash < total) {
