@@ -6,6 +6,7 @@
   <meta name="description" content="Aplikasi kasir untuk warung: catat jualan, stok barang, dan keuangan dengan mudah. Pilih bayar sekali atau bayar bulanan.">
   <meta name="theme-color" content="#087a43">
   <title>Warungku — Warung Ramai, Untungnya Jelas</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
   <style>
     :root {
       --green: #087a43;
@@ -63,146 +64,178 @@
     .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin: 28px 0 18px; }
     .trust-line { color: #607267; font-size: .85rem; font-weight: 650; display:flex; gap:9px; align-items:center; }
     .hero-visual { min-height: 550px; position:relative; display:grid; place-items:center; }
-    .report-mockup {
-      width:min(100%, 370px); height:550px; position:relative; overflow:hidden;
-      border:1px solid #e5ece8; border-radius:26px; background:#f5f8f6;
-      box-shadow:0 28px 65px rgba(4,77,49,.18); color:#35443d;
-      padding:12px 12px 68px;
-    }
-    .report-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; }
-    .report-header h3 { margin:0; color:#183b2a; font-size:1.25rem; letter-spacing:-.5px; }
-    .report-back { width:36px; height:36px; display:grid; place-items:center; border-radius:50%; background:#eaf0f1; font-size:1.2rem; }
-    .report-card { margin-top:10px; padding:11px; border:1px solid #e9eeeb; border-radius:17px; background:white; }
-    .sales-total { position:relative; padding:15px 14px; background:linear-gradient(115deg,#16864d,#08643b); color:white; }
-    .sales-total-label { font-size:.69rem; color:#d7eee1; }
-    .sales-total-value { margin-top:2px; font-size:1.72rem; font-weight:950; letter-spacing:-.9px; white-space:nowrap; }
-    .sales-total-icon { position:absolute; right:13px; top:50%; transform:translateY(-50%); width:36px; height:36px; display:grid; place-items:center; border-radius:12px; background:rgba(255,255,255,.16); font-size:1.15rem; }
-    .report-metrics { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin:9px 0 0; }
-    .report-metric { min-height:45px; padding:7px 9px; border-radius:13px; background:#f2f6f3; }
-    .report-metric span { display:block; color:#87948d; font-size:.59rem; line-height:1.2; }
-    .report-metric strong { display:block; margin-top:3px; color:#35443d; font-size:.78rem; line-height:1.15; white-space:nowrap; }
-    .report-metric:first-child strong { color:#16864d; }
-    .stock-card { display:flex; align-items:center; gap:11px; padding:11px 12px; }
-    .stock-icon { width:42px; height:42px; flex:none; display:grid; place-items:center; border-radius:13px; background:#e8f1ff; color:#2879d5; font-size:1.2rem; }
-    .stock-card span { color:#87948d; font-size:.65rem; }
-    .stock-card strong { display:block; font-size:1.25rem; line-height:1.2; }
-    .stock-card small { color:#87948d; font-size:.61rem; }
-    .sales-chart { height:180px; margin-top:10px; padding:11px 11px 8px; }
-    .sales-chart h4 { margin:0; font-size:.83rem; }
-    .chart-columns { height:123px; display:flex; align-items:flex-end; gap:8px; overflow:hidden; margin-top:9px; padding:0 2px; border-bottom:1px solid #e8eeea; }
-    .chart-day { min-width:22px; flex:1; height:100%; display:flex; flex-direction:column; justify-content:flex-end; align-items:center; gap:3px; }
-    .chart-pair { width:100%; height:calc(100% - 14px); display:flex; align-items:flex-end; justify-content:center; gap:3px; }
-    .chart-pair i { width:8px; border-radius:5px 5px 0 0; background:#16864d; }
-    .chart-pair i:last-child { background:#c8a646; }
-    .chart-day small { color:#87948d; font-size:.48rem; line-height:1; }
-    .chart-day:nth-child(1) i{height:70%}.chart-day:nth-child(2) i{height:83%}.chart-day:nth-child(3) i{height:76%}.chart-day:nth-child(4) i{height:91%}.chart-day:nth-child(5) i{height:80%}.chart-day:nth-child(6) i{height:88%}.chart-day:nth-child(7) i{height:75%}.chart-day:nth-child(8) i{height:86%}.chart-day:nth-child(9) i{height:78%}.chart-day:nth-child(10) i{height:94%}
-    .report-nav { position:absolute; right:0; bottom:0; left:0; height:63px; display:flex; justify-content:space-around; align-items:center; border-top:1px solid #e8eeea; background:rgba(255,255,255,.97); }
-    .report-nav span { display:grid; gap:1px; justify-items:center; color:#92a39a; font-size:.58rem; line-height:1.2; }
-    .report-nav b { font-size:1.1rem; }
-    .report-nav .active { color:#087a43; font-weight:850; }
-    .report-nav .cashier { width:48px; height:52px; margin-top:-17px; border-radius:18px; background:#087a43; color:white; box-shadow:0 8px 16px rgba(8,122,67,.22); }
     .hero-carousel { width:min(100%, 370px); height:550px; position:relative; }
     .hero-slide { position:absolute; inset:0; visibility:hidden; opacity:0; transform:translateX(12px); transition:opacity .7s ease, transform .7s ease, visibility .7s; pointer-events:none; }
     .hero-slide.active { visibility:visible; opacity:1; transform:translateX(0); pointer-events:auto; }
-    .dashboard-mockup { height:100%; position:relative; overflow:hidden; border:1px solid #e5ece8; border-radius:28px; background:#f6f9f7; box-shadow:0 28px 65px rgba(4,77,49,.18); color:#173126; padding:16px 15px 68px; }
-    .dashboard-top { display:flex; justify-content:space-between; align-items:center; gap:10px; }
-    .dashboard-store { display:flex; align-items:center; gap:10px; min-width:0; }
-    .dashboard-store-icon { width:42px; height:42px; flex:none; display:grid; place-items:center; border-radius:14px; background:#13874d; color:white; font-size:1.25rem; }
-    .dashboard-store strong { display:block; font-size:.94rem; line-height:1.2; }
-    .dashboard-store small { color:#84928b; font-size:.68rem; }
-    .dashboard-user { width:38px; height:38px; flex:none; display:grid; place-items:center; border-radius:50%; background:#e2f5e9; color:#12814a; font-size:1.25rem; }
-    .dashboard-title { margin:24px 0 13px; }
-    .dashboard-title h3 { margin:0; font-size:1.55rem; line-height:1.2; letter-spacing:-.5px; }
-    .dashboard-title p { margin:3px 0 0; color:#89958f; font-size:.78rem; }
-    .dashboard-sales { padding:16px 15px; border-radius:21px; color:white; background:linear-gradient(140deg,#16864d,#08613a); box-shadow:0 12px 26px rgba(8,122,67,.14); }
-    .dashboard-sales-label { color:#d7eee1; font-size:.72rem; }
-    .dashboard-sales-value { margin:4px 0 11px; font-size:1.65rem; font-weight:950; letter-spacing:-.9px; white-space:nowrap; }
-    .dashboard-sales-stats { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
-    .dashboard-sales-stats div { padding-top:8px; border-top:1px solid rgba(255,255,255,.25); color:#d7eee1; font-size:.68rem; }
-    .dashboard-sales-stats strong { display:block; color:white; font-size:.92rem; }
-    .dashboard-menu-heading { display:flex; justify-content:space-between; align-items:center; margin:16px 0 9px; }
-    .dashboard-menu-heading strong { font-size:1rem; }
-    .dashboard-menu-heading span { color:#13874d; font-size:.7rem; }
-    .dashboard-menu { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
-    .dashboard-menu-item { min-height:91px; display:grid; justify-items:center; align-content:center; gap:6px; border:1px solid #e8eeea; border-radius:16px; background:white; font-size:.68rem; font-weight:800; }
-    .dashboard-menu-icon { width:43px; height:43px; display:grid; place-items:center; border-radius:14px; background:#e4f5e9; color:#11834a; font-size:1.25rem; }
-    .dashboard-menu-item:nth-child(2) .dashboard-menu-icon { background:#e5efff; color:#3180d5; }
-    .dashboard-menu-item:nth-child(3) .dashboard-menu-icon { background:#fff0dc; color:#e89318; }
-    .dashboard-menu-item:nth-child(4) .dashboard-menu-icon { background:#f2e6fb; color:#9051c9; }
-    .dashboard-menu-item:nth-child(5) .dashboard-menu-icon { background:#e0f4f3; color:#1b9994; }
-    .dashboard-menu-item:nth-child(6) .dashboard-menu-icon { background:#fbe6ed; color:#db4c7a; }
-    .dashboard-nav { position:absolute; right:0; bottom:0; left:0; height:61px; display:flex; justify-content:space-around; align-items:center; border-top:1px solid #e8eeea; background:rgba(255,255,255,.98); }
-    .dashboard-nav span { display:grid; justify-items:center; gap:1px; color:#9ba9a2; font-size:.56rem; line-height:1.1; }
-    .dashboard-nav b { font-size:1rem; }
-    .dashboard-nav .active { color:#087a43; font-weight:850; }
-    .dashboard-nav .cashier { width:46px; height:50px; margin-top:-16px; border-radius:16px; background:#087a43; color:white; box-shadow:0 8px 16px rgba(8,122,67,.22); }
-    .history-mockup { height:100%; position:relative; overflow:hidden; border-radius:28px; background:#d9e5dd; color:#173126; padding:14px; }
-    .history-title { display:flex; justify-content:space-between; align-items:center; margin:0 2px 17px; font-size:1.25rem; font-weight:900; }
-    .history-back { width:32px; height:32px; display:grid; place-items:center; border-radius:50%; background:rgba(255,255,255,.55); }
-    .history-list { display:grid; gap:9px; opacity:.66; }
-    .history-item { padding:11px 12px; border:1px solid rgba(255,255,255,.65); border-radius:13px; background:rgba(255,255,255,.48); font-size:.7rem; }
-    .history-item strong { display:block; font-size:.8rem; }
-    .receipt-overlay { position:absolute; inset:0; display:grid; place-items:center; padding:12px; background:rgba(14,37,26,.72); }
-    .receipt-dialog { width:100%; padding:15px; border-radius:20px; background:#e9eeeb; box-shadow:0 18px 35px rgba(0,0,0,.2); }
-    .receipt-paper { padding:15px 13px; border-radius:6px; background:white; box-shadow:0 3px 10px rgba(0,0,0,.15); color:#252525; font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size:.62rem; line-height:1.55; }
-    .receipt-paper h4 { margin:0 0 7px; text-align:center; font-size:.8rem; }
-    .receipt-center { text-align:center; }
-    .receipt-divider { margin:8px 0; border-top:1px dashed #777; }
-    .receipt-line { display:flex; justify-content:space-between; gap:6px; }
-    .receipt-line.total { margin-top:7px; font-weight:900; }
-    .receipt-actions { display:grid; grid-template-columns:1fr 1fr; gap:7px; margin-top:11px; }
-    .receipt-action { min-height:39px; display:grid; place-items:center; border-radius:10px; color:white; font-size:.7rem; font-weight:850; }
-    .receipt-print { background:#0a7040; }
-    .receipt-delete { background:#bb1e4c; }
-    .receipt-close { margin-top:7px; background:#dff3e5; color:#087a43; }
-    .cart-mockup { height:100%; position:relative; overflow:hidden; border:1px solid #e5ece8; border-radius:28px; background:#f6f9f7; box-shadow:0 28px 65px rgba(4,77,49,.18); color:#173126; }
-    .cart-header { display:flex; justify-content:space-between; align-items:center; padding:12px 16px; background:#16834a; border-bottom:3px solid #c9a84c; color:white; font-size:.95rem; font-weight:850; }
-    .cart-header span { font-size:.72rem; font-weight:600; opacity:.92; }
-    .cart-body { display:grid; gap:6px; padding:10px 12px; }
+    /* ===== Mockup aplikasi (mengikuti tampilan mobile.html) ===== */
+    .m-screen { height:100%; position:relative; overflow:hidden; border:1px solid #e5ece8; border-radius:28px; background:#f8faf9; box-shadow:0 28px 65px rgba(4,77,49,.18); color:#26352d; font-family:Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; line-height:1.35; }
+    .m-screen i { font-style:normal; }
+    .m-nav { position:absolute; z-index:2; right:0; bottom:0; left:0; height:58px; display:flex; justify-content:space-around; align-items:center; border-top:1px solid #edf1ee; background:#fff; }
+    .m-nav span { flex:1; min-width:0; display:flex; flex-direction:column; align-items:center; gap:3px; color:#a2ada5; font-size:8px; font-weight:600; line-height:1.2; }
+    .m-nav i { font-size:15px; }
+    .m-nav .on { color:#16834a; font-weight:800; }
+    .m-nav .kasir { color:#16834a; font-weight:800; transform:translateY(-6px); }
+    .m-nav .kasir i { width:40px; height:40px; display:grid; place-items:center; margin-bottom:-1px; border-radius:14px; background:linear-gradient(135deg,#16834a,#0d6638); color:#fff; box-shadow:0 5px 12px rgba(22,131,74,.27); font-size:16px; }
+    .m-head { display:flex; justify-content:space-between; align-items:center; gap:10px; padding:14px 14px 0; margin-bottom:9px; }
+    .m-head h3 { margin:0; font-size:16px; font-weight:800; letter-spacing:-.2px; }
+    .m-back { width:30px; height:30px; flex:none; display:grid; place-items:center; border-radius:50%; background:#e9eff1; font-size:14px; }
+    .m-body { padding:0 13px; }
+    .m-select { display:flex; justify-content:space-between; align-items:center; gap:6px; min-height:30px; padding:0 10px; border:1px solid #e3eae5; border-radius:10px; background:#fff; color:#26352d; font-size:10px; font-weight:600; }
+    .m-select i { color:#89958e; font-size:8px; }
+    .m-dim { position:absolute; inset:0; background:rgba(23,37,29,.8); }
+
+    /* Home */
+    .hm-hero { position:relative; overflow:hidden; padding:15px 14px 46px; border-radius:0 0 22px 22px; background:linear-gradient(160deg,#16834a,#0d6638); color:#fff; }
+    .hm-hero:after { content:""; position:absolute; right:-30px; top:-30px; width:140px; height:140px; border-radius:50%; background:rgba(255,255,255,.08); }
+    .hm-top { position:relative; z-index:1; display:flex; align-items:center; gap:9px; }
+    .hm-logo { width:34px; height:34px; display:grid; place-items:center; border-radius:11px; background:rgba(255,255,255,.2); font-size:15px; }
+    .hm-top strong { flex:1; font-size:11.5px; font-weight:800; }
+    .hm-user { width:30px; height:30px; display:grid; place-items:center; border-radius:50%; background:rgba(255,255,255,.2); font-size:13px; }
+    .hm-hero h3 { position:relative; z-index:1; margin:13px 0 0; font-size:19px; line-height:1.2; font-weight:800; }
+    .hm-hero p { position:relative; z-index:1; margin:3px 0 0; font-size:9.5px; opacity:.9; }
+    .hm-panel { position:relative; margin:-32px 12px 0; padding:12px; border-radius:19px; background:#fff; box-shadow:0 8px 24px rgba(13,102,56,.15); }
+    .hm-ph { display:flex; align-items:center; gap:9px; }
+    .hm-pi { width:32px; height:32px; flex:none; display:grid; place-items:center; border-radius:10px; background:#e5f5ea; color:#16834a; font-size:14px; }
+    .hm-ph strong { display:block; font-size:13px; line-height:1.2; }
+    .hm-ph small { display:block; margin-top:1px; color:#6b7a71; font-size:8.5px; }
+    .hm-seg { display:flex; margin:9px 0; padding:3px; border-radius:99px; background:#f4f7f5; }
+    .hm-seg span { flex:1; padding:6px 0; border-radius:99px; text-align:center; font-size:10px; font-weight:600; }
+    .hm-seg .on { background:#16834a; color:#fff; }
+    .hm-stats { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+    .hm-st { min-width:0; padding:9px; border-radius:14px; }
+    .hm-st.a { background:#e5f5ea; }
+    .hm-st.b { background:#fbf1d6; }
+    .hm-st-h { display:flex; align-items:center; gap:6px; }
+    .hm-st-ic { width:26px; height:26px; flex:none; display:grid; place-items:center; border-radius:9px; background:#fff; font-size:11px; box-shadow:0 1px 3px rgba(0,0,0,.06); }
+    .hm-st.a .hm-st-ic { color:#16834a; }
+    .hm-st.b .hm-st-ic { color:#b8860b; }
+    .hm-st-h span { color:#6b7a71; font-size:10px; font-weight:600; }
+    .hm-st strong { display:block; margin:7px 0 5px; font-size:13.5px; font-weight:800; white-space:nowrap; }
+    .hm-trend { display:inline-block; max-width:100%; padding:3px 7px; border-radius:12px; background:#fff; color:#16834a; font-size:8px; font-weight:600; line-height:1.3; }
+    .hm-st small { display:block; margin-top:5px; color:#6b7a71; font-size:8.5px; line-height:1.3; }
+    .hm-foot { display:flex; justify-content:space-between; gap:4px; margin-top:10px; padding-top:8px; border-top:1px solid #e3eae5; color:#6b7a71; font-size:8px; }
+    .hm-chart { margin:10px 12px 0; padding:11px 12px; border-radius:19px; background:#fff; }
+    .hm-chart-h { display:flex; justify-content:space-between; align-items:center; }
+    .hm-chart-h strong { font-size:12px; }
+    .hm-chart-h span { color:#16834a; font-size:9px; font-weight:700; }
+    .hm-bars { height:46px; display:flex; align-items:flex-end; gap:7px; margin:9px 0 15px; }
+    .hm-bar { flex:1; height:100%; position:relative; display:flex; align-items:flex-end; }
+    .hm-bar b { display:block; width:100%; min-height:3px; border-radius:6px 6px 0 0; background:#e5f5ea; }
+    .hm-bar.now b { background:#16834a; }
+    .hm-bar span { position:absolute; right:0; bottom:-13px; left:0; text-align:center; color:#6b7a71; font-size:7.5px; }
+
+    /* Laporan */
+    .rp-filter { margin:0 0 8px; }
+    .rp-filter label { display:block; margin-bottom:4px; color:#6b7a71; font-size:9px; font-weight:600; }
+    .rp-omzet { padding:9px 12px; border-radius:16px; background:linear-gradient(135deg,#e5f5ea,#f6fbf8); box-shadow:0 4px 16px rgba(13,102,56,.1); }
+    .rp-omzet small { color:#6b7a71; font-size:10px; font-weight:600; }
+    .rp-omzet h4 { margin:1px 0 7px; font-size:21px; line-height:1.2; font-weight:800; letter-spacing:-.4px; }
+    .rp-chip { display:inline-block; margin:0 4px 4px 0; padding:2px 8px; border:1px solid #d5e6db; border-radius:99px; background:#fff; color:#4d5e54; font-size:8px; }
+    .rp-chip.up { color:#16834a; font-weight:700; }
+    .rp-laba { display:flex; align-items:center; justify-content:space-between; gap:10px; margin:8px 0; padding:8px 12px; border:2px solid #d5e6db; border-radius:15px; background:#fff; }
+    .rp-laba .l { color:#6b7a71; font-size:9.5px; font-weight:600; }
+    .rp-laba strong { display:block; margin:1px 0 2px; color:#16834a; font-size:18px; font-weight:800; }
+    .rp-laba small { color:#6b7a71; font-size:8.5px; }
+    .rp-ring { width:50px; height:50px; flex:none; display:grid; place-items:center; border-radius:50%; background:conic-gradient(#16834a 20%, #e5f5ea 0); }
+    .rp-ring span { width:38px; height:38px; display:grid; place-items:center; border-radius:50%; background:#fff; color:#16834a; font-size:9px; font-weight:800; }
+    .rp-card { margin-bottom:8px; padding:9px 12px; border-radius:15px; background:#fff; box-shadow:0 3px 12px rgba(13,102,56,.08); }
+    .rp-stock { display:flex; align-items:center; gap:10px; }
+    .rp-stock .ic { width:34px; height:34px; flex:none; display:grid; place-items:center; border-radius:10px; background:#e5f5ea; color:#16834a; font-size:14px; }
+    .rp-stock small { display:block; color:#6b7a71; font-size:9px; }
+    .rp-stock strong { display:block; margin:1px 0; font-size:15px; }
+    .rp-stock p { margin:0; color:#89958e; font-size:8px; }
+    .rp-card h5 { margin:0; font-size:11.5px; }
+    .rp-bars { height:34px; display:flex; align-items:flex-end; gap:5px; margin-top:8px; border-bottom:1px solid #dce5df; }
+    .rp-day { flex:1; height:100%; display:flex; align-items:flex-end; justify-content:center; gap:2px; }
+    .rp-day i { display:block; width:7px; border-radius:4px 4px 0 0; background:#16834a; }
+    .rp-day i + i { background:#c8a64b; }
+    .rp-day:nth-child(1) i{height:70%}.rp-day:nth-child(2) i{height:83%}.rp-day:nth-child(3) i{height:76%}.rp-day:nth-child(4) i{height:91%}.rp-day:nth-child(5) i{height:80%}.rp-day:nth-child(6) i{height:88%}.rp-day:nth-child(7) i{height:75%}.rp-day:nth-child(8) i{height:86%}.rp-day:nth-child(9) i{height:78%}.rp-day:nth-child(10) i{height:94%}
+
+    /* Keranjang + Pembayaran */
+    .cart-header { display:flex; justify-content:space-between; align-items:center; min-height:50px; padding:9px 14px; background:#16834a; border-bottom:3px solid #c8a64b; color:#fff; font-size:13px; font-weight:800; }
+    .cart-header span { font-size:10.5px; font-weight:600; }
+    .cart-body { display:grid; gap:6px; padding:11px 11px 0; }
     .cart-search { display:flex; gap:7px; margin-bottom:3px; }
-    .cart-search-field { flex:1; height:34px; display:flex; align-items:center; padding:0 12px; border:1px solid #e1e9e4; border-radius:12px; background:white; color:#9aa8a0; font-size:.72rem; }
-    .cart-scan { width:34px; height:34px; display:grid; place-items:center; border:1px solid #e1e9e4; border-radius:12px; background:white; font-size:1rem; }
-    .cart-item { padding:6px 11px; border:1px solid #e8eeea; border-left:4px solid #c9a84c; border-radius:13px; background:white; }
-    .cart-item-top { display:flex; justify-content:space-between; align-items:center; font-size:.78rem; font-weight:850; }
-    .cart-item-top span { font-size:.8rem; opacity:.55; }
-    .cart-item-bottom { display:flex; justify-content:space-between; align-items:center; gap:6px; margin-top:4px; }
-    .cart-price { padding:3px 8px; border:1px dashed #c9d6cd; border-radius:8px; background:#f4f8f5; font-size:.64rem; font-weight:700; white-space:nowrap; }
-    .cart-qty { display:flex; align-items:center; gap:7px; font-size:.78rem; font-weight:850; }
-    .cart-qty i { width:22px; height:22px; display:grid; place-items:center; border:1px solid #dce5df; border-radius:7px; color:#16834a; font-style:normal; font-size:.85rem; }
-    .cart-line { min-width:64px; text-align:right; font-size:.76rem; font-weight:850; }
-    .cart-total { position:absolute; right:12px; bottom:73px; left:12px; display:flex; justify-content:space-between; align-items:center; padding:10px 12px; border-radius:16px; background:#16834a; color:white; }
-    .cart-total small { display:block; color:#cfeadb; font-size:.64rem; }
-    .cart-total strong { font-size:1.15rem; font-weight:900; letter-spacing:-.4px; }
-    .cart-pay { padding:10px 20px; border-radius:11px; background:#c9a84c; color:#2b2410; font-size:.78rem; font-weight:850; }
-    .pay-mockup { height:100%; position:relative; overflow:hidden; border-radius:28px; background:#d9e5dd; color:#173126; padding:14px; }
-    .pay-bg-title { display:flex; justify-content:space-between; align-items:center; margin:0 2px 15px; font-size:1.25rem; font-weight:900; }
-    .pay-bg-list { display:grid; gap:9px; opacity:.6; }
-    .pay-bg-item { display:flex; justify-content:space-between; gap:8px; padding:11px 12px; border:1px solid rgba(255,255,255,.65); border-radius:13px; background:rgba(255,255,255,.5); font-size:.72rem; }
-    .pay-bg-item strong { font-size:.8rem; }
-    .pay-overlay { position:absolute; inset:0; display:grid; place-items:center; padding:12px; background:rgba(14,37,26,.72); }
-    .pay-box { width:100%; padding:14px; border-radius:20px; background:#f8faf9; box-shadow:0 18px 35px rgba(0,0,0,.2); }
-    .pay-head { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
-    .pay-head strong { font-size:1.05rem; }
-    .pay-close { width:30px; height:30px; display:grid; place-items:center; border-radius:50%; background:#e9eff1; font-size:1rem; }
-    .pay-total { margin-bottom:9px; padding:10px 12px; border:1px solid #dce5df; border-radius:14px; background:white; text-align:center; }
-    .pay-total small { display:block; color:#718078; font-size:.68rem; font-weight:700; }
-    .pay-total strong { display:block; font-size:1.65rem; line-height:1.2; font-weight:850; letter-spacing:-.5px; }
-    .pay-form { display:grid; gap:7px; padding:11px; border:1px solid #edf1ee; border-radius:15px; background:white; }
-    .pay-field { min-height:36px; display:flex; align-items:center; padding:0 11px; border:1px solid #dce5df; border-radius:10px; color:#26352d; font-size:.74rem; }
-    .pay-field.placeholder { color:#9aa8a0; }
-    .pay-label { margin-bottom:-3px; color:#53645a; font-size:.66rem; font-weight:700; }
+    .cart-search-field { flex:1; height:38px; display:flex; align-items:center; padding:0 11px; border:1px solid #dce5df; border-radius:11px; background:#fff; color:#9aa8a0; font-size:10.5px; }
+    .cart-scan { width:38px; height:38px; display:grid; place-items:center; border:1px solid #dce5df; border-radius:11px; background:#fff; color:#16834a; font-size:14px; }
+    .cart-item { padding:7px 10px; border:1px solid #dce5df; border-left:4px solid #c8a64b; border-radius:11px; background:#fff; }
+    .cart-item-top { display:flex; justify-content:space-between; align-items:center; font-size:10.5px; font-weight:800; }
+    .cart-item-top i { color:#89958e; font-size:11px; }
+    .cart-item-bottom { display:flex; justify-content:space-between; align-items:center; gap:6px; margin-top:5px; }
+    .cart-price { display:inline-flex; align-items:center; gap:6px; padding:3px 7px; border:1px dashed #b9c8be; border-radius:8px; background:#f4f7f5; font-size:9.5px; font-weight:700; white-space:nowrap; }
+    .cart-price i { color:#89958e; font-size:7.5px; }
+    .cart-qty { display:flex; align-items:center; gap:5px; font-size:10.5px; font-weight:800; }
+    .cart-qty em { width:24px; height:24px; display:grid; place-items:center; border:1px solid #dce5df; border-radius:8px; background:#fff; color:#16834a; font-style:normal; font-size:13px; }
+    .cart-line { min-width:58px; text-align:right; font-size:10.5px; font-weight:800; }
+    .cart-foot { position:absolute; right:0; bottom:0; left:0; padding:0 0 0; }
+    .cart-total { display:flex; justify-content:space-between; align-items:center; margin:0 11px 8px; padding:9px 12px; border-radius:14px; background:#16834a; color:#fff; box-shadow:0 5px 16px rgba(22,131,74,.15); }
+    .cart-total small { display:block; margin-bottom:2px; color:#fff; opacity:.82; font-size:8.5px; }
+    .cart-total strong { font-size:15px; font-weight:800; }
+    .cart-pay { padding:9px 20px; border-radius:11px; background:#c8a64b; color:#26352d; font-size:10.5px; font-weight:800; }
+    .cart-foot .m-nav { position:relative; }
+    .pay-overlay { position:absolute; z-index:3; inset:0; display:grid; place-items:center; padding:12px; background:rgba(23,37,29,.8); }
+    .pay-box { width:100%; padding:13px; border-radius:18px; background:#f8faf9; box-shadow:0 12px 40px rgba(0,0,0,.2); }
+    .pay-head { display:flex; justify-content:space-between; align-items:center; margin-bottom:9px; }
+    .pay-head strong { font-size:15px; }
+    .pay-close { width:28px; height:28px; display:grid; place-items:center; border-radius:50%; background:#e9eff1; font-size:15px; }
+    .pay-total { margin-bottom:8px; padding:9px 12px; border:1px solid #dce5df; border-radius:13px; background:#fff; text-align:center; }
+    .pay-total small { display:block; color:#718078; font-size:9.5px; font-weight:700; }
+    .pay-total strong { display:block; margin-top:1px; font-size:22px; line-height:1.2; font-weight:800; letter-spacing:-.5px; }
+    .pay-form { display:grid; gap:6px; padding:10px; border:1px solid #edf1ee; border-radius:14px; background:#fff; }
+    .pay-field { min-height:33px; display:flex; align-items:center; padding:0 10px; border:1px solid #dce5df; border-radius:10px; font-size:10.5px; }
+    .pay-field.ph { color:#9aa8a0; }
+    .pay-label { margin-bottom:-2px; color:#53645a; font-size:9px; font-weight:700; }
     .pay-quick { display:grid; grid-template-columns:repeat(3,1fr); gap:6px; }
-    .pay-quick span { min-height:36px; display:grid; place-items:center; border:1.5px solid #16834a; border-radius:10px; background:white; color:#16834a; font-size:.66rem; font-weight:800; }
-    .pay-quick span.selected { background:#16834a; color:white; }
-    .pay-change { padding:8px 12px; border-radius:12px; background:#e5f5ea; color:#16834a; font-size:.7rem; font-weight:700; }
-    .pay-change strong { display:block; font-size:1rem; }
-    .pay-confirm { min-height:38px; display:grid; place-items:center; border-radius:10px; background:#16834a; color:white; font-size:.74rem; font-weight:800; }
-    .carousel-dots { position:absolute; z-index:3; right:0; bottom:-22px; left:0; display:flex; justify-content:center; gap:7px; }
+    .pay-quick span { min-height:33px; display:grid; place-items:center; border:1.5px solid #16834a; border-radius:10px; background:#fff; color:#16834a; font-size:9.5px; font-weight:800; }
+    .pay-quick span.selected { background:#16834a; color:#fff; }
+    .pay-change { padding:8px 11px; border-radius:11px; background:#e5f5ea; color:#16834a; font-size:10px; font-weight:700; }
+    .pay-change strong { display:block; margin-top:2px; font-size:14px; }
+    .pay-confirm { min-height:35px; display:grid; place-items:center; border-radius:10px; background:#16834a; color:#fff; font-size:10.5px; font-weight:800; }
+
+    /* Riwayat + Struk */
+    .hs-search { display:flex; align-items:center; gap:8px; margin-bottom:8px; padding:0 11px; border:1px solid #e3eae5; border-radius:12px; background:#fff; color:#89958e; font-size:10px; }
+    .hs-search span { padding:10px 0; }
+    .hs-filters { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:10px; }
+    .hs-head { display:flex; justify-content:space-between; align-items:baseline; margin:2px 2px 8px; }
+    .hs-head strong { font-size:13px; }
+    .hs-head span { color:#6b7a71; font-size:9px; }
+    .hs-card { display:flex; align-items:center; gap:9px; margin-bottom:8px; padding:10px; border:1px solid #edf1ee; border-radius:13px; background:#fff; }
+    .hs-ic { width:32px; height:32px; flex:none; display:grid; place-items:center; border-radius:10px; background:#e5f5ea; color:#16834a; font-size:13px; }
+    .hs-info { flex:1; min-width:0; }
+    .hs-info b { display:block; font-size:9.5px; letter-spacing:.2px; }
+    .hs-info small { display:block; margin-top:1px; overflow:hidden; color:#6b7a71; font-size:8.5px; text-overflow:ellipsis; white-space:nowrap; }
+    .hs-tot { color:#26352d; font-size:10.5px; font-weight:800; white-space:nowrap; }
+    .rc-overlay { position:absolute; z-index:3; inset:0; display:grid; place-items:center; padding:12px; background:rgba(23,37,29,.8); }
+    .rc-box { width:100%; padding:14px; border-radius:18px; background:#e9edea; box-shadow:0 12px 40px rgba(0,0,0,.2); }
+    .rc-paper { padding:13px 13px 12px; border-radius:4px; background:#fff; box-shadow:0 1px 6px rgba(0,0,0,.2); color:#111; font-family:"Courier New", ui-monospace, Menlo, Consolas, monospace; font-size:9px; line-height:1.4; }
+    .rc-paper h4 { margin:0 0 3px; text-align:center; font-size:12px; text-transform:uppercase; }
+    .rc-head { text-align:center; }
+    .rc-head p { margin:0 0 2px; }
+    .rc-div { margin:7px 0; border-top:1px dashed #555; }
+    .rc-name { font-weight:700; }
+    .rc-line { display:flex; justify-content:space-between; gap:6px; margin:1px 0 5px; }
+    .rc-tot { margin:0 0 2px; }
+    .rc-tot b { font-weight:700; }
+    .rc-thanks { margin:0; text-align:center; }
+    .rc-actions { display:grid; grid-template-columns:1fr 1fr; gap:7px; margin-top:11px; }
+    .rc-btn { min-height:34px; display:flex; justify-content:center; align-items:center; gap:5px; border-radius:11px; font-size:10px; font-weight:700; }
+    .rc-print { background:#0d6638; color:#fff; }
+    .rc-del { background:#b4234d; color:#fff; }
+    .rc-close { grid-column:1 / -1; background:#e5f5ea; color:#16834a; }
+
+    /* Lainnya */
+    .ln-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:9px; padding:4px 0 0; }
+    .ln-card { min-height:88px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; padding:0 4px; border:1px solid #edf1ee; border-radius:15px; background:#fff; }
+    .ln-icon { width:40px; height:40px; display:grid; place-items:center; border-radius:13px; font-size:17px; }
+    .ln-card span { text-align:center; font-size:9px; font-weight:700; line-height:1.25; }
+    .ln-green{background:#e5f5ea;color:#16834a}.ln-blue{background:#e5f0ff;color:#2878d0}.ln-orange{background:#fff1dc;color:#e69522}.ln-purple{background:#f2e8fa;color:#9250b8}.ln-cyan{background:#e0f5f5;color:#168b91}.ln-pink{background:#fce8ef;color:#d34e78}.ln-yellow{background:#fff5d9;color:#c18a19}.ln-violet{background:#ede8fa;color:#7253bb}.ln-gray{background:#e9eff1;color:#546e7a}
+
+    /* Kontrol carousel */
+    .carousel-dots { position:absolute; z-index:3; right:0; bottom:-22px; left:0; display:flex; justify-content:center; align-items:center; gap:7px; }
     .carousel-dot { width:7px; height:7px; padding:0; border:0; border-radius:50%; background:#b8d8c4; cursor:pointer; }
     .carousel-dot.active { width:20px; border-radius:99px; background:var(--green); }
     .hero-carousel { touch-action:pan-y; user-select:none; -webkit-user-select:none; cursor:grab; }
     .hero-carousel:active { cursor:grabbing; }
-    .carousel-dots { align-items:center; }
     .carousel-arrow { width:26px; height:26px; margin:0 6px; padding:0 0 3px; display:grid; place-items:center; border:0; border-radius:50%; background:#e4f5e9; color:var(--green); font-size:1.2rem; line-height:1; cursor:pointer; }
     .carousel-arrow:hover { background:#cfeedb; }
     .section { padding: 82px 0; }
@@ -299,7 +332,6 @@
       .hero-copy { font-size:1rem; }
       .hero-visual { min-height:570px; margin-top:0; }
       .hero-carousel { height:550px; }
-      .report-mockup { height:550px; }
       .section { padding:60px 0; }
       .section-head { margin-bottom:28px; }
       .pain-grid { grid-template-columns:1fr 1fr; gap:10px; }
@@ -358,113 +390,111 @@
         <div class="hero-visual" aria-label="Slide otomatis mockup aplikasi Warungku">
           <div class="hero-carousel" aria-live="off">
             <div class="hero-slide active" data-slide="0" aria-hidden="false">
-              <div class="report-mockup">
-                <div class="report-header"><h3>Laporan</h3><span class="report-back">←</span></div>
-                <div class="report-card">
-                  <div class="sales-total">
-                    <div class="sales-total-label">Total penjualan</div>
-                    <div class="sales-total-value">Rp 359.500.000</div>
-                    <span class="sales-total-icon">⌁</span>
-                  </div>
-                  <div class="report-metrics">
-                    <div class="report-metric"><span>Perkiraan keuntungan</span><strong>Rp 71.900.000</strong></div>
-                    <div class="report-metric"><span>Jumlah transaksi</span><strong>538</strong></div>
-                    <div class="report-metric"><span>Rata-rata transaksi</span><strong>Rp 25.678.571,429</strong></div>
-                    <div class="report-metric"><span>Produk terjual</span><strong>3595 unit</strong></div>
-                  </div>
-                </div>
-                <div class="report-card stock-card">
-                  <div class="stock-icon">▣</div>
-                  <div><span>Nilai stok saat ini</span><strong>Rp 4.872.600</strong><small>Berdasarkan stok × harga modal</small></div>
-                </div>
-                <div class="report-card sales-chart">
-                  <h4>Grafik penjualan &amp; keuntungan</h4>
-                  <div class="chart-columns">
-                    <div class="chart-day"><div class="chart-pair"><i></i><i></i></div><small>01/11</small></div>
-                    <div class="chart-day"><div class="chart-pair"><i></i><i></i></div><small>02/11</small></div>
-                    <div class="chart-day"><div class="chart-pair"><i></i><i></i></div><small>03/11</small></div>
-                    <div class="chart-day"><div class="chart-pair"><i></i><i></i></div><small>04/11</small></div>
-                    <div class="chart-day"><div class="chart-pair"><i></i><i></i></div><small>05/11</small></div>
-                    <div class="chart-day"><div class="chart-pair"><i></i><i></i></div><small>06/11</small></div>
-                    <div class="chart-day"><div class="chart-pair"><i></i><i></i></div><small>07/11</small></div>
-                    <div class="chart-day"><div class="chart-pair"><i></i><i></i></div><small>08/11</small></div>
-                    <div class="chart-day"><div class="chart-pair"><i></i><i></i></div><small>09/11</small></div>
-                    <div class="chart-day"><div class="chart-pair"><i></i><i></i></div><small>10/11</small></div>
+              <div class="m-screen">
+                <div class="m-head"><h3>Laporan</h3><span class="m-back">←</span></div>
+                <div class="m-body">
+                  <div class="rp-filter"><label>Periode laporan</label><div class="m-select">30 hari terakhir <i class="fa-solid fa-chevron-down"></i></div></div>
+                  <section class="rp-omzet">
+                    <small>Total penjualan</small>
+                    <h4>Rp 359.500.000</h4>
+                    <span class="rp-chip">dari 538 transaksi</span><span class="rp-chip">3.595 unit terjual</span><span class="rp-chip">rata-rata Rp 668.216 per transaksi</span><span class="rp-chip up">↑ 8% dari periode sebelumnya</span>
+                  </section>
+                  <section class="rp-laba">
+                    <div><div class="l"><i class="fa-solid fa-arrow-trend-up"></i> Perkiraan keuntungan</div><strong>Rp 71.900.000</strong><small>Margin dari penjualan</small></div>
+                    <div class="rp-ring"><span>20%</span></div>
+                  </section>
+                  <section class="rp-card rp-stock">
+                    <div class="ic"><i class="fa-solid fa-boxes-stacked"></i></div>
+                    <div><small>Nilai stok saat ini</small><strong>Rp 4.872.600</strong><p>Berdasarkan stok × harga modal</p></div>
+                  </section>
+                  <div class="rp-card">
+                    <h5>Grafik penjualan &amp; keuntungan</h5>
+                    <div class="rp-bars">
+                      <div class="rp-day"><i></i><i></i></div><div class="rp-day"><i></i><i></i></div><div class="rp-day"><i></i><i></i></div><div class="rp-day"><i></i><i></i></div><div class="rp-day"><i></i><i></i></div><div class="rp-day"><i></i><i></i></div><div class="rp-day"><i></i><i></i></div><div class="rp-day"><i></i><i></i></div><div class="rp-day"><i></i><i></i></div><div class="rp-day"><i></i><i></i></div>
+                    </div>
                   </div>
                 </div>
-                <div class="report-nav">
-                  <span><b>⌂</b>Home</span><span><b>▤</b>Riwayat</span><span class="cashier"><b>🛒</b>Kasir</span><span class="active"><b>▥</b>Laporan</span><span><b>●</b>Profil</span>
+                <div class="m-nav">
+                  <span><i class="fa-solid fa-house"></i>Home</span><span><i class="fa-solid fa-receipt"></i>Riwayat</span><span class="kasir"><i class="fa-solid fa-cart-shopping"></i>Kasir</span><span class="on"><i class="fa-solid fa-chart-column"></i>Laporan</span><span><i class="fa-solid fa-table-cells-large"></i>Lainnya</span>
                 </div>
               </div>
             </div>
             <div class="hero-slide" data-slide="1" aria-hidden="true">
-              <div class="dashboard-mockup">
-                <div class="dashboard-top">
-                  <div class="dashboard-store"><span class="dashboard-store-icon">▣</span><div><strong>TOKO SEMBAKO</strong><small>Selamat datang, Fendi!</small></div></div>
-                  <span class="dashboard-user">●</span>
+              <div class="m-screen">
+                <div class="hm-hero">
+                  <div class="hm-top"><span class="hm-logo"><i class="fa-solid fa-store"></i></span><strong>TOKO SEMBAKO</strong><span class="hm-user"><i class="fa-solid fa-user"></i></span></div>
+                  <h3>Selamat Pagi, Fendi 👋</h3>
+                  <p>Tetap semangat, toko Anda makin maju hari ini!</p>
                 </div>
-                <div class="dashboard-title"><h3>Dashboard</h3><p>Ringkasan aktivitas toko hari ini</p></div>
-                <div class="dashboard-sales">
-                  <div class="dashboard-sales-label">Total Penjualan Hari Ini</div>
-                  <div class="dashboard-sales-value">Rp 507.942.000</div>
-                  <div class="dashboard-sales-stats"><div>Transaksi<strong>143
-                    </strong></div><div>Keuntungan<strong>Rp 295.347.200</strong></div></div>
-                </div>
-                <div class="dashboard-menu-heading"><strong>Menu Utama</strong><span>9 Menu</span></div>
-                <div class="dashboard-menu">
-                  <div class="dashboard-menu-item"><span class="dashboard-menu-icon">🛒</span>Keranjang</div>
-                  <div class="dashboard-menu-item"><span class="dashboard-menu-icon">📦</span>Produk</div>
-                  <div class="dashboard-menu-item"><span class="dashboard-menu-icon">▥</span>Laporan</div>
-                  <div class="dashboard-menu-item"><span class="dashboard-menu-icon">🚚</span>Supplier</div>
-                  <div class="dashboard-menu-item"><span class="dashboard-menu-icon">▤</span>Stok Barang</div>
-                  <div class="dashboard-menu-item"><span class="dashboard-menu-icon">🛍</span>Pembelian</div>
-                </div>
-                <div class="dashboard-nav">
-                  <span class="active"><b>⌂</b>Home</span><span><b>▤</b>Riwayat</span><span class="cashier"><b>🛒</b>Kasir</span><span><b>▥</b>Laporan</span><span><b>●</b>Profil</span>
+                <section class="hm-panel">
+                  <div class="hm-ph"><span class="hm-pi"><i class="fa-solid fa-chart-pie"></i></span><div><strong>Performa Usaha</strong><small>Pantau perkembangan toko Anda secara real-time</small></div></div>
+                  <div class="hm-seg"><span>Hari Ini</span><span class="on">Minggu Ini</span><span>Bulan Ini</span></div>
+                  <div class="hm-stats">
+                    <div class="hm-st a"><div class="hm-st-h"><span class="hm-st-ic"><i class="fa-solid fa-piggy-bank"></i></span><span>Omzet</span></div><strong>Rp 18.745.000</strong><span class="hm-trend"><i class="fa-solid fa-arrow-up"></i> <b>12%</b> dari minggu lalu</span><small>Total penjualan yang tercatat</small></div>
+                    <div class="hm-st b"><div class="hm-st-h"><span class="hm-st-ic"><i class="fa-solid fa-arrow-trend-up"></i></span><span>Laba Kotor</span></div><strong>Rp 3.749.000</strong><span class="hm-trend"><i class="fa-solid fa-arrow-up"></i> <b>9%</b> dari minggu lalu</span><small>Setelah dikurangi modal barang</small></div>
+                  </div>
+                  <div class="hm-foot"><span><i class="fa-solid fa-receipt"></i> 143 transaksi</span><span><i class="fa-solid fa-box"></i> 1.208 produk terjual</span><span><i class="fa-solid fa-arrows-left-right"></i> vs Sen–Min minggu lalu</span></div>
+                </section>
+                <section class="hm-chart">
+                  <div class="hm-chart-h"><strong>Grafik Penjualan</strong><span>Lihat Detail ›</span></div>
+                  <div class="hm-bars">
+                    <div class="hm-bar"><b style="height:62%"></b><span>Sel</span></div><div class="hm-bar"><b style="height:74%"></b><span>Rab</span></div><div class="hm-bar"><b style="height:68%"></b><span>Kam</span></div><div class="hm-bar"><b style="height:90%"></b><span>Jum</span></div><div class="hm-bar"><b style="height:100%"></b><span>Sab</span></div><div class="hm-bar"><b style="height:52%"></b><span>Min</span></div><div class="hm-bar now"><b style="height:40%"></b><span>Sen</span></div>
+                  </div>
+                </section>
+                <div class="m-nav">
+                  <span class="on"><i class="fa-solid fa-house"></i>Home</span><span><i class="fa-solid fa-receipt"></i>Riwayat</span><span class="kasir"><i class="fa-solid fa-cart-shopping"></i>Kasir</span><span><i class="fa-solid fa-chart-column"></i>Laporan</span><span><i class="fa-solid fa-table-cells-large"></i>Lainnya</span>
                 </div>
               </div>
             </div>
             <div class="hero-slide" data-slide="2" aria-hidden="true">
-              <div class="cart-mockup">
-                <div class="cart-header"><span style="font-size:.95rem;opacity:1;font-weight:850">🛒 Keranjang</span><span>Fendi</span></div>
+              <div class="m-screen">
+                <div class="cart-header"><span style="font-size:13px;font-weight:800"><i class="fa-solid fa-cart-shopping" style="margin-right:7px"></i>Keranjang</span><span><i class="fa-solid fa-user" style="margin-right:5px"></i>Fendi</span></div>
                 <div class="cart-body">
-                  <div class="cart-search"><div class="cart-search-field">Scan / ketik nama atau barcode</div><div class="cart-scan">▥</div></div>
+                  <div class="cart-search"><div class="cart-search-field">Scan / ketik nama atau barcode</div><div class="cart-scan"><i class="fa-solid fa-barcode"></i></div></div>
                   <div class="cart-item">
-                    <div class="cart-item-top">Beras Premium 5 kg<span>🗑</span></div>
-                    <div class="cart-item-bottom"><span class="cart-price">Rp 68.000 · karung</span><div class="cart-qty"><i>−</i>2<i>+</i></div><span class="cart-line">Rp 136.000</span></div>
+                    <div class="cart-item-top">Beras Premium 5 kg<i class="fa-solid fa-trash-can"></i></div>
+                    <div class="cart-item-bottom"><span class="cart-price">Rp 68.000 · karung <i class="fa-solid fa-pen"></i></span><div class="cart-qty"><em>−</em>2<em>+</em></div><span class="cart-line">Rp 136.000</span></div>
                   </div>
                   <div class="cart-item">
-                    <div class="cart-item-top">Minyak Goreng 1 L<span>🗑</span></div>
-                    <div class="cart-item-bottom"><span class="cart-price">Rp 18.000 · pcs</span><div class="cart-qty"><i>−</i>2<i>+</i></div><span class="cart-line">Rp 36.000</span></div>
+                    <div class="cart-item-top">Minyak Goreng 1 L<i class="fa-solid fa-trash-can"></i></div>
+                    <div class="cart-item-bottom"><span class="cart-price">Rp 18.000 · pcs <i class="fa-solid fa-pen"></i></span><div class="cart-qty"><em>−</em>2<em>+</em></div><span class="cart-line">Rp 36.000</span></div>
                   </div>
                   <div class="cart-item">
-                    <div class="cart-item-top">Telur Ayam<span>🗑</span></div>
-                    <div class="cart-item-bottom"><span class="cart-price">Rp 29.000 · kg</span><div class="cart-qty"><i>−</i>1<i>+</i></div><span class="cart-line">Rp 29.000</span></div>
+                    <div class="cart-item-top">Telur Ayam<i class="fa-solid fa-trash-can"></i></div>
+                    <div class="cart-item-bottom"><span class="cart-price">Rp 29.000 · kg <i class="fa-solid fa-pen"></i></span><div class="cart-qty"><em>−</em>1<em>+</em></div><span class="cart-line">Rp 29.000</span></div>
                   </div>
                   <div class="cart-item">
-                    <div class="cart-item-top">Kopi Sachet Kapal Api<span>🗑</span></div>
-                    <div class="cart-item-bottom"><span class="cart-price">Rp 14.000 · renteng</span><div class="cart-qty"><i>−</i>2<i>+</i></div><span class="cart-line">Rp 28.000</span></div>
+                    <div class="cart-item-top">Kopi Sachet Kapal Api<i class="fa-solid fa-trash-can"></i></div>
+                    <div class="cart-item-bottom"><span class="cart-price">Rp 14.000 · renteng <i class="fa-solid fa-pen"></i></span><div class="cart-qty"><em>−</em>2<em>+</em></div><span class="cart-line">Rp 28.000</span></div>
                   </div>
                 </div>
-                <div class="cart-total"><div><small>7 barang</small><strong>Rp 229.000</strong></div><span class="cart-pay">Bayar ›</span></div>
-                <div class="dashboard-nav">
-                  <span><b>⌂</b>Home</span><span><b>▤</b>Riwayat</span><span class="cashier"><b>🛒</b>Kasir</span><span><b>▥</b>Laporan</span><span><b>●</b>Profil</span>
+                <div class="cart-foot">
+                  <div class="cart-total"><div><small>7 barang</small><strong>Rp 229.000</strong></div><span class="cart-pay">Bayar ›</span></div>
+                  <div class="m-nav">
+                    <span><i class="fa-solid fa-house"></i>Home</span><span><i class="fa-solid fa-receipt"></i>Riwayat</span><span class="kasir"><i class="fa-solid fa-cart-shopping"></i>Kasir</span><span><i class="fa-solid fa-chart-column"></i>Laporan</span><span><i class="fa-solid fa-table-cells-large"></i>Lainnya</span>
+                  </div>
                 </div>
               </div>
             </div>
             <div class="hero-slide" data-slide="3" aria-hidden="true">
-              <div class="pay-mockup">
-                <div class="pay-bg-title"><span>Kasir</span><span class="history-back">←</span></div>
-                <div class="pay-bg-list">
-                  <div class="pay-bg-item"><strong>Beras Premium 5 kg</strong><span>2 x Rp 68.000</span></div>
-                  <div class="pay-bg-item"><strong>Minyak Goreng 1 L</strong><span>2 x Rp 18.000</span></div>
+              <div class="m-screen">
+                <div class="cart-header"><span style="font-size:13px;font-weight:800"><i class="fa-solid fa-cart-shopping" style="margin-right:7px"></i>Keranjang</span><span><i class="fa-solid fa-user" style="margin-right:5px"></i>Fendi</span></div>
+                <div class="cart-body">
+                  <div class="cart-item">
+                    <div class="cart-item-top">Beras Premium 5 kg<i class="fa-solid fa-trash-can"></i></div>
+                    <div class="cart-item-bottom"><span class="cart-price">Rp 68.000 · karung <i class="fa-solid fa-pen"></i></span><div class="cart-qty"><em>−</em>2<em>+</em></div><span class="cart-line">Rp 136.000</span></div>
+                  </div>
+                  <div class="cart-item">
+                    <div class="cart-item-top">Minyak Goreng 1 L<i class="fa-solid fa-trash-can"></i></div>
+                    <div class="cart-item-bottom"><span class="cart-price">Rp 18.000 · pcs <i class="fa-solid fa-pen"></i></span><div class="cart-qty"><em>−</em>2<em>+</em></div><span class="cart-line">Rp 36.000</span></div>
+                  </div>
                 </div>
                 <div class="pay-overlay">
                   <div class="pay-box">
                     <div class="pay-head"><strong>Pembayaran</strong><span class="pay-close">×</span></div>
                     <div class="pay-total"><small>Total pembayaran</small><strong>Rp 229.000</strong></div>
                     <div class="pay-form">
-                      <div class="pay-field">Siti Aminah</div>
+                      <div class="pay-field ph">Nama pelanggan (opsional)</div>
                       <div class="pay-label">Uang diterima</div>
                       <div class="pay-field">250.000</div>
                       <div class="pay-quick"><span>Rp 230.000</span><span class="selected">Rp 250.000</span><span>Rp 300.000</span></div>
@@ -476,45 +506,70 @@
               </div>
             </div>
             <div class="hero-slide" data-slide="4" aria-hidden="true">
-              <div class="history-mockup">
-                <div class="history-title"><span>Riwayat</span><span class="history-back">←</span></div>
-                <div class="history-list">
-                  <div class="history-item"><strong>Siti Aminah</strong>14/11/2026, 19.30.00 · Rp 5.615.000</div>
-                  <div class="history-item"><strong>Budi Santoso</strong>14/11/2026, 15.46.00 · Rp 5.584.000</div>
+              <div class="m-screen">
+                <div class="m-head"><h3>Riwayat</h3><span class="m-back">←</span></div>
+                <div class="m-body">
+                  <div class="hs-search"><i class="fa-solid fa-magnifying-glass"></i><span>Cari nomor / pelanggan / barang</span></div>
+                  <div class="hs-filters"><div class="m-select">Hari Ini <i class="fa-solid fa-chevron-down"></i></div><div class="m-select">Terbaru <i class="fa-solid fa-chevron-down"></i></div></div>
+                  <div class="hs-head"><strong>Daftar Transaksi</strong><span>24 transaksi</span></div>
+                  <div class="hs-card"><div class="hs-ic"><i class="fa-solid fa-receipt"></i></div><div class="hs-info"><b>TRX20261116-0024</b><small>16 Nov 2026 · 09.41</small><small>Siti Aminah · 7 item · Beras Premium 5 kg, Minyak Goreng 1 L +2</small></div><div class="hs-tot">Rp 229.000</div></div>
+                  <div class="hs-card"><div class="hs-ic"><i class="fa-solid fa-receipt"></i></div><div class="hs-info"><b>TRX20261116-0023</b><small>16 Nov 2026 · 09.12</small><small>Budi Santoso · 5 item · Gula Pasir 1 kg, Telur Ayam</small></div><div class="hs-tot">Rp 148.000</div></div>
+                  <div class="hs-card"><div class="hs-ic"><i class="fa-solid fa-receipt"></i></div><div class="hs-info"><b>TRX20261116-0022</b><small>16 Nov 2026 · 08.47</small><small>Umum · 3 item · Kopi Sachet Kapal Api +1</small></div><div class="hs-tot">Rp 52.000</div></div>
                 </div>
-                <div class="receipt-overlay">
-                  <div class="receipt-dialog">
-                    <div class="receipt-paper">
-                      <h4>TOKO SEMBAKO</h4>
-                      <div class="receipt-center">Dusun Oprak Desa Tamberu Daya<br>14/11/2026 · 19.27.00</div>
-                      <div class="receipt-divider"></div>
-                      <div>Gula Pasir 1 kg</div>
-                      <div class="receipt-line"><span>196 x Rp 16.000</span><span>Rp 3.136.000</span></div>
-                      <div style="margin-top:7px">Gula Pasir 1 kg</div>
-                      <div class="receipt-line"><span>146 x Rp 16.000</span><span>Rp 2.336.000</span></div>
-                      <div class="receipt-divider"></div>
-                      <div class="receipt-line total"><span>Total</span><span>Rp 5.472.000</span></div>
-                      <div class="receipt-line"><span>Tunai</span><span>Rp 5.480.000</span></div>
-                      <div class="receipt-line"><span>Kembalian</span><span>Rp 8.000</span></div>
-                      <div class="receipt-divider"></div>
-                      <div class="receipt-center">Terima kasih telah berbelanja</div>
+                <div class="rc-overlay">
+                  <div class="rc-box">
+                    <div class="rc-paper">
+                      <div class="rc-head"><h4>TOKO SEMBAKO</h4><p>Dusun Oprak Desa Tamberu Daya</p><p>16/11/2026 · 09.41.22</p></div>
+                      <div class="rc-div"></div>
+                      <div class="rc-name">Beras Premium 5 kg</div><div class="rc-line"><span>2 karung x Rp 68.000</span><span>Rp 136.000</span></div>
+                      <div class="rc-name">Minyak Goreng 1 L</div><div class="rc-line"><span>2 pcs x Rp 18.000</span><span>Rp 36.000</span></div>
+                      <div class="rc-name">Telur Ayam</div><div class="rc-line"><span>1 kg x Rp 29.000</span><span>Rp 29.000</span></div>
+                      <div class="rc-name">Kopi Sachet Kapal Api</div><div class="rc-line"><span>2 renteng x Rp 14.000</span><span>Rp 28.000</span></div>
+                      <div class="rc-div"></div>
+                      <div class="rc-line rc-tot"><b>Total</b><b>Rp 229.000</b></div>
+                      <div class="rc-line rc-tot"><span>Tunai</span><span>Rp 250.000</span></div>
+                      <div class="rc-line rc-tot"><span>Kembalian</span><span>Rp 21.000</span></div>
+                      <div class="rc-div"></div>
+                      <p class="rc-thanks">Terima kasih telah berbelanja</p>
                     </div>
-                    <div class="receipt-actions">
-                      <div class="receipt-action receipt-print">▣ Cetak</div>
-                      <div class="receipt-action receipt-delete">▤ Hapus</div>
+                    <div class="rc-actions">
+                      <div class="rc-btn rc-print"><i class="fa-solid fa-print"></i>Cetak</div>
+                      <div class="rc-btn rc-del"><i class="fa-solid fa-trash-can"></i>Hapus</div>
+                      <div class="rc-btn rc-close">Tutup</div>
                     </div>
-                    <div class="receipt-action receipt-close">Tutup</div>
                   </div>
+                </div>
+              </div>
+            </div>
+            <div class="hero-slide" data-slide="5" aria-hidden="true">
+              <div class="m-screen">
+                <div class="m-head"><h3>Lainnya</h3><span class="m-back">←</span></div>
+                <div class="m-body">
+                  <div class="ln-grid">
+                    <div class="ln-card"><div class="ln-icon ln-blue"><i class="fa-solid fa-box-open"></i></div><span>Produk</span></div>
+                    <div class="ln-card"><div class="ln-icon ln-cyan"><i class="fa-solid fa-warehouse"></i></div><span>Stok Barang</span></div>
+                    <div class="ln-card"><div class="ln-icon ln-pink"><i class="fa-solid fa-basket-shopping"></i></div><span>Pembelian</span></div>
+                    <div class="ln-card"><div class="ln-icon ln-orange"><i class="fa-solid fa-clock-rotate-left"></i></div><span>Riwayat Pembelian</span></div>
+                    <div class="ln-card"><div class="ln-icon ln-purple"><i class="fa-solid fa-truck"></i></div><span>Supplier</span></div>
+                    <div class="ln-card"><div class="ln-icon ln-yellow"><i class="fa-solid fa-users"></i></div><span>Pelanggan</span></div>
+                    <div class="ln-card"><div class="ln-icon ln-violet"><i class="fa-solid fa-wallet"></i></div><span>Hutang</span></div>
+                    <div class="ln-card"><div class="ln-icon ln-green"><i class="fa-solid fa-user"></i></div><span>Profil</span></div>
+                    <div class="ln-card"><div class="ln-icon ln-gray"><i class="fa-solid fa-gear"></i></div><span>Pengaturan</span></div>
+                  </div>
+                </div>
+                <div class="m-nav">
+                  <span><i class="fa-solid fa-house"></i>Home</span><span><i class="fa-solid fa-receipt"></i>Riwayat</span><span class="kasir"><i class="fa-solid fa-cart-shopping"></i>Kasir</span><span><i class="fa-solid fa-chart-column"></i>Laporan</span><span class="on"><i class="fa-solid fa-table-cells-large"></i>Lainnya</span>
                 </div>
               </div>
             </div>
             <div class="carousel-dots" aria-label="Pilih slide">
               <button class="carousel-arrow carousel-prev" type="button" aria-label="Slide sebelumnya">‹</button>
               <button class="carousel-dot active" type="button" aria-label="Tampilkan slide laporan" aria-current="true"></button>
-              <button class="carousel-dot" type="button" aria-label="Tampilkan slide dashboard" aria-current="false"></button>
+              <button class="carousel-dot" type="button" aria-label="Tampilkan slide beranda" aria-current="false"></button>
               <button class="carousel-dot" type="button" aria-label="Tampilkan slide keranjang" aria-current="false"></button>
               <button class="carousel-dot" type="button" aria-label="Tampilkan slide pembayaran" aria-current="false"></button>
-              <button class="carousel-dot" type="button" aria-label="Tampilkan slide struk riwayat" aria-current="false"></button>
+              <button class="carousel-dot" type="button" aria-label="Tampilkan slide riwayat dan struk" aria-current="false"></button>
+              <button class="carousel-dot" type="button" aria-label="Tampilkan slide menu lainnya" aria-current="false"></button>
               <button class="carousel-arrow carousel-next" type="button" aria-label="Slide berikutnya">›</button>
             </div>
           </div>
