@@ -62,13 +62,18 @@
     h1 span { color: var(--green); }
     .hero-copy { color: #52645a; font-size: 1.12rem; max-width: 570px; }
     .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin: 28px 0 18px; }
+    .hero-price { margin:16px 0 0; color:var(--green-dark); font-size:1rem; font-weight:650; line-height:1.5; }
+    .hero-price strong { font-size:1.15rem; font-weight:900; color:var(--green); }
+    .hero-price span { color:var(--muted); font-weight:600; }
     .trust-line { color: #607267; font-size: .85rem; font-weight: 650; display:flex; gap:9px; align-items:center; }
-    .hero-visual { min-height: 550px; position:relative; display:grid; place-items:center; }
+    .hero-visual { min-height: 550px; position:relative; display:grid; place-items:center; align-content:center; }
     .hero-carousel { width:min(100%, 370px); height:550px; position:relative; }
     .hero-slide { position:absolute; inset:0; visibility:hidden; opacity:0; transform:translateX(12px); transition:opacity .7s ease, transform .7s ease, visibility .7s; pointer-events:none; }
     .hero-slide.active { visibility:visible; opacity:1; transform:translateX(0); pointer-events:auto; }
     /* ===== Mockup aplikasi (mengikuti tampilan mobile.html) ===== */
-    .m-screen { height:100%; position:relative; overflow:hidden; border:1px solid #e5ece8; border-radius:28px; background:#f8faf9; box-shadow:0 28px 65px rgba(4,77,49,.18); color:#26352d; font-family:Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; line-height:1.35; }
+        .m-screen { height:100%; position:relative; overflow:hidden; border:7px solid #26352d; border-top-width:20px; border-bottom-width:15px; border-radius:38px; background:#f8faf9; box-shadow:0 28px 65px rgba(4,77,49,.22), inset 0 0 0 1px rgba(255,255,255,.3); color:#26352d; font-family:Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; line-height:1.35; }
+    .m-screen:before { content:""; position:absolute; z-index:5; top:-13px; left:50%; width:42px; height:4px; border-radius:99px; background:#718078; transform:translateX(-50%); }
+    .m-screen:after { content:""; position:absolute; z-index:5; top:-14px; left:calc(50% + 29px); width:6px; height:6px; border-radius:50%; background:#718078; }
     .m-screen i { font-style:normal; }
     .m-nav { position:absolute; z-index:2; right:0; bottom:0; left:0; height:58px; display:flex; justify-content:space-around; align-items:center; border-top:1px solid #edf1ee; background:#fff; }
     .m-nav span { flex:1; min-width:0; display:flex; flex-direction:column; align-items:center; gap:3px; color:#a2ada5; font-size:8px; font-weight:600; line-height:1.2; }
@@ -230,6 +235,8 @@
     .ln-card span { text-align:center; font-size:9px; font-weight:700; line-height:1.25; }
     .ln-green{background:#e5f5ea;color:#16834a}.ln-blue{background:#e5f0ff;color:#2878d0}.ln-orange{background:#fff1dc;color:#e69522}.ln-purple{background:#f2e8fa;color:#9250b8}.ln-cyan{background:#e0f5f5;color:#168b91}.ln-pink{background:#fce8ef;color:#d34e78}.ln-yellow{background:#fff5d9;color:#c18a19}.ln-violet{background:#ede8fa;color:#7253bb}.ln-gray{background:#e9eff1;color:#546e7a}
 
+    .hero-caption { width:min(100%, 370px); min-height:3em; margin:38px 0 0; text-align:center; color:#3e554a; font-size:.9rem; font-weight:650; line-height:1.45; }
+
     /* Kontrol carousel */
     .carousel-dots { position:absolute; z-index:3; right:0; bottom:-22px; left:0; display:flex; justify-content:center; align-items:center; gap:7px; }
     .carousel-dot { width:7px; height:7px; padding:0; border:0; border-radius:50%; background:#b8d8c4; cursor:pointer; }
@@ -273,6 +280,7 @@
     .feature .f-icon { font-size:1.5rem; width:46px; height:46px; border-radius:14px; background:#e8f7ed; display:grid; place-items:center; margin-bottom:14px; }
     .feature h3 { margin:0 0 6px; font-size:1.05rem; }
     .feature p { margin:0; color:var(--muted); font-size:.88rem; }
+    .f-tag { display:inline-block; margin-left:6px; padding:2px 8px; border-radius:99px; background:#fff0c2; color:#7a5600; font-size:.66rem; font-weight:900; letter-spacing:.2px; vertical-align:middle; white-space:nowrap; }
     .offline-callout { display:grid; grid-template-columns:auto 1fr; gap:18px; align-items:center; margin-top:28px; background:linear-gradient(110deg,var(--green-dark),#0a8750); color:white; border-radius:22px; padding:25px 28px; }
     .offline-callout .big-icon { width:58px; height:58px; display:grid; place-items:center; background:rgba(255,255,255,.14); border-radius:18px; font-size:1.8rem; }
     .offline-callout h3 { margin:0 0 4px; font-size:1.25rem; }
@@ -340,8 +348,10 @@
       .plans { grid-template-columns:1fr; }
       .plan { padding:24px; }
       .plan-intro { min-height:0; }
-      .feature-grid { grid-template-columns:1fr 1fr; gap:10px; }
-      .feature { padding:17px; }
+            .feature-grid { grid-template-columns:1fr 1fr; gap:10px; }
+            .feature { padding:17px; }
+      .feature:last-child { grid-column:1 / -1; text-align:center; }
+      .feature:last-child .f-icon { margin-right:auto; margin-left:auto; }
       .offline-callout { grid-template-columns:1fr; padding:22px; }
       .multi { padding:60px 0; }
       .device-flow { grid-template-columns:1fr; gap:8px; }
@@ -381,6 +391,7 @@
           <div class="eyebrow">✦ Aplikasi kasir untuk warung kamu</div>
           <h1>Warung Ramai,<br>Untungnya <span>Jelas.</span></h1>
           <p class="hero-copy">Catat jualan, stok barang, dan uang modal di satu aplikasi. Jadi kamu tahu warungmu untung berapa, bukan cuma berapa uang yang masuk.</p>
+          <p class="hero-price"><strong>Mulai Rp39.000/bulan</strong> <span>(sekitar Rp1.300 per hari)</span><br>atau Rp99.000 bayar sekali, tanpa biaya bulanan.</p>
           <div class="hero-actions">
             <a class="btn btn-yellow" href="#paket">Lihat Pilihan Paket <span>→</span></a>
             <a class="btn btn-outline" href="#fitur">Apa Saja Isinya?</a>
@@ -389,7 +400,7 @@
         </div>
         <div class="hero-visual" aria-label="Slide otomatis mockup aplikasi Warungku">
           <div class="hero-carousel" aria-live="off">
-            <div class="hero-slide active" data-slide="0" aria-hidden="false">
+            <div class="hero-slide active" data-slide="0" data-caption="Laporan: lihat untung sebenarnya, bukan cuma uang masuk." aria-hidden="false">
               <div class="m-screen">
                 <div class="m-head"><h3>Laporan</h3><span class="m-back">←</span></div>
                 <div class="m-body">
@@ -419,7 +430,7 @@
                 </div>
               </div>
             </div>
-            <div class="hero-slide" data-slide="1" aria-hidden="true">
+            <div class="hero-slide" data-slide="1" data-caption="Beranda: omzet dan laba minggu ini terlihat begitu aplikasi dibuka." aria-hidden="true">
               <div class="m-screen">
                 <div class="hm-hero">
                   <div class="hm-top"><span class="hm-logo"><i class="fa-solid fa-store"></i></span><strong>TOKO SEMBAKO</strong><span class="hm-user"><i class="fa-solid fa-user"></i></span></div>
@@ -446,7 +457,7 @@
                 </div>
               </div>
             </div>
-            <div class="hero-slide" data-slide="2" aria-hidden="true">
+            <div class="hero-slide" data-slide="2" data-caption="Kasir: scan barcode atau ketik nama barang, harga bisa diubah langsung." aria-hidden="true">
               <div class="m-screen">
                 <div class="cart-header"><span style="font-size:13px;font-weight:800"><i class="fa-solid fa-cart-shopping" style="margin-right:7px"></i>Keranjang</span><span><i class="fa-solid fa-user" style="margin-right:5px"></i>Fendi</span></div>
                 <div class="cart-body">
@@ -476,7 +487,7 @@
                 </div>
               </div>
             </div>
-            <div class="hero-slide" data-slide="3" aria-hidden="true">
+            <div class="hero-slide" data-slide="3" data-caption="Bayar: kembalian terhitung otomatis, tinggal pilih nominal uang." aria-hidden="true">
               <div class="m-screen">
                 <div class="cart-header"><span style="font-size:13px;font-weight:800"><i class="fa-solid fa-cart-shopping" style="margin-right:7px"></i>Keranjang</span><span><i class="fa-solid fa-user" style="margin-right:5px"></i>Fendi</span></div>
                 <div class="cart-body">
@@ -505,7 +516,7 @@
                 </div>
               </div>
             </div>
-            <div class="hero-slide" data-slide="4" aria-hidden="true">
+            <div class="hero-slide" data-slide="4" data-caption="Riwayat &amp; struk: cari transaksi lama dan cetak ulang struknya." aria-hidden="true">
               <div class="m-screen">
                 <div class="m-head"><h3>Riwayat</h3><span class="m-back">←</span></div>
                 <div class="m-body">
@@ -541,7 +552,7 @@
                 </div>
               </div>
             </div>
-            <div class="hero-slide" data-slide="5" aria-hidden="true">
+            <div class="hero-slide" data-slide="5" data-caption="Menu lainnya: stok, kulakan, supplier, pelanggan, dan hutang." aria-hidden="true">
               <div class="m-screen">
                 <div class="m-head"><h3>Lainnya</h3><span class="m-back">←</span></div>
                 <div class="m-body">
@@ -573,6 +584,7 @@
               <button class="carousel-arrow carousel-next" type="button" aria-label="Slide berikutnya">›</button>
             </div>
           </div>
+          <p class="hero-caption" id="heroCaption" aria-live="polite"></p>
         </div>
       </div>
     </section>
@@ -607,7 +619,7 @@
             <span class="plan-label">SEKALI BAYAR</span>
             <h3>Warungku Offline</h3>
             <div class="price">Rp99.000</div>
-            <div class="price-note">Bayar satu kali</div>
+            <div class="price-note">Bayar satu kali · tanpa biaya bulanan</div>
             <p class="plan-intro">Bayar sekali, aplikasi jadi milikmu. Cocok kalau kamu tidak mau bayar tiap bulan.</p>
             <ul class="feature-list">
               <li><span class="check">✓</span> Bisa mencatat ribuan barang</li>
@@ -626,7 +638,7 @@
             <span class="plan-label">LEBIH FLEKSIBEL</span>
             <h3>Warungku Online</h3>
             <div class="price">Rp39.000 <small>/ bulan</small></div>
-            <div class="price-note">Bayar tiap bulan</div>
+            <div class="price-note">Bayar tiap bulan · sekitar Rp1.300 per hari</div>
             <p class="plan-intro">Datamu tersimpan aman di internet, bisa dipantau dari jauh, dan ada bantuan kalau kamu butuh fitur baru.</p>
             <div class="offline-banner"><b>📶</b><span>ONLINE MAUPUN OFFLINE — internet mati, kasir tetap bisa jalan.</span></div>
             <ul class="feature-list">
@@ -653,12 +665,15 @@
           <p>Catatan jadi rapi, jadi kamu bisa ambil keputusan dengan yakin.</p>
         </div>
         <div class="feature-grid">
-          <article class="feature"><div class="f-icon">🧮</div><h3>Kasir Praktis</h3><p>Layani pembeli dan catat jualan harian dengan cepat.</p></article>
-          <article class="feature"><div class="f-icon">📊</div><h3>Laporan Keuangan</h3><p>Lihat uang masuk, uang keluar, dan untung rugi.</p></article>
-          <article class="feature"><div class="f-icon">📦</div><h3>Catatan Barang</h3><p>Catat ribuan barang beserta harga modalnya.</p></article>
-          <article class="feature"><div class="f-icon">🛍️</div><h3>Catat Belanja Barang</h3><p>Catat kulakan dan uang yang keluar untuk beli barang.</p></article>
-          <article class="feature"><div class="f-icon">🏬</div><h3>Banyak Warung, Satu Aplikasi</h3><p>Pantau dan bandingkan beberapa warung sekaligus.</p></article>
-          <article class="feature"><div class="f-icon">📱</div><h3>Bisa Masuk dari Beberapa HP</h3><p>Kasir pakai HP/Tablet/Komputer warung, kamu masuk dari HP sendiri untuk lihat jualan di warung. Ada di paket Online.</p></article>
+          <article class="feature"><div class="f-icon">🧮</div><h3>Kasir Cepat</h3><p>Scan barcode lewat kamera HP atau ketik nama barang. Harga bisa diubah langsung saat melayani pembeli.</p></article>
+          <article class="feature"><div class="f-icon">📒</div><h3>Catat Kasbon Pelanggan</h3><p>Tahu siapa yang masih berhutang, berapa jumlahnya, dan berapa sisanya. Tidak perlu lagi buku kasbon.</p></article>
+          <article class="feature"><div class="f-icon">📊</div><h3>Untung Rugi Jelas</h3><p>Lihat omzet, perkiraan keuntungan, dan margin per hari, minggu, atau bulan, lengkap dengan grafik dan daftar produk terlaris.</p></article>
+          <article class="feature"><div class="f-icon">⚠️</div><h3>Stok Menipis Ketahuan</h3><p>Lihat daftar barang yang stoknya tinggal sedikit, jadi kamu tahu apa yang harus segera dikulak.</p></article>
+          <article class="feature"><div class="f-icon">🛍️</div><h3>Catat Kulakan &amp; Supplier</h3><p>Catat belanja barang dari supplier beserta riwayatnya, supaya uang yang keluar untuk beli barang jelas.</p></article>
+          <article class="feature"><div class="f-icon">🧾</div><h3>Cetak Struk</h3><p>Cetak lewat printer thermal Bluetooth atau menu cetak di HP Android. Struk transaksi lama bisa dicetak ulang.</p></article>
+          <article class="feature"><div class="f-icon">📥</div><h3>Pindah dari Excel, Mudah</h3><p>Masukkan daftar barang dari file Excel atau CSV tanpa mengetik satu per satu. Data produk, pelanggan, dan hutang juga bisa disimpan sebagai salinan.</p></article>
+          <article class="feature"><div class="f-icon">⚖️</div><h3>Satuan Sesuai Warung</h3><p>Jual per karung, kg, pcs, atau renteng. Harga jual dan harga modal dicatat per barang, jadi untungnya terhitung.</p></article>
+          <article class="feature"><div class="f-icon">📱</div><h3>Bisa Masuk dari Beberapa HP <span class="f-tag">Paket Online</span></h3><p>Kasir pakai HP/Tablet/Komputer warung, kamu masuk dari HP sendiri untuk lihat jualan di warung.</p></article>
         </div>
         <div class="offline-callout">
           <div class="big-icon">📡</div>
@@ -716,7 +731,7 @@
         </div>
         <div class="offline-callout">
           <div class="big-icon">🤝</div>
-          <div><h3>Gaptek? Belum ngerti caranya? Tenang, ada admin yang bantu.</h3><p>Kalau kamu bingung atau belum paham cara pakainya, jangan khawatir. Admin akan membantu apa pun yang belum kamu mengerti, selama kamu masih berlangganan. Tanya saja lewat WhatsApp.</p></div>
+          <div><h3>Baru pertama kali pakai aplikasi ini? Tenang, kami bantu sampai bisa.</h3><p>Kalau masih bingung menggunakan aplikasinya, jangan khawatir. Admin akan membimbing langkah demi langkah lewat telepon atau video call WhatsApp sampai kamu lebih paham dan siap menggunakannya.</p></div>
         </div>
       </div>
     </section>
@@ -736,6 +751,13 @@
           <details><summary>Bisa mencatat banyak barang?</summary><p>Bisa. Paket sekali bayar mampu mencatat ribuan barang. Kalau kebutuhanmu khusus, tanya admin dulu supaya pasti.</p></details>
           <details><summary>Boleh dipakai selain warung Madura?</summary><p>Boleh. Warungku bisa dipakai untuk berbagai jenis toko, termasuk minimarket, bahkan sekelas Indomaret.</p></details>
           <details><summary>Aplikasinya boleh dijual lagi?</summary><p>Paket Offline boleh dijual kembali. Paket Online tidak bisa dijual kembali.</p></details>
+          <details><summary>Perlu pasang dari Play Store?</summary><p>Tidak perlu. Warungku berupa aplikasi web: dibuka lewat browser HP, lalu bisa dipasang ke layar utama supaya tampil seperti aplikasi biasa. Kalau belum tahu caranya, admin akan membantu.</p></details>
+          <details><summary>Bagaimana cara bayar paketnya?</summary><p>Setelah memilih paket, chat admin lewat WhatsApp. Admin akan memberi tahu cara pembayarannya dan membantu sampai aplikasi siap dipakai.</p></details>
+          <details><summary>Printer struk apa yang bisa dipakai?</summary><p>Bisa cetak lewat printer thermal Bluetooth, atau lewat menu cetak di HP Android. Sebelum membeli printer, tanya admin dulu supaya tipenya cocok.</p></details>
+          <details><summary>Bisa scan barcode pakai kamera HP?</summary><p>Bisa, asalkan barcode sudah disimpan di data barang. Kalau barang tidak punya barcode atau belum disimpan, kamu tetap bisa mencarinya dengan mengetik nama.</p></details>
+          <details><summary>Daftar barang dari Excel bisa dimasukkan?</summary><p>Bisa. Daftar barang dari file Excel atau CSV bisa diimpor, jadi tidak perlu mengetik satu per satu. Data produk, pelanggan, dan hutang juga bisa disimpan sebagai salinan kapan saja.</p></details>
+          <details><summary>Pelanggan yang kasbon bisa dicatat?</summary><p>Bisa. Ada menu Hutang untuk mencatat siapa yang berhutang, berapa jumlahnya, dan berapa sisa yang belum dibayar.</p></details>
+          
           <details><summary>Boleh minta fitur khusus?</summary><p>Boleh, untuk pelanggan paket Online. Hubungi admin, sampaikan kebutuhanmu, lalu diskusikan bersama.</p></details>
         </div>
       </div>
@@ -768,11 +790,13 @@
     const carousel = document.querySelector(".hero-carousel");
     const slides = [...carousel.querySelectorAll(".hero-slide")];
     const dots = [...carousel.querySelectorAll(".carousel-dot")];
+    const caption = document.getElementById("heroCaption");
     let currentSlide = 0;
     let carouselTimer;
 
     function showSlide(index) {
       currentSlide = index;
+      if (caption) caption.innerHTML = slides[index].dataset.caption || "";
       slides.forEach((slide, slideIndex) => {
         const active = slideIndex === currentSlide;
         slide.classList.toggle("active", active);
@@ -781,6 +805,8 @@
         dots[slideIndex].setAttribute("aria-current", String(active));
       });
     }
+
+    showSlide(0);
 
     let hovering = false;
 
