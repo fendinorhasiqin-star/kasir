@@ -181,6 +181,11 @@
     .carousel-dots { position:absolute; z-index:3; right:0; bottom:-22px; left:0; display:flex; justify-content:center; gap:7px; }
     .carousel-dot { width:7px; height:7px; padding:0; border:0; border-radius:50%; background:#b8d8c4; cursor:pointer; }
     .carousel-dot.active { width:20px; border-radius:99px; background:var(--green); }
+    .hero-carousel { touch-action:pan-y; user-select:none; -webkit-user-select:none; cursor:grab; }
+    .hero-carousel:active { cursor:grabbing; }
+    .carousel-dots { align-items:center; }
+    .carousel-arrow { width:26px; height:26px; margin:0 6px; padding:0 0 3px; display:grid; place-items:center; border:0; border-radius:50%; background:#e4f5e9; color:var(--green); font-size:1.2rem; line-height:1; cursor:pointer; }
+    .carousel-arrow:hover { background:#cfeedb; }
     .section { padding: 82px 0; }
     .section-soft { background: #f2faf5; }
     .section-head { text-align:center; max-width:740px; margin:0 auto 42px; }
@@ -457,10 +462,12 @@
               </div>
             </div>
             <div class="carousel-dots" aria-label="Pilih slide">
+              <button class="carousel-arrow carousel-prev" type="button" aria-label="Slide sebelumnya">‹</button>
               <button class="carousel-dot active" type="button" aria-label="Tampilkan slide laporan" aria-current="true"></button>
               <button class="carousel-dot" type="button" aria-label="Tampilkan slide dashboard" aria-current="false"></button>
               <button class="carousel-dot" type="button" aria-label="Tampilkan slide pembayaran" aria-current="false"></button>
               <button class="carousel-dot" type="button" aria-label="Tampilkan slide struk riwayat" aria-current="false"></button>
+              <button class="carousel-arrow carousel-next" type="button" aria-label="Slide berikutnya">›</button>
             </div>
           </div>
         </div>
@@ -672,19 +679,63 @@
       });
     }
 
+    let hovering = false;
+
     function startCarousel() {
-      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
       clearInterval(carouselTimer);
+      if (hovering || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
       carouselTimer = setInterval(() => showSlide((currentSlide + 1) % slides.length), 4500);
+    }
+
+    function moveSlide(step) {
+      showSlide((currentSlide + step + slides.length) % slides.length);
+      startCarousel();
     }
 
     dots.forEach((dot, index) => dot.addEventListener("click", () => {
       showSlide(index);
       startCarousel();
     }));
-    carousel.addEventListener("mouseenter", () => clearInterval(carouselTimer));
-    carousel.addEventListener("mouseleave", startCarousel);
-    carousel.addEventListener("focusin", () => clearInterval(carouselTimer));
+    carousel.querySelector(".carousel-prev").addEventListener("click", () => moveSlide(-1));
+    carousel.querySelector(".carousel-next").addEventListener("click", () => moveSlide(1));
+
+    // Geser manual: swipe di HP/tablet, drag dengan mouse
+    let swipeX = null, swipeY = null;
+    carousel.addEventListener("pointerdown", (event) => {
+      if (event.target.closest(".carousel-arrow, .carousel-dot")) return;
+      swipeX = event.clientX;
+      swipeY = event.clientY;
+      clearInterval(carouselTimer);
+      try { carousel.setPointerCapture(event.pointerId); } catch (e) {}
+    });
+    carousel.addEventListener("pointerup", (event) => {
+      if (swipeX === null) return;
+      const dx = event.clientX - swipeX;
+      const dy = event.clientY - swipeY;
+      swipeX = swipeY = null;
+      if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) moveSlide(dx < 0 ? 1 : -1);
+      else startCarousel();
+    });
+    carousel.addEventListener("pointercancel", () => { swipeX = swipeY = null; startCarousel(); });
+    carousel.addEventListener("keydown", (event) => {
+      if (event.key === "ArrowLeft") moveSlide(-1);
+      if (event.key === "ArrowRight") moveSlide(1);
+    });
+
+    // Otomatis berhenti saat kursor mouse di atas slide / fokus keyboard
+    carousel.addEventListener("pointerenter", (event) => {
+      if (event.pointerType !== "mouse") return;
+      hovering = true;
+      clearInterval(carouselTimer);
+    });
+    carousel.addEventListener("pointerleave", (event) => {
+      if (event.pointerType !== "mouse") return;
+      hovering = false;
+      startCarousel();
+    });
+    carousel.addEventListener("focusin", (event) => {
+      if (event.target.matches(":focus-visible")) clearInterval(carouselTimer);
+    });
     carousel.addEventListener("focusout", startCarousel);
     startCarousel();
 
