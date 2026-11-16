@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -1187,7 +1186,7 @@ function editCartPrice(id) {
       </form>
     </section>
   </div>`);
-  document.getElementById('cartItemPrice').focus();
+  document.getElementById('cartItemPrice').focus({ preventScroll: true });
 }
 function closeCartPrice() {
   document.getElementById('cartPriceOverlay')?.remove();
@@ -1218,7 +1217,7 @@ function addProductToCart(id) {
     existing.qty++;
   } else data.cart.push({ id, name: product.name, unit: product.unit || '', price: product.price, cost: product.cost, qty: 1 });
   playAddToCartSound();
-  openMenu(activeFeature);
+  refreshKeepingScroll();
 }
 function openPayment() {
   if (!data.cart.length) return;
@@ -1328,11 +1327,11 @@ function addToCart(event) {
     existing.qty += qty;
   } else data.cart.push({ id: product.id, name: product.name, unit: product.unit || '', price: product.price, cost: product.cost, qty });
   playAddToCartSound();
-  openMenu(activeFeature);
+  refreshKeepingScroll();
 }
 function removeFromCart(index) {
   data.cart.splice(index, 1);
-  openMenu(activeFeature);
+  refreshKeepingScroll();
 }
 function checkout(event) {
   event.preventDefault();

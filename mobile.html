@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -795,6 +794,8 @@ body {
 .bh-trend{display:inline-block;white-space:nowrap;background:#fff;color:#16834A;font-size:11px;font-weight:600;border-radius:999px;padding:4px 8px}
 .bh-trend.down{color:#C0392B}
 .bh-st small{display:block;margin-top:8px;font-size:12px;color:#6B7A71}
+.bh-st .v{max-width:100%}
+.bh-st .bh-trend{max-width:100%;box-sizing:border-box;white-space:normal;line-height:1.3;text-wrap:balance;border-radius:14px}
 .bh-foot b{font-weight:500}.bh-foot i{margin-right:2px}
 .bh-foot{display:flex;flex-wrap:wrap;justify-content:space-between;gap:6px;border-top:1px solid #E3EAE5;margin-top:14px;padding-top:12px;font-size:11px;color:#6B7A71}
 .bh-chart{margin:16px 0;background:#fff;border-radius:24px;padding:16px}
@@ -1207,7 +1208,7 @@ function editCartPrice(id) {
       </form>
     </section>
   </div>`);
-  document.getElementById('cartItemPrice').focus();
+  document.getElementById('cartItemPrice').focus({ preventScroll: true });
 }
 function closeCartPrice() {
   document.getElementById('cartPriceOverlay')?.remove();
@@ -1238,7 +1239,7 @@ function addProductToCart(id) {
     existing.qty++;
   } else data.cart.push({ id, name: product.name, unit: product.unit || '', price: product.price, cost: product.cost, qty: 1 });
   playAddToCartSound();
-  openMenu(activeFeature);
+  refreshKeepingScroll();
 }
 function openPayment() {
   if (!data.cart.length) return;
@@ -1348,11 +1349,11 @@ function addToCart(event) {
     existing.qty += qty;
   } else data.cart.push({ id: product.id, name: product.name, unit: product.unit || '', price: product.price, cost: product.cost, qty });
   playAddToCartSound();
-  openMenu(activeFeature);
+  refreshKeepingScroll();
 }
 function removeFromCart(index) {
   data.cart.splice(index, 1);
-  openMenu(activeFeature);
+  refreshKeepingScroll();
 }
 function checkout(event) {
   event.preventDefault();
@@ -2973,5 +2974,45 @@ document.addEventListener('click', event => {
 <script src="akses.js"></script>
 <script type="module" src="sync.js"></script>
 
+<script>
+/* ===== BERANDA: nominal Omzet / Laba Kotor mengecil otomatis agar tidak keluar dari kartu ===== */
+(function () {
+  let busy = false;
+  function fitBhValues() {
+    if (busy) return; busy = true;
+    const vs = [...document.querySelectorAll('.bh-st .v')], sizes = [];
+    vs.forEach(v => {
+      v.style.fontSize = '';
+      const box = v.parentElement, cs = getComputedStyle(box);
+      const avail = box.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
+      if (avail <= 0) return;                       // kartu belum tampil (tersembunyi)
+      let size = parseFloat(getComputedStyle(v).fontSize);
+      while (v.scrollWidth > avail + 0.5 && size > 10) { size -= 0.5; v.style.fontSize = size + 'px'; }
+      sizes.push(size);
+    });
+    /* kedua nominal memakai ukuran yang sama (yang terkecil) supaya tampak seragam */
+    if (sizes.length) { const small = Math.min(...sizes); vs.forEach(v => { if (parseFloat(getComputedStyle(v).fontSize) > small) v.style.fontSize = small + 'px'; }); }
+    /* pill persentase: usahakan satu baris (huruf dikecilkan sedikit), kalau masih kepanjangan baru terlipat */
+    document.querySelectorAll('.bh-st .bh-trend').forEach(t => {
+      t.style.fontSize = '';
+      const cs = getComputedStyle(t), pad = parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom);
+      let size = parseFloat(cs.fontSize);
+      const wrapped = () => t.offsetHeight > parseFloat(getComputedStyle(t).lineHeight) + pad + 2;
+      while (wrapped() && size > 9.5) { size -= 0.5; t.style.fontSize = size + 'px'; }
+    });
+    busy = false;
+  }
+  window.fitBhValues = fitBhValues;
+  if (typeof renderBeranda === 'function') {
+    const baseRender = renderBeranda;
+    renderBeranda = function (k) { baseRender(k); fitBhValues(); };
+  }
+  const stats = document.querySelector('.bh-stats');
+  if (stats && window.ResizeObserver) new ResizeObserver(fitBhValues).observe(stats);
+  window.addEventListener('resize', fitBhValues);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitBhValues);
+  fitBhValues();
+})();
+</script>
 </body>
 </html>
