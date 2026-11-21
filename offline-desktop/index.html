@@ -805,6 +805,7 @@ body { padding: 0 !important; background: #F4F7F5; overflow-x: hidden; }
 .product-add-button { right: 44px !important; bottom: 36px !important; width: 60px; height: 60px; }
 .product-add-button:hover { background: #0D6638; }
 #stockList, #featureContent > .feature-card { max-width: 760px; }
+.akses-kartu button { min-width: 78px; }
 #emptyStockSetting, #printMode { display: block; width: 100%; min-height: 42px; margin-top: 10px; padding: 10px 12px; border: 1px solid #DCE5DF; border-radius: 10px; background: #fff; color: #26352D; font: inherit; font-size: 13px; }
 #stockList { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; max-width: none; }
 #stockList .feature-card { margin-bottom: 0; }
@@ -1120,8 +1121,6 @@ body.side-collapsed .side-toggle i { transform: rotate(180deg); }
     <button type="button" class="side-item" data-menu="Riwayat"><i class="fa-solid fa-receipt"></i><span>Riwayat</span></button>
     <div class="side-sep" role="separator"></div>
     <button type="button" class="side-item" data-menu="Pengaturan"><i class="fa-solid fa-gear"></i><span>Pengaturan</span></button>
-    <button type="button" class="side-item" data-menu="Manajemen Akun"><i class="fa-solid fa-user-shield"></i><span>Manajemen Akun</span></button>
-    <button type="button" class="side-item" data-menu="Profil"><i class="fa-solid fa-user"></i><span>Profil</span></button>
   </nav>
   <div class="side-foot">Pintasan: <kbd>F2</kbd> / <kbd>Spasi</kbd> Kasir &nbsp; <kbd>Esc</kbd> Kembali &nbsp; <kbd>Ctrl+B</kbd> Menu</div>
 </aside>
@@ -2848,8 +2847,11 @@ function renderProfile() {
       <div class="tidy-field"><label for="profileAdmin">Nama admin</label><input id="profileAdmin" name="admin" placeholder="Nama admin" value="${escapeHTML(data.settings.admin)}" required></div>
       <button type="submit">Simpan profil</button></form>`;
 }
+function renderProfilKartu() {
+  return `<section class="feature-card akun-card akses-kartu"><div class="ikon"><i class="fa-solid fa-user" aria-hidden="true"></i></div><div class="teks"><strong>Profil</strong><span>${escapeHTML(data.settings.admin || 'Admin')}</span></div><button type="button" onclick="openMenu('Profil')">Ubah</button></section>`;
+}
 function renderSettings() {
-  const kartu = window.Akses ? Akses.renderKartu() : '';
+  const kartu = renderProfilKartu() + (window.Akses ? Akses.renderKartu() : '');
   return window.Akses?.karyawan() ? kartu : kartu + renderSettingsToko();
 }
 function renderSettingsToko() {
@@ -3241,7 +3243,7 @@ document.querySelectorAll('.nav-item').forEach(item => {
 <script>
 /* ===== VERSI KOMPUTER: sidebar, pintasan keyboard ===== */
 function syncNavigation(feature) {
-  const map = { 'Home': 'Dashboard', 'Keranjang': 'Kasir', 'Produk Terlaris': 'Laporan', 'Cek Stok Menipis': 'Stok Barang' };
+  const map = { 'Home': 'Dashboard', 'Keranjang': 'Kasir', 'Produk Terlaris': 'Laporan', 'Cek Stok Menipis': 'Stok Barang', 'Profil': 'Pengaturan' };
   const active = map[feature] || feature;
   document.querySelectorAll('.side-item').forEach(item => item.classList.toggle('active', item.dataset.menu === active));
 }
@@ -3253,7 +3255,7 @@ function syncNavigation(feature) {
   };
   document.querySelectorAll('.side-item').forEach(button => button.addEventListener('click', () => {
     const menu = button.dataset.menu;
-    if (menu === 'Dashboard') closeFeature(); else if (menu === 'Manajemen Akun') { if (window.Akses) Akses.buka(); } else openMenu(menu);
+    if (menu === 'Dashboard') closeFeature(); else openMenu(menu);
   }));
   document.addEventListener('keydown', event => {
     const tag = (event.target.tagName || '').toLowerCase();
