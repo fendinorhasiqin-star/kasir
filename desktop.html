@@ -848,7 +848,11 @@ body { padding: 0 !important; background: #F4F7F5; overflow-x: hidden; }
 .cashier-table thead th { position: sticky; top: 0; z-index: 2; padding: 10px; text-align: left; white-space: nowrap; background: #F4F7F5; color: #5E6E65; font-size: 11px; font-weight: 700; letter-spacing: .03em; text-transform: uppercase; box-shadow: 0 1px 0 #DCE5DF; }
 .cashier-table .th-price { width: 150px; }
 .cashier-table .th-qty { width: 116px; }
-.cashier-table .th-unit { width: 76px; text-align: center; }
+.cashier-table .th-unit { width: 96px; text-align: center; }
+.cart-unit-select { max-width: 90px; padding: 3px 6px; border: 1px solid #D9E2DD; border-radius: 6px; background: #fff; color: #2F3B34; font-size: 13px; font-weight: 700; text-transform: lowercase; cursor: pointer; }
+.pu-row { display: grid; grid-template-columns: 1.2fr 0.8fr 1.2fr 1.2fr auto; gap: 6px; align-items: center; margin-bottom: 8px; }
+.pu-row input { min-width: 0; margin: 0; }
+.pu-remove { border: 0; background: transparent; color: #C0392B; cursor: pointer; font-size: 15px; padding: 6px; }
 .cashier-table .th-total { width: 120px; text-align: right; }
 .cashier-table .th-del { width: 44px; }
 .cashier-table td { padding: 10px; border-bottom: 1px solid #E5EBE7; vertical-align: middle; color: #26352D; }
@@ -1391,6 +1395,25 @@ function formatMoney(value) {
 function moneyNumber(value) {
   return Number(String(value ?? '').replace(/\./g, '').trim());
 }
+/* ===== Satuan ganda: satuan dasar = product.unit/price/cost (conv 1); satuan lain di product.units (conv = isi dalam satuan dasar) ===== */
+function productUnits(product) {
+  const base = { name: product.unit || '', conv: 1, price: product.price, cost: product.cost };
+  const others = (product.units || []).map(u => ({ name: u.name, conv: Number(u.conv) || 1, price: Number(u.price) || 0, cost: Number(u.cost) || 0 }));
+  return [base, ...others];
+}
+/* Total pemakaian stok (dalam satuan dasar) untuk satu produk di keranjang, semua baris satuan dijumlahkan */
+function cartBaseQty(productId, exceptIndex = -1) {
+  return data.cart.reduce((sum, item, index) => index !== exceptIndex && !item.quick && item.id === productId ? sum + item.qty * (item.conv || 1) : sum, 0);
+}
+/* True bila ada produk yang total pemakaian stoknya melebihi stok saat ini */
+function cartExceedsStock() {
+  if (ignoreStockLimit()) return data.cart.some(item => !item.quick && !data.products.some(product => product.id === item.id));
+  return data.cart.some(item => {
+    if (item.quick) return false;
+    const product = data.products.find(product => product.id === item.id);
+    return !product || cartBaseQty(item.id) > product.stock;
+  });
+}
 function playAddToCartSound() {
   try {
     const AudioContextClass = window.AudioContext || window.webkitAudioContext;
@@ -1516,13 +1539,20 @@ function openMenu(menu) {
 function renderCashier() {
   const itemCount = data.cart.reduce((sum, item) => sum + item.qty, 0);
   const total = data.cart.reduce((sum, item) => sum + item.price * item.qty, 0);
-  const rowsMarkup = data.cart.length ? data.cart.map(item => `<tr>
+  const unitCell = item => {
+    const product = item.quick ? null : data.products.find(p => p.id === item.id);
+    const units = product ? productUnits(product) : [];
+    if (units.length < 2) return item.unit ? `<span class="unit-tag">${escapeHTML(item.unit)}</span>` : '—';
+    const current = Math.max(0, units.findIndex(u => u.name === (item.unit || '')));
+    return `<select class="cart-unit-select" onchange="changeCartUnit(${data.cart.indexOf(item)}, Number(this.value))" aria-label="Satuan ${escapeHTML(item.name)}">${units.map((u, i) => `<option value="${i}"${i === current ? ' selected' : ''}>${escapeHTML(u.name || 'satuan')}</option>`).join('')}</select>`;
+  };
+  const rowsMarkup = data.cart.length ? data.cart.map((item, index) => `<tr>
         <td class="ct-name">${escapeHTML(item.name)}</td>
-        <td><button class="cashier-price-edit" type="button" onclick="editCartPrice(${item.id})" title="Klik untuk ubah harga">${rupiah(item.price)} <i class="fa-solid fa-pen"></i></button></td>
-        <td><div class="cashier-quantity"><button type="button" onclick="changeCartQuantity(${item.id}, -1)" aria-label="Kurangi jumlah">−</button><strong>${item.qty}</strong><button type="button" onclick="changeCartQuantity(${item.id}, 1)" aria-label="Tambah jumlah">+</button></div></td>
-        <td class="ct-unit">${item.unit ? `<span class="unit-tag">${escapeHTML(item.unit)}</span>` : '—'}</td>
+        <td><button class="cashier-price-edit" type="button" onclick="editCartPrice(${index})" title="Klik untuk ubah harga">${rupiah(item.price)} <i class="fa-solid fa-pen"></i></button></td>
+        <td><div class="cashier-quantity"><button type="button" onclick="changeCartQuantity(${index}, -1)" aria-label="Kurangi jumlah">−</button><strong>${item.qty}</strong><button type="button" onclick="changeCartQuantity(${index}, 1)" aria-label="Tambah jumlah">+</button></div></td>
+        <td class="ct-unit">${unitCell(item)}</td>
         <td class="ct-total">${rupiah(item.price * item.qty)}</td>
-        <td><button class="cashier-remove" type="button" onclick="removeFromCartById(${item.id})" aria-label="Hapus ${escapeHTML(item.name)}"><i class="fa-solid fa-trash-can"></i></button></td>
+        <td><button class="cashier-remove" type="button" onclick="removeFromCartById(${index})" aria-label="Hapus ${escapeHTML(item.name)}"><i class="fa-solid fa-trash-can"></i></button></td>
       </tr>`).join('') : '<tr><td colspan="6" class="cashier-empty">Belum ada barang. Scan barcode atau cari nama barang di samping.</td></tr>';
   return `<header class="cashier-page-header"><strong><i class="fa-solid fa-cart-shopping" aria-hidden="true" style="margin-right:8px"></i>Kasir</strong><span><i class="fa-solid fa-user" style="margin-right:5px"></i>${escapeHTML(data.settings.admin)}</span></header>
     <main class="cashier-page-content">
@@ -1547,22 +1577,40 @@ async function clearCashierCart() {
   resetCashierPay();
   openMenu(activeFeature);
 }
-function removeFromCartById(id) {
-  data.cart = data.cart.filter(item => item.id !== id);
+/* Semua fungsi baris keranjang memakai INDEKS baris (bukan id produk), karena satu produk bisa ada di beberapa baris dengan satuan berbeda */
+function removeFromCartById(index) {
+  data.cart.splice(index, 1);
   openMenu(activeFeature);
 }
-function changeCartQuantity(id, change) {
-  const item = data.cart.find(product => product.id === id);
-  const product = data.products.find(product => product.id === id);
-  if (!item || (!product && !item.quick)) return;
-  if (change > 0 && !item.quick && !ignoreStockLimit() && item.qty >= product.stock) return notify('Stok tidak mencukupi.');
+function changeCartQuantity(index, change) {
+  const item = data.cart[index];
+  if (!item) return;
+  const product = data.products.find(product => product.id === item.id);
+  if (!product && !item.quick) return;
+  if (change > 0 && !item.quick && !ignoreStockLimit() && cartBaseQty(item.id) + (item.conv || 1) > product.stock) return notify('Stok tidak mencukupi.');
   if (change > 0) playAddToCartSound();
   item.qty += change;
-  if (item.qty < 1) data.cart = data.cart.filter(product => product.id !== id);
+  if (item.qty < 1) data.cart.splice(index, 1);
+  openMenu(activeFeature);
+}
+/* Ganti satuan satu baris keranjang: harga & modal otomatis ikut satuan baru. Kalau produk yang sama sudah ada di baris dengan satuan itu, jumlahnya digabung. */
+function changeCartUnit(index, unitIndex) {
+  const item = data.cart[index];
+  const product = item && !item.quick ? data.products.find(p => p.id === item.id) : null;
+  const unit = product ? productUnits(product)[unitIndex] : null;
+  if (!unit) return openMenu(activeFeature);
+  const twin = data.cart.findIndex((other, i) => i !== index && !other.quick && other.id === item.id && (other.unit || '') === unit.name);
+  const newQty = item.qty + (twin >= 0 ? data.cart[twin].qty : 0);
+  if (!ignoreStockLimit() && cartBaseQty(item.id, index) - (twin >= 0 ? data.cart[twin].qty * (data.cart[twin].conv || 1) : 0) + newQty * unit.conv > product.stock) {
+    notify('Stok tidak mencukupi untuk satuan ini.');
+    return openMenu(activeFeature);
+  }
+  Object.assign(item, { unit: unit.name, conv: unit.conv, price: unit.price, cost: unit.cost, qty: newQty });
+  if (twin >= 0) data.cart.splice(twin, 1);
   openMenu(activeFeature);
 }
 function editCartPrice(id) {
-  const item = data.cart.find(product => product.id === id);
+  const item = data.cart[id];
   if (!item) return;
   document.getElementById('cartPriceOverlay')?.remove();
   document.getElementById('featureContent').insertAdjacentHTML('beforeend', `<div class="payment-overlay" id="cartPriceOverlay" onclick="if(event.target === this) closeCartPrice()">
@@ -1582,7 +1630,7 @@ function closeCartPrice() {
 }
 function saveCartPrice(event, id) {
   event.preventDefault();
-  const item = data.cart.find(product => product.id === id);
+  const item = data.cart[id];
   if (!item) return closeCartPrice();
   const value = event.currentTarget.elements.namedItem('price').value.trim();
   const price = moneyNumber(value);
@@ -1710,10 +1758,11 @@ function addProductToCart(id, qty) {
   const product = data.products.find(item => item.id === id);
   if (!product || (product.stock < 1 && !ignoreStockLimit())) return notify('Stok produk habis.');
   qty = Math.max(1, Math.floor(Number(qty ?? document.getElementById('cashierQty')?.value) || 1));
-  const existing = data.cart.find(item => item.id === id);
-    if (!ignoreStockLimit() && (existing ? existing.qty : 0) + qty > product.stock) return notify('Stok tidak mencukupi.');
+  /* produk dari pencarian/scan selalu masuk dengan satuan dasar; satuan lain dipilih lewat dropdown di keranjang */
+  const existing = data.cart.find(item => item.id === id && (item.unit || '') === (product.unit || ''));
+  if (!ignoreStockLimit() && cartBaseQty(id) + qty > product.stock) return notify('Stok tidak mencukupi.');
   if (existing) existing.qty += qty;
-  else data.cart.push({ id, name: product.name, unit: product.unit || '', price: product.price, cost: product.cost, qty });
+  else data.cart.push({ id, name: product.name, unit: product.unit || '', conv: 1, price: product.price, cost: product.cost, qty });
   playAddToCartSound();
   openMenu(activeFeature);
 }
@@ -1721,11 +1770,7 @@ function addProductToCart(id, qty) {
 /* --- pembayaran: tombol Process Payment -> pop-up Konfirmasi Pembayaran --- */
 function processPayment() {
   if (!canProcessPayment()) return;
-    const unavailable = data.cart.some(item => {
-    if (item.quick) return false;
-    const product = data.products.find(product => product.id === item.id);
-    return !product || (!ignoreStockLimit() && product.stock < item.qty);
-  });
+  const unavailable = cartExceedsStock();
   if (unavailable) return notify('Stok produk berubah dan tidak mencukupi. Periksa kembali keranjang.');
   const tunai = cashierPay.method === 'tunai';
   pendingPayment = { total: cartTotal(), method: cashierPay.method, cash: tunai ? cashierPay.cash : 0, customer: cashierPay.customer.trim(), transaction: null };
@@ -1758,16 +1803,14 @@ function commitPayment() {
   const p = pendingPayment;
   if (!p) return null;
   if (p.transaction) return p.transaction;
-    const unavailable = data.cart.some(item => {
-    if (item.quick) return false;
-    const product = data.products.find(product => product.id === item.id);
-    return !product || (!ignoreStockLimit() && product.stock < item.qty);
-  });
+  const unavailable = cartExceedsStock();
   if (!data.cart.length || unavailable) { notify('Stok produk berubah dan tidak mencukupi. Periksa kembali keranjang.'); return null; }
-    data.cart.forEach(item => {
+  /* stok dipotong dalam satuan dasar: qty × isi satuan (mis. 2 dus × 24 = 48 pcs) */
+  data.cart.forEach(item => {
     if (item.quick) return;
     const product = data.products.find(product => product.id === item.id);
-    product.stock = ignoreStockLimit() ? Math.max(0, product.stock - item.qty) : product.stock - item.qty;
+    const used = item.qty * (item.conv || 1);
+    product.stock = ignoreStockLimit() ? Math.max(0, product.stock - used) : product.stock - used;
   });
   const utang = p.method === 'utang';
   const transaction = {
@@ -1788,7 +1831,7 @@ function fillReceipt(transaction) {
   if (!box) return;
   const utang = transaction.method === 'utang';
   const cash = Number(transaction.cash) || 0;
-  const lines = transaction.items.map(item => `<div class="receipt-line"><span>${escapeHTML(item.name)} × ${item.qty}</span><span>${rupiah(item.price * item.qty)}</span></div>`).join('');
+  const lines = transaction.items.map(item => `<div class="receipt-line"><span>${escapeHTML(item.name)} × ${item.qty}${item.unit ? ' ' + escapeHTML(item.unit) : ''}</span><span>${rupiah(item.price * item.qty)}</span></div>`).join('');
   const date = new Date(transaction.date);
   box.innerHTML = `<div class="receipt-header"><h2>${escapeHTML(data.settings.shop)}</h2>
       ${data.settings.address ? `<p>${escapeHTML(data.settings.address)}</p>` : ''}<p>${date.toLocaleDateString('id-ID')} · ${date.toLocaleTimeString('id-ID')}</p></div>
@@ -2099,6 +2142,21 @@ function showProductActions(id) {
     </section>
   </div>`);
 }
+function productUnitRowHTML(unit = {}) {
+  return `<div class="pu-row">
+    <input class="pu-name" placeholder="Satuan (mis. dus)" aria-label="Nama satuan lain" value="${escapeHTML(unit.name || '')}">
+    <input class="pu-conv" type="number" min="0" step="any" placeholder="Isi (mis. 24)" aria-label="Isi per satuan, dalam satuan dasar" value="${unit.conv ?? ''}">
+    <input class="pu-price money-input" type="text" inputmode="numeric" autocomplete="off" placeholder="Harga jual" aria-label="Harga jual satuan lain" value="${formatMoney(unit.price)}">
+    <input class="pu-cost money-input" type="text" inputmode="numeric" autocomplete="off" placeholder="Modal (opsional)" aria-label="Harga modal satuan lain" value="${formatMoney(unit.cost)}">
+    <button class="pu-remove" type="button" onclick="this.closest('.pu-row').remove()" aria-label="Hapus satuan"><i class="fa-solid fa-trash-can" aria-hidden="true"></i></button>
+  </div>`;
+}
+function addProductUnitRow() {
+  const box = document.getElementById('productUnitRows');
+  if (!box) return;
+  box.insertAdjacentHTML('beforeend', productUnitRowHTML());
+  box.lastElementChild.querySelector('.pu-name').focus();
+}
 function showProductEditor(id = null) {
   if (id === null && !wajibLogin()) return;
   const product = data.products.find(item => item.id === id);
@@ -2108,7 +2166,11 @@ function showProductEditor(id = null) {
     <label for="productUnit">Satuan</label><input id="productUnit" name="unit" placeholder="Contoh: pcs, kg, liter" value="${escapeHTML(product?.unit || '')}">
     <label for="productPrice">Harga jual (Rp)</label><input id="productPrice" name="price" ${MONEY_ATTRS} placeholder="Masukkan harga yang dibayar pelanggan" value="${formatMoney(product?.price)}" required>
     <label for="productCost">Harga modal per unit (Rp)</label><input id="productCost" name="cost" ${MONEY_ATTRS} placeholder="Harga beli dari supplier (opsional)" value="${formatMoney(product?.cost)}">
-    <label for="productStock">Stok barang (unit)</label><input id="productStock" name="stock" type="number" min="0" placeholder="Jumlah stok saat ini" value="${product?.stock ?? ''}">
+    <label for="productStock">Stok barang (satuan dasar)</label><input id="productStock" name="stock" type="number" min="0" placeholder="Jumlah stok saat ini" value="${product?.stock ?? ''}">
+    <label>Satuan lain (opsional)</label>
+    <p class="product-hint">Contoh: satuan dasar pcs, tambah "dus" dengan isi 24 dan harga dus sendiri. Stok tetap dihitung dalam satuan dasar.</p>
+    <div id="productUnitRows">${(product?.units || []).map(productUnitRowHTML).join('')}</div>
+    <button class="feature-button secondary" type="button" onclick="addProductUnitRow()"><i class="fa-solid fa-plus" aria-hidden="true"></i> Tambah satuan lain</button>
     <label for="productBarcode">Barcode (opsional)</label><input id="productBarcode" name="barcode" placeholder="Masukkan nomor barcode" value="${escapeHTML(product?.barcode || '')}">
     <button type="submit">${product ? 'Simpan perubahan' : 'Tambah produk'}</button><button class="feature-button secondary" type="button" onclick="openMenu('Produk')">Batal</button>
     ${product ? `<button class="feature-button danger" type="button" onclick="deleteProduct(${product.id})">Hapus produk</button>` : ''}</form>`;
@@ -2177,6 +2239,24 @@ function saveProduct(event) {
   };
   if (!values.name) { notify('Nama barang wajib diisi.'); form.elements.namedItem('name').focus(); return; }
   if (form.elements.namedItem('price').value === '' || !Number.isFinite(values.price) || values.price < 0) { notify('Harga jual wajib diisi.'); form.elements.namedItem('price').focus(); return; }
+  /* satuan lain: baris yang kosong semua diabaikan; sisanya harus lengkap, unik, dan beda dari satuan dasar */
+  const extraUnits = [];
+  const seen = new Set([values.unit.toLocaleLowerCase('id-ID')]);
+  for (const row of form.querySelectorAll('.pu-row')) {
+    const name = row.querySelector('.pu-name').value.trim();
+    const convText = row.querySelector('.pu-conv').value.trim();
+    const priceText = row.querySelector('.pu-price').value.trim();
+    const costText = row.querySelector('.pu-cost').value.trim();
+    if (!name && !convText && !priceText && !costText) continue;
+    const conv = Number(convText), price = moneyNumber(priceText), cost = moneyNumber(costText) || 0;
+    if (!name) { notify('Nama satuan lain wajib diisi.'); row.querySelector('.pu-name').focus(); return; }
+    if (seen.has(name.toLocaleLowerCase('id-ID'))) { notify(`Satuan "${name}" sudah dipakai. Gunakan nama yang berbeda.`); row.querySelector('.pu-name').focus(); return; }
+    if (!Number.isFinite(conv) || conv <= 0) { notify(`Isi satuan "${name}" harus lebih dari nol.`); row.querySelector('.pu-conv').focus(); return; }
+    if (priceText === '' || !Number.isFinite(price) || price < 0) { notify(`Harga jual satuan "${name}" wajib diisi.`); row.querySelector('.pu-price').focus(); return; }
+    seen.add(name.toLocaleLowerCase('id-ID'));
+    extraUnits.push({ name, conv, price, cost });
+  }
+  values.units = extraUnits;
   if (id) Object.assign(data.products.find(product => product.id === id), values);
   else data.products.push({ id: Date.now(), ...values });
   saveData(); openMenu('Produk');
@@ -2674,7 +2754,7 @@ function openTransactionDetail(id) {
   if (!transaction) return;
   const date = new Date(transaction.date);
   const items = Array.isArray(transaction.items) ? transaction.items : [];
-  const itemRows = items.length ? items.map(item => `<div class="history-detail-item"><span><strong>${escapeHTML(item.name || 'Produk')} × ${item.qty}</strong></span><strong>${rupiah(item.price * item.qty)}</strong></div>`).join('') : '<p class="product-hint">Rincian barang tidak tersedia untuk transaksi lama ini.</p>';
+  const itemRows = items.length ? items.map(item => `<div class="history-detail-item"><span><strong>${escapeHTML(item.name || 'Produk')} × ${item.qty}${item.unit ? ' ' + escapeHTML(item.unit) : ''}</strong></span><strong>${rupiah(item.price * item.qty)}</strong></div>`).join('') : '<p class="product-hint">Rincian barang tidak tersedia untuk transaksi lama ini.</p>';
   const isDebt = transaction.method === 'utang';
   const cash = Number(transaction.cash) || 0;
   const dateText = Number.isNaN(date.getTime()) ? '-' : date.toLocaleString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false }).replace(',', '');
@@ -2781,7 +2861,7 @@ function renderReports(period = document.getElementById('reportPeriod')?.value |
   const totalSales = transactions.reduce((sum, transaction) => sum + transaction.total, 0);
   const transactionProfit = transaction => (transaction.items || []).reduce((sum, item) => sum + (item.price - (item.cost || 0)) * item.qty, 0);
   const totalProfit = transactions.reduce((sum, transaction) => sum + transactionProfit(transaction), 0);
-  const units = transactions.reduce((sum, transaction) => sum + (transaction.items || []).reduce((n, item) => n + item.qty, 0), 0);
+  const units = transactions.reduce((sum, transaction) => sum + (transaction.items || []).reduce((n, item) => n + item.qty * (item.conv || 1), 0), 0);
   const dailyTotals = new Map();
   transactions.forEach(transaction => {
     const date = new Date(transaction.date);
@@ -2802,7 +2882,7 @@ function renderReports(period = document.getElementById('reportPeriod')?.value |
   transactions.forEach(transaction => (transaction.items || []).forEach(item => {
     const key = String(item.id ?? item.name);
     const product = bestSellers.get(key) || { name: item.name, qty: 0, total: 0 };
-    product.qty += item.qty;
+    product.qty += item.qty * (item.conv || 1);
     product.total += item.price * item.qty;
     bestSellers.set(key, product);
   }));
