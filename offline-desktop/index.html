@@ -761,6 +761,8 @@ body { padding: 0 !important; background: #F4F7F5; overflow-x: hidden; }
 .side-item i { width: 20px; text-align: center; font-size: 15px; }
 .side-item:hover { background: #ffffff14; color: #fff; }
 .side-item.active { background: #16834A; color: #fff; box-shadow: 0 4px 12px #0003; }
+.side-nav { overflow-y: auto; overflow-x: hidden; min-height: 0; }
+.side-sep { height: 1px; margin: 8px 10px; background: #ffffff1c; }
 .side-foot { padding: 16px 20px 20px; color: #7FA48D; font-size: 11px; border-top: 1px solid #ffffff18; }
 .side-foot kbd { padding: 1px 6px; border-radius: 5px; background: #ffffff1c; color: #fff; font: inherit; font-size: 10px; }
 
@@ -803,6 +805,7 @@ body { padding: 0 !important; background: #F4F7F5; overflow-x: hidden; }
 .product-add-button { right: 44px !important; bottom: 36px !important; width: 60px; height: 60px; }
 .product-add-button:hover { background: #0D6638; }
 #stockList, #featureContent > .feature-card { max-width: 760px; }
+#emptyStockSetting, #printMode { display: block; width: 100%; min-height: 42px; margin-top: 10px; padding: 10px 12px; border: 1px solid #DCE5DF; border-radius: 10px; background: #fff; color: #26352D; font: inherit; font-size: 13px; }
 #stockList { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; max-width: none; }
 #stockList .feature-card { margin-bottom: 0; }
 .report-filters { grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); max-width: 760px; }
@@ -1115,7 +1118,9 @@ body.side-collapsed .side-toggle i { transform: rotate(180deg); }
     <button type="button" class="side-item" data-menu="Hutang"><i class="fa-solid fa-wallet"></i><span>Hutang</span></button>
     <button type="button" class="side-item" data-menu="Laporan"><i class="fa-solid fa-chart-column"></i><span>Laporan</span></button>
     <button type="button" class="side-item" data-menu="Riwayat"><i class="fa-solid fa-receipt"></i><span>Riwayat</span></button>
+    <div class="side-sep" role="separator"></div>
     <button type="button" class="side-item" data-menu="Pengaturan"><i class="fa-solid fa-gear"></i><span>Pengaturan</span></button>
+    <button type="button" class="side-item" data-menu="Manajemen Akun"><i class="fa-solid fa-user-shield"></i><span>Manajemen Akun</span></button>
     <button type="button" class="side-item" data-menu="Profil"><i class="fa-solid fa-user"></i><span>Profil</span></button>
   </nav>
   <div class="side-foot">Pintasan: <kbd>F2</kbd> / <kbd>Spasi</kbd> Kasir &nbsp; <kbd>Esc</kbd> Kembali &nbsp; <kbd>Ctrl+B</kbd> Menu</div>
@@ -3248,7 +3253,7 @@ function syncNavigation(feature) {
   };
   document.querySelectorAll('.side-item').forEach(button => button.addEventListener('click', () => {
     const menu = button.dataset.menu;
-    if (menu === 'Dashboard') closeFeature(); else openMenu(menu);
+    if (menu === 'Dashboard') closeFeature(); else if (menu === 'Manajemen Akun') { if (window.Akses) Akses.buka(); } else openMenu(menu);
   }));
   document.addEventListener('keydown', event => {
     const tag = (event.target.tagName || '').toLowerCase();
