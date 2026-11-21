@@ -3053,7 +3053,13 @@ function expandScientificNumber(value) {
 }
 function exportProductsCSV() {
   const columns = [['id', 'id'], ['nama', 'name'], ['satuan', 'unit'], ['harga', 'price'], ['modal', 'cost'], ['stok', 'stock'], ['barcode', 'barcode']];
+  /* satuan lain (dus, pak, dll): sampai 3 satuan tambahan -> kolom satuan 2/isi 2/harga 2/modal 2, dst. */
+  [2, 3, 4].forEach(n => ['name', 'conv', 'price', 'cost'].forEach(field => {
+    const header = { name: 'satuan', conv: 'isi', price: 'harga', cost: 'modal' }[field] + ' ' + n;
+    columns.push([header, product => (product.units || [])[n - 2]?.[field] ?? '']);
+  }));
   const rows = [columns.map(([header]) => header), ...data.products.map(product => columns.map(([, key]) => {
+    if (typeof key === 'function') return key(product);
     if (key !== 'barcode') return product[key] ?? '';
     const barcode = expandScientificNumber(product.barcode);
     return /^\d+$/.test(barcode) ? `="${barcode}"` : barcode;
@@ -3253,6 +3259,12 @@ async function importProductsCSV(event) {
     const requiredNameIndex = indexOf('nama', 'produk', 'barang', 'nama barang', 'nama produk', 'product', 'product name', 'item', 'item name');
     const requiredPriceIndex = indexOf('harga', 'harga jual', 'price', 'selling price');
     if (requiredNameIndex < 0 || requiredPriceIndex < 0) throw new Error('File wajib memiliki kolom nama/produk/barang atau product, serta harga atau price.');
+    /* kolom satuan lain (opsional): satuan 2/isi 2/harga 2/modal 2, sampai satuan 4 */
+    const unitCols = [2, 3, 4].map(n => ({
+      name: indexOf(`satuan ${n}`, `satuan${n}`), conv: indexOf(`isi ${n}`, `isi${n}`),
+      price: indexOf(`harga ${n}`, `harga${n}`), cost: indexOf(`modal ${n}`, `modal${n}`)
+    }));
+    const hasUnitCols = unitCols.some(col => Object.values(col).some(index => index >= 0));
     let skipped = 0;
     let imported = rows.slice(1).map((row, rowIndex) => {
       if (!row || row.every(cell => !String(cell ?? '').trim())) return null;
@@ -3275,7 +3287,22 @@ async function importProductsCSV(event) {
       const rawBarcode = value('barcode');
       const barcodeText = rawBarcode.match(/^="([^"]*)"$/)?.[1] ?? (rawBarcode.startsWith("'") ? rawBarcode.slice(1) : rawBarcode);
       const barcode = expandScientificNumber(barcodeText);
-      return { id, name, price, cost, stock, unit: value('satuan', 'unit'), barcode };
+      /* satuan lain: hanya diproses bila file punya kolomnya, supaya file lama tidak menghapus satuan lain yang sudah ada */
+      let units;
+      if (hasUnitCols) {
+        units = [];
+        const used = new Set([value('satuan', 'unit').toLocaleLowerCase('id-ID')]);
+        for (const col of unitCols) {
+          const cell = index => index < 0 ? '' : String(row[index] ?? '').trim();
+          const uName = cell(col.name), uConv = cell(col.conv), uPrice = cell(col.price), uCost = cell(col.cost);
+          if (!uName && !uConv && !uPrice && !uCost) continue;
+          const conv = Number(uConv.replace(',', '.')), uPriceNumber = Number(uPrice), uCostNumber = uCost === '' ? 0 : Number(uCost);
+          if (!uName || used.has(uName.toLocaleLowerCase('id-ID')) || !Number.isFinite(conv) || conv <= 0 || uPrice === '' || !Number.isFinite(uPriceNumber) || uPriceNumber < 0 || !Number.isFinite(uCostNumber) || uCostNumber < 0) { skipped++; return null; }
+          used.add(uName.toLocaleLowerCase('id-ID'));
+          units.push({ name: uName, conv, price: uPriceNumber, cost: uCostNumber });
+        }
+      }
+      return { id, name, price, cost, stock, unit: value('satuan', 'unit'), barcode, units };
     }).filter(Boolean);
     const seenIds = new Set(), seenBarcodes = new Set();
     imported = imported.filter(product => {
@@ -3304,6 +3331,7 @@ async function importProductsCSV(event) {
         || (item.barcode && data.products.find(product => String(product.barcode || '') === item.barcode))
         || data.products.find(product => product.name.trim().toLocaleLowerCase('id-ID') === item.name.toLocaleLowerCase('id-ID'));
       const values = { name: item.name, unit: item.unit, price: item.price, cost: item.cost, stock: item.stock, barcode: item.barcode };
+      if (item.units) values.units = item.units;
       if (existing) Object.assign(existing, values);
       else {
         const id = item.id && !data.products.some(product => String(product.id) === item.id) ? Number(item.id) : Date.now() + Math.floor(Math.random() * 1000000);
