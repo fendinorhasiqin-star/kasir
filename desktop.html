@@ -850,9 +850,48 @@ body { padding: 0 !important; background: #F4F7F5; overflow-x: hidden; }
 .cashier-table .th-qty { width: 116px; }
 .cashier-table .th-unit { width: 96px; text-align: center; }
 .cart-unit-select { max-width: 90px; padding: 3px 6px; border: 1px solid #D9E2DD; border-radius: 6px; background: #fff; color: #2F3B34; font-size: 13px; font-weight: 700; text-transform: lowercase; cursor: pointer; }
-.pu-row { display: grid; grid-template-columns: 1.2fr 0.8fr 1.2fr 1.2fr auto; gap: 6px; align-items: center; margin-bottom: 8px; }
+/* ===== Form tambah / edit produk ===== */
+.feature-form.product-form { max-width: 720px; gap: 16px; }
+.product-form .pf-head h3 { margin: 0; font-size: 20px; color: #26352D; }
+.product-form .pf-sub { margin: 4px 0 0; color: #718078; font-size: 13px; }
+.product-form .pf-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px 16px; }
+.product-form .pf-field { display: grid; gap: 6px; align-content: start; min-width: 0; }
+.product-form .pf-wide { grid-column: 1 / -1; }
+.product-form .pf-field > label { color: #3D4F44; font-size: 13px; font-weight: 700; }
+.product-form .pf-req { color: #B8335D; }
+.product-form .pf-opt { color: #89958E; font-weight: 600; font-size: 12px; }
+.product-form .pf-help { color: #89958E; font-size: 12px; line-height: 1.4; }
+.product-form input:focus, .product-form select:focus { outline: none; border-color: #16834A; box-shadow: 0 0 0 3px rgba(22, 131, 74, .15); }
+.product-form .pf-units { display: grid; gap: 12px; padding: 16px; border: 1px dashed #BFD6C7; border-radius: 14px; background: #F8FBF9; }
+.product-form .pf-units-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.product-form .pf-units-head strong { display: block; color: #26352D; font-size: 14px; }
+.product-form .pf-units-head small { display: block; margin-top: 3px; color: #718078; font-size: 12px; line-height: 1.45; }
+.product-form .pf-units-head .feature-button { flex: none; min-height: 36px; padding: 0 12px; font-size: 12.5px; white-space: nowrap; }
+.product-form #productUnitRows { display: grid; gap: 10px; }
+.product-form #productUnitRows:empty::before { content: 'Belum ada satuan lain. Klik "Tambah satuan" kalau barang ini juga dijual per dus, pak, atau satuan lain.'; padding: 4px 0; color: #89958E; font-size: 12.5px; line-height: 1.5; }
+.pu-row { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, .8fr) minmax(0, 1.2fr) minmax(0, 1.2fr) 38px; gap: 8px; align-items: end; padding: 10px; border: 1px solid #E3ECE6; border-radius: 12px; background: #fff; }
+.pu-cell { display: grid; gap: 4px; min-width: 0; }
+.pu-cell > span { color: #718078; font-size: 11.5px; font-weight: 700; }
 .pu-row input { min-width: 0; margin: 0; }
-.pu-remove { border: 0; background: transparent; color: #C0392B; cursor: pointer; font-size: 15px; padding: 6px; }
+.product-form .pu-remove { width: 38px; min-height: 42px; height: 42px; padding: 0; border: 0; border-radius: 10px; background: #FCE8EF; color: #B8335D; cursor: pointer; font-size: 14px; }
+.product-form .pu-remove:hover { background: #F8D4E1; }
+.pu-remove-text { display: none; font-size: 12.5px; font-weight: 700; }
+.pu-preview { grid-column: 1 / -1; min-height: 16px; color: #16834A; font-size: 12px; font-weight: 600; }
+.pu-preview:empty { display: none; }
+.product-form .pf-actions { position: sticky; bottom: 0; z-index: 2; display: grid; grid-template-columns: 1fr auto; gap: 10px; margin: 0 -20px -20px; padding: 14px 20px; border-top: 1px solid #EDF1EE; border-radius: 0 0 16px 16px; background: rgba(255, 255, 255, .96); }
+.product-form .pf-actions .feature-button { min-width: 110px; }
+.product-form .pf-delete { justify-self: start; min-height: 36px; padding: 0 12px; border: 0; background: transparent; color: #B8335D; font-size: 12.5px; font-weight: 700; cursor: pointer; }
+.product-form .pf-delete:hover { background: #FCE8EF; border-radius: 8px; }
+@media (min-width: 561px) { .pu-row:not(:first-child) .pu-cell > span { display: none; } }
+@media (max-width: 560px) {
+  .product-form .pf-grid { grid-template-columns: 1fr; }
+  .pu-row { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .product-form .pu-remove { grid-column: 1 / -1; width: 100%; min-height: 36px; height: 36px; }
+  .pu-remove-text { display: inline; }
+  .product-form .pf-units-head { flex-direction: column; }
+  .product-form .pf-units-head .feature-button { width: 100%; }
+  .product-form .pf-actions { margin: 0 -20px -20px; }
+}
 .cashier-table .th-total { width: 120px; text-align: right; }
 .cashier-table .th-del { width: 44px; }
 .cashier-table td { padding: 10px; border-bottom: 1px solid #E5EBE7; vertical-align: middle; color: #26352D; }
@@ -2144,11 +2183,12 @@ function showProductActions(id) {
 }
 function productUnitRowHTML(unit = {}) {
   return `<div class="pu-row">
-    <input class="pu-name" placeholder="Satuan (mis. dus)" aria-label="Nama satuan lain" value="${escapeHTML(unit.name || '')}">
-    <input class="pu-conv" type="number" min="0" step="any" placeholder="Isi (mis. 24)" aria-label="Isi per satuan, dalam satuan dasar" value="${unit.conv ?? ''}">
-    <input class="pu-price money-input" type="text" inputmode="numeric" autocomplete="off" placeholder="Harga jual" aria-label="Harga jual satuan lain" value="${formatMoney(unit.price)}">
-    <input class="pu-cost money-input" type="text" inputmode="numeric" autocomplete="off" placeholder="Modal (opsional)" aria-label="Harga modal satuan lain" value="${formatMoney(unit.cost)}">
-    <button class="pu-remove" type="button" onclick="this.closest('.pu-row').remove()" aria-label="Hapus satuan"><i class="fa-solid fa-trash-can" aria-hidden="true"></i></button>
+    <label class="pu-cell"><span>Satuan</span><input class="pu-name" placeholder="mis. dus" aria-label="Nama satuan lain" value="${escapeHTML(unit.name || '')}"></label>
+    <label class="pu-cell"><span>Isi</span><input class="pu-conv" type="number" min="0" step="any" placeholder="mis. 24" aria-label="Isi per satuan, dalam satuan dasar" value="${unit.conv ?? ''}"></label>
+    <label class="pu-cell"><span>Harga jual (Rp)</span><input class="pu-price money-input" type="text" inputmode="numeric" autocomplete="off" placeholder="Harga per satuan ini" aria-label="Harga jual satuan lain" value="${formatMoney(unit.price)}"></label>
+    <label class="pu-cell"><span>Modal (Rp)</span><input class="pu-cost money-input" type="text" inputmode="numeric" autocomplete="off" placeholder="Opsional" aria-label="Harga modal satuan lain" value="${formatMoney(unit.cost)}"></label>
+    <button class="pu-remove" type="button" onclick="removeProductUnitRow(this)" aria-label="Hapus satuan"><i class="fa-solid fa-trash-can" aria-hidden="true"></i><span class="pu-remove-text"> Hapus satuan</span></button>
+    <small class="pu-preview" aria-live="polite"></small>
   </div>`;
 }
 function addProductUnitRow() {
@@ -2157,23 +2197,55 @@ function addProductUnitRow() {
   box.insertAdjacentHTML('beforeend', productUnitRowHTML());
   box.lastElementChild.querySelector('.pu-name').focus();
 }
+function removeProductUnitRow(button) {
+  const form = button.closest('form');
+  button.closest('.pu-row').remove();
+  if (form) refreshProductFormHints(form);
+}
+/* Perbarui teks bantu di form produk: nama satuan dasar pada label, dan ringkasan "1 dus = 24 pcs · setara Rp2.750 per pcs" di tiap satuan lain */
+function refreshProductFormHints(form) {
+  if (!form) return;
+  const base = (form.querySelector('#productUnit')?.value || '').trim() || 'satuan dasar';
+  form.querySelectorAll('.pf-unit-name').forEach(el => { el.textContent = base; });
+  form.querySelectorAll('.pu-row').forEach(row => {
+    const name = row.querySelector('.pu-name').value.trim();
+    const conv = Number(row.querySelector('.pu-conv').value);
+    const price = moneyNumber(row.querySelector('.pu-price').value);
+    const preview = row.querySelector('.pu-preview');
+    if (!name || !Number.isFinite(conv) || conv <= 0) { preview.textContent = ''; return; }
+    let text = `1 ${name} = ${conv.toLocaleString('id-ID')} ${base}`;
+    if (Number.isFinite(price) && price > 0) text += ` · setara ${rupiah(Math.round(price / conv))} per ${base}`;
+    preview.textContent = text;
+  });
+}
 function showProductEditor(id = null) {
   if (id === null && !wajibLogin()) return;
   const product = data.products.find(item => item.id === id);
-  document.getElementById('featureContent').innerHTML = `<form class="feature-form" autocomplete="off" novalidate onsubmit="saveProduct(event)" onkeydown="productFormEnter(event)">
-    <h3>${product ? 'Edit produk' : 'Tambah produk'}</h3><input type="hidden" name="id" value="${product?.id || ''}">
-    <label for="productName">Nama barang</label><input id="productName" type="text" name="name" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Contoh: Beras 5 kg" value="${escapeHTML(product?.name || '')}" required>
-    <label for="productUnit">Satuan</label><input id="productUnit" name="unit" placeholder="Contoh: pcs, kg, liter" value="${escapeHTML(product?.unit || '')}">
-    <label for="productPrice">Harga jual (Rp)</label><input id="productPrice" name="price" ${MONEY_ATTRS} placeholder="Masukkan harga yang dibayar pelanggan" value="${formatMoney(product?.price)}" required>
-    <label for="productCost">Harga modal per unit (Rp)</label><input id="productCost" name="cost" ${MONEY_ATTRS} placeholder="Harga beli dari supplier (opsional)" value="${formatMoney(product?.cost)}">
-    <label for="productStock">Stok barang (satuan dasar)</label><input id="productStock" name="stock" type="number" min="0" placeholder="Jumlah stok saat ini" value="${product?.stock ?? ''}">
-    <label>Satuan lain (opsional)</label>
-    <p class="product-hint">Contoh: satuan dasar pcs, tambah "dus" dengan isi 24 dan harga dus sendiri. Stok tetap dihitung dalam satuan dasar.</p>
-    <div id="productUnitRows">${(product?.units || []).map(productUnitRowHTML).join('')}</div>
-    <button class="feature-button secondary" type="button" onclick="addProductUnitRow()"><i class="fa-solid fa-plus" aria-hidden="true"></i> Tambah satuan lain</button>
-    <label for="productBarcode">Barcode (opsional)</label><input id="productBarcode" name="barcode" placeholder="Masukkan nomor barcode" value="${escapeHTML(product?.barcode || '')}">
-    <button type="submit">${product ? 'Simpan perubahan' : 'Tambah produk'}</button><button class="feature-button secondary" type="button" onclick="openMenu('Produk')">Batal</button>
-    ${product ? `<button class="feature-button danger" type="button" onclick="deleteProduct(${product.id})">Hapus produk</button>` : ''}</form>`;
+  document.getElementById('featureContent').innerHTML = `<form class="feature-form product-form" autocomplete="off" novalidate onsubmit="saveProduct(event)" onkeydown="productFormEnter(event)" oninput="refreshProductFormHints(this)">
+    <div class="pf-head"><h3>${product ? 'Edit produk' : 'Tambah produk'}</h3><p class="pf-sub">${product ? 'Ubah data barang, lalu simpan.' : 'Isi data barang. Yang bertanda * wajib diisi.'}</p></div>
+    <input type="hidden" name="id" value="${product?.id || ''}">
+    <div class="pf-grid">
+      <div class="pf-field pf-wide"><label for="productName">Nama barang <span class="pf-req">*</span></label><input id="productName" type="text" name="name" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Contoh: Aqua 600 ml" value="${escapeHTML(product?.name || '')}" required></div>
+      <div class="pf-field"><label for="productUnit">Satuan dasar</label><input id="productUnit" name="unit" placeholder="Contoh: pcs, kg, liter" value="${escapeHTML(product?.unit || '')}"><small class="pf-help">Satuan terkecil yang dijual. Stok dihitung dalam satuan ini.</small></div>
+      <div class="pf-field"><label for="productStock">Stok <span class="pf-opt">(<span class="pf-unit-name">satuan dasar</span>)</span></label><input id="productStock" name="stock" type="number" min="0" placeholder="Jumlah stok saat ini" value="${product?.stock ?? ''}"></div>
+      <div class="pf-field"><label for="productPrice">Harga jual <span class="pf-opt">per <span class="pf-unit-name">satuan dasar</span> (Rp)</span> <span class="pf-req">*</span></label><input id="productPrice" name="price" ${MONEY_ATTRS} placeholder="Harga yang dibayar pelanggan" value="${formatMoney(product?.price)}" required></div>
+      <div class="pf-field"><label for="productCost">Harga modal <span class="pf-opt">per <span class="pf-unit-name">satuan dasar</span> (Rp)</span></label><input id="productCost" name="cost" ${MONEY_ATTRS} placeholder="Harga beli dari supplier (opsional)" value="${formatMoney(product?.cost)}"></div>
+      <div class="pf-field pf-wide"><label for="productBarcode">Barcode <span class="pf-opt">(opsional)</span></label><input id="productBarcode" name="barcode" placeholder="Masukkan atau scan nomor barcode" value="${escapeHTML(product?.barcode || '')}"></div>
+    </div>
+    <section class="pf-units" aria-label="Satuan lain">
+      <div class="pf-units-head">
+        <div><strong>Satuan lain <span class="pf-opt">(opsional)</span></strong><small>Untuk barang yang juga dijual per dus, pak, dan sebagainya. Isi = berapa <span class="pf-unit-name">satuan dasar</span> dalam 1 satuan ini, dan harganya diisi sendiri.</small></div>
+        <button class="feature-button secondary" type="button" onclick="addProductUnitRow()"><i class="fa-solid fa-plus" aria-hidden="true"></i> Tambah satuan</button>
+      </div>
+      <div id="productUnitRows">${(product?.units || []).map(productUnitRowHTML).join('')}</div>
+    </section>
+    <div class="pf-actions">
+      <button type="submit">${product ? 'Simpan perubahan' : 'Tambah produk'}</button>
+      <button class="feature-button secondary" type="button" onclick="openMenu('Produk')">Batal</button>
+      ${product ? `<button class="pf-delete" type="button" onclick="deleteProduct(${product.id})"><i class="fa-solid fa-trash-can" aria-hidden="true"></i> Hapus produk</button>` : ''}
+    </div>
+  </form>`;
+  refreshProductFormHints(document.querySelector('#featureContent .product-form'));
   document.getElementById('featureContent').scrollTop = 0;
   document.getElementById('productName')?.focus();
 }
