@@ -932,9 +932,9 @@ body {
       Home
     </button>
 
-    <button class="nav-item" onclick="openMenu('Riwayat')">
-      <i class="fa-solid fa-receipt"></i>
-      Riwayat
+    <button class="nav-item" onclick="openMenu('Produk')">
+      <i class="fa-solid fa-box-open"></i>
+      Produk
     </button>
 
     <button class="nav-item cashier-nav-item" onclick="openMenu('Kasir')">
@@ -962,7 +962,7 @@ body {
             <div id="featureContent"></div>
       <nav class="bottom-nav feature-bottom-nav" aria-label="Navigasi utama">
         <button class="nav-item" type="button"><i class="fa-solid fa-house"></i>Home</button>
-        <button class="nav-item" type="button"><i class="fa-solid fa-receipt"></i>Riwayat</button>
+        <button class="nav-item" type="button"><i class="fa-solid fa-box-open"></i>Produk</button>
         <button class="nav-item cashier-nav-item" type="button"><i class="fa-solid fa-cart-shopping"></i>Kasir</button>
         <button class="nav-item" type="button"><i class="fa-solid fa-chart-column"></i>Laporan</button>
         <button class="nav-item" type="button"><i class="fa-solid fa-table-cells-large"></i>Lainnya</button>
@@ -1064,7 +1064,7 @@ function syncNavigation(feature) {
   const activeLabel = ({
     'Home': 'Home', 'Dashboard': 'Home',
     'Kasir': 'Kasir', 'Keranjang': 'Kasir',
-    'Riwayat': 'Riwayat', 'Laporan': 'Laporan', 'Lainnya': 'Lainnya', 'Profil': 'Lainnya'  })[feature] || 'Lainnya';
+    'Produk': 'Produk', 'Laporan': 'Laporan', 'Lainnya': 'Lainnya', 'Profil': 'Lainnya'  })[feature] || 'Lainnya';
   document.querySelectorAll('.nav-item').forEach(item => {
     item.classList.toggle('active', item.textContent.trim() === activeLabel && activeLabel !== '');
   });
@@ -1165,7 +1165,7 @@ function renderCashier() {
       <div class="cashier-total"><div><small>${itemCount} barang</small><strong>${rupiah(total)}</strong></div><button class="feature-button cashier-pay" type="button" onclick="openPayment()" ${!data.cart.length ? 'disabled' : ''}>Bayar ›</button></div>
       <nav class="bottom-nav cashier-bottom-nav" aria-label="Navigasi utama">
         <button class="nav-item" type="button" onclick="closeFeature()"><i class="fa-solid fa-house"></i>Home</button>
-        <button class="nav-item" type="button" onclick="openMenu('Riwayat')"><i class="fa-solid fa-receipt"></i>Riwayat</button>
+        <button class="nav-item" type="button" onclick="openMenu('Produk')"><i class="fa-solid fa-box-open"></i>Produk</button>
         <button class="nav-item cashier-nav-item active" type="button" onclick="openMenu('Kasir')"><i class="fa-solid fa-cart-shopping"></i>Kasir</button>
         <button class="nav-item" type="button" onclick="openMenu('Laporan')"><i class="fa-solid fa-chart-column"></i>Laporan</button>
         <button class="nav-item" type="button" onclick="openMenu('Lainnya')"><i class="fa-solid fa-table-cells-large"></i>Lainnya</button>
@@ -2934,7 +2934,7 @@ document.querySelectorAll('.nav-item').forEach(item => {
       nav.classList.toggle('active', nav.textContent.trim() === label);
     });
     if (label === 'Home') closeFeature();
-    else openMenu(label === 'Kasir' ? 'Kasir' : label === 'Riwayat' ? 'Riwayat' : label === 'Laporan' ? 'Laporan' : 'Lainnya');
+    else openMenu(label === 'Kasir' ? 'Kasir' : label === 'Produk' ? 'Produk' : label === 'Laporan' ? 'Laporan' : 'Lainnya');
   });
 });
 </script>

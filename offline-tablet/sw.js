@@ -1,7 +1,7 @@
 /* Service worker Kasir Arridho Jaya (OFFLINE, offline-tablet)
    Semua file ada di folder ini, jadi setelah dibuka sekali aplikasi jalan tanpa internet.
    Naikkan VERSI setiap kali kamu mengubah index.html supaya perangkat mengambil file terbaru. */
-var VERSI = 'v5';
+var VERSI = 'v6';
 var CACHE = 'kasir-offline-tablet-' + VERSI;
 
 var INTI = [

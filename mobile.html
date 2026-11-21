@@ -942,7 +942,7 @@ body {
 
     <nav class="bottom-nav" aria-label="Navigasi utama">
     <button class="nav-item active" type="button" data-nav="Home" aria-current="page"><i class="fa-solid fa-house" aria-hidden="true"></i>Home</button>
-    <button class="nav-item" type="button" data-nav="Riwayat"><i class="fa-solid fa-receipt" aria-hidden="true"></i>Riwayat</button>
+    <button class="nav-item" type="button" data-nav="Produk"><i class="fa-solid fa-box-open" aria-hidden="true"></i>Produk</button>
     <button class="nav-item cashier-nav-item" type="button" data-nav="Kasir"><i class="fa-solid fa-cart-shopping" aria-hidden="true"></i>Kasir</button>
     <button class="nav-item" type="button" data-nav="Laporan"><i class="fa-solid fa-chart-column" aria-hidden="true"></i>Laporan</button>
     <button class="nav-item" type="button" data-nav="Lainnya"><i class="fa-solid fa-table-cells-large" aria-hidden="true"></i>Lainnya</button>
@@ -957,7 +957,7 @@ body {
             <div id="featureContent"></div>
             <nav class="bottom-nav feature-bottom-nav" aria-label="Navigasi utama">
         <button class="nav-item" type="button" data-nav="Home"><i class="fa-solid fa-house" aria-hidden="true"></i>Home</button>
-        <button class="nav-item" type="button" data-nav="Riwayat"><i class="fa-solid fa-receipt" aria-hidden="true"></i>Riwayat</button>
+        <button class="nav-item" type="button" data-nav="Produk"><i class="fa-solid fa-box-open" aria-hidden="true"></i>Produk</button>
         <button class="nav-item cashier-nav-item" type="button" data-nav="Kasir"><i class="fa-solid fa-cart-shopping" aria-hidden="true"></i>Kasir</button>
         <button class="nav-item" type="button" data-nav="Laporan"><i class="fa-solid fa-chart-column" aria-hidden="true"></i>Laporan</button>
         <button class="nav-item" type="button" data-nav="Lainnya"><i class="fa-solid fa-table-cells-large" aria-hidden="true"></i>Lainnya</button>
@@ -1060,7 +1060,7 @@ function syncNavigation(feature) {
   const activeLabel = ({
     'Home': 'Home', 'Dashboard': 'Home',
     'Kasir': 'Kasir', 'Keranjang': 'Kasir',
-    'Riwayat': 'Riwayat', 'Laporan': 'Laporan', 'Lainnya': 'Lainnya', 'Profil': 'Lainnya'  })[feature] || 'Lainnya';
+    'Produk': 'Produk', 'Laporan': 'Laporan', 'Lainnya': 'Lainnya', 'Profil': 'Lainnya'  })[feature] || 'Lainnya';
   document.querySelectorAll('.nav-item').forEach(item => {
     const on = item.textContent.trim() === activeLabel && activeLabel !== '';
     item.classList.toggle('active', on);
@@ -1163,7 +1163,7 @@ function renderCashier() {
       <div class="cashier-total"><div><small>${itemCount} barang</small><strong>${rupiah(total)}</strong></div><button class="feature-button cashier-pay" type="button" onclick="openPayment()" ${!data.cart.length ? 'disabled' : ''}>Bayar ›</button></div>
             <nav class="bottom-nav cashier-bottom-nav" aria-label="Navigasi utama">
         <button class="nav-item" type="button" data-nav="Home"><i class="fa-solid fa-house" aria-hidden="true"></i>Home</button>
-        <button class="nav-item" type="button" data-nav="Riwayat"><i class="fa-solid fa-receipt" aria-hidden="true"></i>Riwayat</button>
+        <button class="nav-item" type="button" data-nav="Produk"><i class="fa-solid fa-box-open" aria-hidden="true"></i>Produk</button>
         <button class="nav-item cashier-nav-item active" type="button" data-nav="Kasir" aria-current="page"><i class="fa-solid fa-cart-shopping" aria-hidden="true"></i>Kasir</button>
         <button class="nav-item" type="button" data-nav="Laporan"><i class="fa-solid fa-chart-column" aria-hidden="true"></i>Laporan</button>
         <button class="nav-item" type="button" data-nav="Lainnya"><i class="fa-solid fa-table-cells-large" aria-hidden="true"></i>Lainnya</button>
