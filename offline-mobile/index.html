@@ -805,8 +805,11 @@ body {
 .bh-bar i{display:block;width:100%;background:#E5F5EA;border-radius:8px 8px 0 0;min-height:3px}
 .bh-bar.now i{background:#16834A}
 .bh-bar span{position:absolute;bottom:-18px;left:0;right:0;text-align:center;font-size:10px;color:#6B7A71}
-.bh-lainnya{padding:16px 16px 14px}.bh-lainnya .menu-card{padding-left:6px;padding-right:6px}.bh-lainnya .menu-card span{text-align:center;line-height:1.25}
+.bh-lainnya{padding:16px 16px 14px}.bh-lainnya .menu-card{padding:18px 6px 10px;justify-content:flex-start}.bh-lainnya .menu-card span{text-align:center;line-height:1.25}
 .bh-lainnya .section-title{margin-top:4px}
+#emptyStockSetting,#printMode{display:block;width:100%;max-width:100%;min-height:42px;margin-top:10px;padding:10px 12px;border:1px solid #DCE5DF;border-radius:10px;background:#fff;color:#26352D;font:inherit;font-size:13px}
+.feature-card .feature-button{max-width:100%}
+.akses-kartu button{min-width:78px}
 
 /* ===== HUTANG / PIUTANG ===== */
 .dbt-search{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid #E3EAE5;border-radius:14px;padding:0 14px;margin-bottom:14px}
@@ -2416,8 +2419,11 @@ function filterReports() {
 function renderProfile() {
   return `${renderAkunCard()}<form class="feature-form" onsubmit="saveProfile(event)"><h3>Informasi pengguna</h3><label for="profileAdmin">Nama admin</label><input id="profileAdmin" name="admin" placeholder="Nama admin" value="${escapeHTML(data.settings.admin)}" required><button type="submit">Simpan profil</button></form>`;
 }
+function renderProfilKartu() {
+  return `<section class="feature-card akun-card akses-kartu"><div class="ikon"><i class="fa-solid fa-user" aria-hidden="true"></i></div><div class="teks"><strong>Profil</strong><span>${escapeHTML(data.settings.admin || 'Admin')}</span></div><button type="button" onclick="openMenu('Profil')">Ubah</button></section>`;
+}
 function renderSettings() {
-  const kartu = window.Akses ? Akses.renderKartu() : '';
+  const kartu = renderProfilKartu() + (window.Akses ? Akses.renderKartu() : '');
   return window.Akses?.karyawan() ? kartu : kartu + renderSettingsToko();
 }
 function renderSettingsToko() {
@@ -2813,7 +2819,7 @@ function renderBeranda(k) {
   document.getElementById('sapaan').textContent = 'Selamat ' + (j < 11 ? 'Pagi' : j < 15 ? 'Siang' : j < 18 ? 'Sore' : 'Malam') + adm + ' \u{1F44B}';
 }
 function renderMenuLainnya() {
-  return `<div class="bh-lainnya"><section class="menu-grid"><div class="menu-card" onclick="openMenu('Produk')"><div class="menu-icon blue"><i class="fa-solid fa-box-open"></i></div><span>Produk</span></div><div class="menu-card" onclick="openMenu('Stok Barang')"><div class="menu-icon cyan"><i class="fa-solid fa-warehouse"></i></div><span>Stok Barang</span></div><div class="menu-card" onclick="openMenu('Pembelian')"><div class="menu-icon pink"><i class="fa-solid fa-basket-shopping"></i></div><span>Pembelian</span></div><div class="menu-card" onclick="openMenu('Riwayat Pembelian')"><div class="menu-icon orange"><i class="fa-solid fa-clock-rotate-left"></i></div><span>Riwayat Pembelian</span></div><div class="menu-card" onclick="openMenu('Supplier')"><div class="menu-icon purple"><i class="fa-solid fa-truck"></i></div><span>Supplier</span></div><div class="menu-card" onclick="openMenu('Pelanggan')"><div class="menu-icon yellow"><i class="fa-solid fa-users"></i></div><span>Pelanggan</span></div><div class="menu-card" onclick="openMenu('Hutang')"><div class="menu-icon violet"><i class="fa-solid fa-wallet"></i></div><span>Hutang</span></div><div class="menu-card" onclick="openMenu('Profil')"><div class="menu-icon green"><i class="fa-solid fa-user"></i></div><span>Profil</span></div><div class="menu-card" onclick="window.Akses && Akses.buka()"><div class="menu-icon violet"><i class="fa-solid fa-user-shield"></i></div><span>Manajemen Akun</span></div><div class="menu-card" onclick="openMenu('Pengaturan')"><div class="menu-icon gray"><i class="fa-solid fa-gear"></i></div><span>Pengaturan</span></div></section></div>`;
+  return `<div class="bh-lainnya"><section class="menu-grid"><div class="menu-card" onclick="openMenu('Produk')"><div class="menu-icon blue"><i class="fa-solid fa-box-open"></i></div><span>Produk</span></div><div class="menu-card" onclick="openMenu('Stok Barang')"><div class="menu-icon cyan"><i class="fa-solid fa-warehouse"></i></div><span>Stok Barang</span></div><div class="menu-card" onclick="openMenu('Pembelian')"><div class="menu-icon pink"><i class="fa-solid fa-basket-shopping"></i></div><span>Pembelian</span></div><div class="menu-card" onclick="openMenu('Riwayat Pembelian')"><div class="menu-icon orange"><i class="fa-solid fa-clock-rotate-left"></i></div><span>Riwayat Pembelian</span></div><div class="menu-card" onclick="openMenu('Supplier')"><div class="menu-icon purple"><i class="fa-solid fa-truck"></i></div><span>Supplier</span></div><div class="menu-card" onclick="openMenu('Pelanggan')"><div class="menu-icon yellow"><i class="fa-solid fa-users"></i></div><span>Pelanggan</span></div><div class="menu-card" onclick="openMenu('Hutang')"><div class="menu-icon violet"><i class="fa-solid fa-wallet"></i></div><span>Hutang</span></div><div class="menu-card" onclick="window.Akses && Akses.buka()"><div class="menu-icon violet"><i class="fa-solid fa-user-shield"></i></div><span>Manajemen Akun</span></div><div class="menu-card" onclick="openMenu('Pengaturan')"><div class="menu-icon gray"><i class="fa-solid fa-gear"></i></div><span>Pengaturan</span></div></section></div>`;
 }
 function renderLainnya() { return renderMenuLainnya(); }
 
