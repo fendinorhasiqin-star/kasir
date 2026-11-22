@@ -872,7 +872,11 @@ body { padding: 0 !important; background: #F4F7F5; overflow-x: hidden; }
 .pu-cell { display: grid; gap: 4px; min-width: 0; }
 .pu-cell > span { color: #718078; font-size: 11.5px; font-weight: 700; }
 .pu-row input { min-width: 0; margin: 0; }
-.product-form .pu-remove { width: 38px; min-height: 42px; height: 42px; padding: 0; border: 0; border-radius: 10px; background: #FCE8EF; color: #B8335D; cursor: pointer; font-size: 14px; }
+.product-form .purchase-unit-select { width: 100%; margin-top: 6px; padding: 8px 10px; border: 1px solid #D9E2DD; border-radius: 10px; background: #fff; color: #26352D; font: inherit; font-weight: 700; }
+.stock-input-row { display: flex; gap: 8px; align-items: stretch; }
+.stock-input-row input { flex: 1 1 auto; min-width: 0; }
+.stock-unit-select { flex: 0 0 auto; max-width: 42%; padding: 0 10px; border: 1px solid #D9E2DD; border-radius: 10px; background: #fff; color: #26352D; font: inherit; font-weight: 700; }
+.pu-remove { width: 38px; min-height: 42px; height: 42px; padding: 0; border: 0; border-radius: 10px; background: #FCE8EF; color: #B8335D; cursor: pointer; font-size: 14px; }
 .product-form .pu-remove:hover { background: #F8D4E1; }
 .pu-remove-text { display: none; font-size: 12.5px; font-weight: 700; }
 .pu-preview { grid-column: 1 / -1; min-height: 16px; color: #16834A; font-size: 12px; font-weight: 600; }
@@ -2168,6 +2172,42 @@ function showProductActions(id) {
     </section>
   </div>`);
 }
+/* ===== Isi stok dengan satuan lain (mis. 5 dus x isi 50 = 250 pcs): disimpan selalu dalam satuan dasar ===== */
+function productStockUnitList(form) {
+  const base = (form.querySelector('#productUnit')?.value || '').trim() || 'satuan dasar';
+  const list = [{ name: base, conv: 1 }];
+  form.querySelectorAll('.pu-row').forEach(row => {
+    const name = row.querySelector('.pu-name').value.trim();
+    const conv = Number(row.querySelector('.pu-conv').value);
+    if (name && Number.isFinite(conv) && conv > 0) list.push({ name, conv });
+  });
+  return list;
+}
+function productStockUnitSelectHTML(product) {
+  const list = [{ name: (product?.unit || '').trim() || 'satuan dasar', conv: 1 }];
+  (product?.units || []).forEach(u => { if (u.name && Number(u.conv) > 0) list.push({ name: u.name, conv: Number(u.conv) }); });
+  return `<select id="productStockUnit" name="stockUnit" class="stock-unit-select" aria-label="Satuan untuk mengisi stok" data-sig='${escapeHTML(JSON.stringify(list))}'${list.length < 2 ? ' style="display:none"' : ''}>${list.map((u, i) => `<option value="${i}" data-name="${escapeHTML(u.name)}">${escapeHTML(u.name)}</option>`).join('')}</select>`;
+}
+function refreshProductStockUnit(form) {
+  const select = form && form.querySelector('#productStockUnit');
+  if (!select) return;
+  const list = productStockUnitList(form);
+  const sig = JSON.stringify(list);
+  if ((select.dataset.sig || '') !== sig) {
+    const prevIndex = select.selectedIndex, prevName = select.options[prevIndex]?.dataset.name;
+    let index = 0;
+    if (prevIndex > 0) index = Math.max(0, list.findIndex((u, i) => i > 0 && u.name === prevName));
+    select.innerHTML = list.map((u, i) => `<option value="${i}" data-name="${escapeHTML(u.name)}"${i === index ? ' selected' : ''}>${escapeHTML(u.name)}</option>`).join('');
+    select.dataset.sig = sig;
+  }
+  select.style.display = list.length < 2 ? 'none' : '';
+  const hint = form.querySelector('#productStockHint');
+  if (hint) {
+    const conv = list[select.selectedIndex]?.conv || 1;
+    const qty = Number(form.querySelector('#productStock')?.value);
+    hint.textContent = conv !== 1 && qty > 0 ? `= ${(Math.round(qty * conv * 1000) / 1000).toLocaleString('id-ID')} ${list[0].name} akan disimpan sebagai stok` : '';
+  }
+}
 function productUnitRowHTML(unit = {}) {
   return `<div class="pu-row">
     <label class="pu-cell"><span>Satuan</span><input class="pu-name" placeholder="mis. dus" aria-label="Nama satuan lain" value="${escapeHTML(unit.name || '')}"></label>
@@ -2192,6 +2232,7 @@ function removeProductUnitRow(button) {
 /* Perbarui teks bantu di form produk: nama satuan dasar pada label, dan ringkasan "1 dus = 24 pcs · setara Rp2.750 per pcs" di tiap satuan lain */
 function refreshProductFormHints(form) {
   if (!form) return;
+  refreshProductStockUnit(form);
   const base = (form.querySelector('#productUnit')?.value || '').trim() || 'satuan dasar';
   form.querySelectorAll('.pf-unit-name').forEach(el => { el.textContent = base; });
   form.querySelectorAll('.pu-row').forEach(row => {
@@ -2214,7 +2255,7 @@ function showProductEditor(id = null) {
     <div class="pf-grid">
       <div class="pf-field pf-wide"><label for="productName">Nama barang <span class="pf-req">*</span></label><input id="productName" type="text" name="name" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Contoh: Aqua 600 ml" value="${escapeHTML(product?.name || '')}" required></div>
       <div class="pf-field"><label for="productUnit">Satuan dasar</label><input id="productUnit" name="unit" placeholder="Contoh: pcs, kg, liter" value="${escapeHTML(product?.unit || '')}"><small class="pf-help">Satuan terkecil yang dijual. Stok dihitung dalam satuan ini.</small></div>
-      <div class="pf-field"><label for="productStock">Stok <span class="pf-opt">(<span class="pf-unit-name">satuan dasar</span>)</span></label><input id="productStock" name="stock" type="number" min="0" placeholder="Jumlah stok saat ini" value="${product?.stock ?? ''}"></div>
+      <div class="pf-field"><label for="productStock">Stok <span class="pf-opt">(<span class="pf-unit-name">satuan dasar</span>)</span></label><div class="stock-input-row"><input id="productStock" name="stock" type="number" min="0" step="any" placeholder="Jumlah stok saat ini" value="${product?.stock ?? ''}">${productStockUnitSelectHTML(product)}</div><small id="productStockHint" class="product-hint"></small></div>
       <div class="pf-field"><label for="productPrice">Harga jual <span class="pf-opt">per <span class="pf-unit-name">satuan dasar</span> (Rp)</span> <span class="pf-req">*</span></label><input id="productPrice" name="price" ${MONEY_ATTRS} placeholder="Harga yang dibayar pelanggan" value="${formatMoney(product?.price)}" required></div>
       <div class="pf-field"><label for="productCost">Harga modal <span class="pf-opt">per <span class="pf-unit-name">satuan dasar</span> (Rp)</span></label><input id="productCost" name="cost" ${MONEY_ATTRS} placeholder="Harga beli dari supplier (opsional)" value="${formatMoney(product?.cost)}"></div>
       <div class="pf-field pf-wide"><label for="productBarcode">Barcode <span class="pf-opt">(opsional)</span></label><input id="productBarcode" name="barcode" placeholder="Masukkan atau scan nomor barcode" value="${escapeHTML(product?.barcode || '')}"></div>
@@ -2316,6 +2357,9 @@ function saveProduct(event) {
     extraUnits.push({ name, conv, price, cost });
   }
   values.units = extraUnits;
+  /* stok yang diketik dalam satuan lain (mis. 5 dus) dikonversi ke satuan dasar (5 x isi) */
+  const stockConv = productStockUnitList(form)[Number(form.elements.namedItem('stockUnit')?.value) || 0]?.conv || 1;
+  if (stockConv !== 1) values.stock = Math.round(values.stock * stockConv * 1000) / 1000;
   if (id) Object.assign(data.products.find(product => product.id === id), values);
   else data.products.push({ id: Date.now(), ...values });
   saveData(); openMenu('Produk');
@@ -2361,9 +2405,9 @@ function renderStockList() {
   const query = (document.getElementById('stockSearch')?.value || '').trim().toLocaleLowerCase('id-ID');
   const products = data.products.filter(product => product.name.toLocaleLowerCase('id-ID').includes(query));
   return products.map(product => `<div class="feature-card"><h3>${escapeHTML(product.name)}</h3>
-    <p>Stok saat ini: <strong>${product.stock}</strong> unit</p>
+    <p>Stok saat ini: <strong>${product.stock}</strong> ${escapeHTML(product.unit || 'unit')}${stockBreakdownText(product)}</p>
     <form class="feature-row" style="margin-top:10px" onsubmit="adjustStock(event, ${product.id})">
-      <input name="amount" type="number" min="1" placeholder="Jumlah" required>
+      ${stockAdjustUnitSelect(product)}<input name="amount" type="number" min="0.001" step="any" placeholder="Jumlah" required>
       <button class="feature-button secondary" name="change" value="add">+ Tambah</button>
       <button class="feature-button danger" name="change" value="subtract">− Kurangi</button>
     </form></div>`).join('') || emptyMessage(data.products.length ? 'Produk tidak ditemukan.' : 'Belum ada produk.');
@@ -2376,7 +2420,12 @@ function adjustStock(event, id) {
   event.preventDefault();
   
     const product = data.products.find(item => item.id === id);
-  const amount = Number(event.submitter.value === 'add' ? event.currentTarget.amount.value : -event.currentTarget.amount.value);
+  const form = event.currentTarget;
+  /* jumlah diketik dalam satuan pilihan (mis. 2 dus), disimpan dalam satuan dasar (2 x isi) */
+  const conv = productUnits(product)[Number(form.elements.namedItem('unit')?.value) || 0]?.conv || 1;
+  const entered = Math.round(Number(form.elements.namedItem('amount').value) * conv * 1000) / 1000;
+  if (!Number.isInteger(entered) || entered < 1) return notify('Jumlah harus bilangan bulat dalam satuan dasar.');
+  const amount = event.submitter.value === 'add' ? entered : -entered;
   if (product.stock + amount < 0) return notify('Stok tidak boleh kurang dari nol.');
   product.stock += amount; saveData(); openMenu('Stok Barang');
 }
@@ -2467,8 +2516,8 @@ function renderPurchaseHistoryList() {
     const items = getPurchaseItems(purchase);
     const status = purchase.paymentStatus === 'paid' ? 'Lunas' : purchase.paymentStatus === 'unpaid' ? 'Belum lunas' : 'Status belum dicatat';
     const isLegacy = !purchase.productId && !Array.isArray(purchase.items);
-    const heading = items.length === 1 ? `${escapeHTML(items[0].productName || 'Produk')} × ${items[0].qty}` : `${items.length || 1} produk dari ${escapeHTML(purchase.supplierName || 'supplier')}`;
-    const itemDetails = items.map(item => `<p>${escapeHTML(item.productName || 'Produk')} × ${item.qty} · ${rupiah(item.cost ?? (item.qty ? item.total / item.qty : 0))}/unit · ${rupiah(item.total ?? item.qty * item.cost)}</p>`).join('');
+    const heading = items.length === 1 ? `${escapeHTML(items[0].productName || 'Produk')} × ${purchaseQtyText(items[0])}` : `${items.length || 1} produk dari ${escapeHTML(purchase.supplierName || 'supplier')}`;
+    const itemDetails = items.map(item => `<p>${escapeHTML(item.productName || 'Produk')} × ${purchaseQtyText(item)} · ${item.inputUnit ? `${rupiah(item.inputCost)}/${escapeHTML(item.inputUnit)}` : `${rupiah(item.cost ?? (item.qty ? item.total / item.qty : 0))}/unit`} · ${rupiah(item.total ?? item.qty * item.cost)}</p>`).join('');
     return `<article class="feature-card tidy-purchase">
       <div class="tidy-main"><div class="tidy-info"><h3>${heading}</h3><small>${escapeHTML(purchase.supplierName || 'Supplier tidak tercatat')} · ${dateText}</small></div>
         <div class="tidy-right"><strong>${rupiah(purchase.total)}</strong>${purchase.cancelled ? '<span class="purchase-status">Dibatalkan</span>' : `<span class="purchase-status ${purchase.paymentStatus === 'paid' ? 'paid' : ''}">${status}</span>`}</div></div>
@@ -2489,17 +2538,55 @@ function applyPurchaseDateFilter(event) {
   if (start && end && start > end) return notify('Tanggal awal harus sama dengan atau sebelum tanggal akhir.');
   filterPurchases();
 }
+/* ===== Pembelian & stok dalam satuan lain (mis. 10 dus): diketik per satuan pilihan, disimpan dalam satuan dasar ===== */
+function purchaseUnitSelectHTML(product, selectedName = '') {
+  const units = product ? productUnits(product) : [];
+  const current = Math.max(0, units.findIndex(u => u.name === selectedName));
+  return `<select class="purchase-unit-select" name="unit" aria-label="Satuan pembelian" onchange="onPurchaseUnitChange(this)"${units.length < 2 ? ' style="display:none"' : ''}>${units.map((u, i) => `<option value="${i}"${i === current ? ' selected' : ''}>${escapeHTML(u.name || 'satuan dasar')}</option>`).join('')}</select>`;
+}
+function onPurchaseUnitChange(select) {
+  const row = select.closest('.purchase-item-row');
+  const product = data.products.find(p => String(p.id) === row.querySelector('[name="product"]').value);
+  const unit = product ? productUnits(product)[Number(select.value) || 0] : null;
+  const costInput = row.querySelector('[name="cost"]');
+  if (unit && costInput) {
+    costInput.placeholder = 'Modal/' + (unit.name || 'satuan dasar');
+    if (!costInput.value.trim() && unit.cost > 0) costInput.value = formatMoney(unit.cost);
+  }
+  updatePurchaseTotal();
+}
+function purchaseQtyText(item) {
+  return item.inputUnit ? `${item.inputQty} ${escapeHTML(item.inputUnit)} (= ${item.qty})` : `${item.qty}`;
+}
+function stockBreakdownText(product) {
+  const stock = Number(product.stock) || 0;
+  const units = productUnits(product);
+  const bigger = units.slice(1).filter(u => u.conv > 1 && u.conv <= stock).sort((a, b) => b.conv - a.conv)[0];
+  if (!bigger) return '';
+  const whole = Math.floor(stock / bigger.conv), rest = Math.round((stock - whole * bigger.conv) * 1000) / 1000;
+  return ` <small>(≈ ${whole} ${escapeHTML(bigger.name)}${rest ? ` + ${rest} ${escapeHTML(units[0].name || 'satuan dasar')}` : ''})</small>`;
+}
+function stockAdjustUnitSelect(product) {
+  const units = productUnits(product);
+  if (units.length < 2) return '';
+  return `<select name="unit" class="stock-unit-select" style="grid-column:1/-1;max-width:none;padding:10px 12px" aria-label="Satuan jumlah">${units.map((u, i) => `<option value="${i}">${escapeHTML(u.name || 'satuan dasar')}</option>`).join('')}</select>`;
+}
 function renderPurchaseRow(item = null) {
   const itemCost = item?.cost ?? (item?.qty ? item.total / item.qty : '');
   const selectedProduct = data.products.find(product => product.id === (item?.productId ?? null));
+  /* pembelian lama yang dicatat dalam satuan lain (mis. dus) dibuka kembali dalam satuan itu */
+  const useInput = !!(item?.inputUnit && selectedProduct && productUnits(selectedProduct).some(u => u.name === item.inputUnit));
+  const shownQty = useInput ? item.inputQty : (item?.qty ?? '');
+  const shownCost = useInput ? item.inputCost : itemCost;
   return `<div class="feature-card purchase-item-row tidy-item">
     <div class="purchase-product-picker">
       <input type="search" autocomplete="off" placeholder="Cari produk berdasarkan nama…" value="${escapeHTML(selectedProduct?.name || '')}" onfocus="filterPurchaseProducts(this)" oninput="filterPurchaseProducts(this)" aria-label="Cari produk untuk pembelian">
       <input type="hidden" name="product" value="${selectedProduct?.id ?? ''}">
       <div class="purchase-product-options"></div>
+      ${purchaseUnitSelectHTML(selectedProduct, useInput ? item.inputUnit : '')}
     </div>
-    <div class="tidy-two"><input name="qty" type="number" min="1" placeholder="Jumlah dibeli" aria-label="Jumlah dibeli" value="${item?.qty ?? ''}" oninput="updatePurchaseTotal()" required>
-    <input name="cost" ${MONEY_ATTRS} placeholder="Harga modal per unit" aria-label="Harga modal per unit" value="${formatMoney(itemCost)}" oninput="updatePurchaseTotal()" required></div>
+    <div class="tidy-two"><input name="qty" type="number" min="0.001" step="any" placeholder="Jumlah dibeli" aria-label="Jumlah dibeli" value="${shownQty}" oninput="updatePurchaseTotal()" required>
+    <input name="cost" ${MONEY_ATTRS} placeholder="Harga modal per unit" aria-label="Harga modal per unit" value="${formatMoney(shownCost)}" oninput="updatePurchaseTotal()" required></div>
     <button class="feature-button danger tidy-item-del" type="button" onclick="this.closest('.purchase-item-row').remove(); ensurePurchaseRow(); updatePurchaseTotal()">Hapus produk</button>
   </div>`;
 }
@@ -2507,7 +2594,10 @@ function filterPurchaseProducts(input) {
   const picker = input.closest('.purchase-product-picker');
   const selectedId = picker.querySelector('[name="product"]').value;
   const selectedProduct = data.products.find(product => String(product.id) === selectedId);
-  if (input.value.trim() !== (selectedProduct?.name || '')) picker.querySelector('[name="product"]').value = '';
+  if (input.value.trim() !== (selectedProduct?.name || '')) {
+    picker.querySelector('[name="product"]').value = '';
+    picker.querySelector('.purchase-unit-select')?.remove();
+  }
   const query = input.value.trim().toLocaleLowerCase('id-ID');
   const matches = data.products.filter(product => product.name.toLocaleLowerCase('id-ID').includes(query)).slice(0, 40);
   document.querySelectorAll('.purchase-product-picker.open').forEach(other => { if (other !== picker) other.classList.remove('open'); });
@@ -2522,6 +2612,8 @@ function selectPurchaseProduct(button, id) {
   if (!product || !picker) return;
   picker.querySelector('input[type="search"]').value = product.name;
   picker.querySelector('[name="product"]').value = product.id;
+  picker.querySelector('.purchase-unit-select')?.remove();
+  picker.querySelector('.purchase-product-options').insertAdjacentHTML('afterend', purchaseUnitSelectHTML(product));
   picker.classList.remove('open');
   updatePurchaseTotal();
 }
@@ -2586,10 +2678,15 @@ function savePurchase(event) {
   const rows = [...form.querySelectorAll('.purchase-item-row')];
   const items = rows.map(row => {
     const product = data.products.find(item => item.id === Number(row.querySelector('[name="product"]').value));
-    const qty = Number(row.querySelector('[name="qty"]').value);
-    const cost = moneyNumber(row.querySelector('[name="cost"]').value);
+    const inputQty = Number(row.querySelector('[name="qty"]').value);
+    const inputCost = moneyNumber(row.querySelector('[name="cost"]').value);
+    /* qty & modal diketik per satuan pilihan; disimpan dalam satuan dasar (qty x isi, modal / isi) */
+    const unit = product ? productUnits(product)[Number(row.querySelector('[name="unit"]')?.value) || 0] : null;
+    const conv = unit?.conv || 1;
+    const qty = Math.round(inputQty * conv * 1000) / 1000;
+    const cost = conv === 1 ? inputCost : Math.round(inputCost / conv * 100) / 100;
     return product && Number.isInteger(qty) && qty > 0 && Number.isFinite(cost) && cost >= 0
-      ? { product, qty, cost } : null;
+      ? { product, qty, cost, inputQty, inputCost, inputUnit: conv !== 1 ? unit.name : '', conv } : null;
   });
   if (!supplier || !purchaseDate || !items.length || items.some(item => !item)) return notify('Periksa kembali data pembelian. Pilih produk dari daftar yang muncul saat mengetik.');
   const duplicateProducts = new Set();
@@ -2606,10 +2703,11 @@ function savePurchase(event) {
     const product = data.products.find(item => item.id === productId);
     if (!product || product.stock + change < 0) return notify(`Stok ${product?.name || 'produk'} tidak cukup untuk menyimpan perubahan pembelian.`);
   }
-  const purchaseItems = items.map(({ product, qty, cost }) => {
+  const purchaseItems = items.map(({ product, qty, cost, inputQty, inputCost, inputUnit, conv }) => {
     const previousItem = oldItems.find(item => item.productId === product.id);
-    return { productId: product.id, productName: product.name, qty, cost, total: qty * cost,
-      previousCost: previousItem ? (Number(previousItem.previousCost) || 0) : (Number(product.cost) || 0) };
+    return { productId: product.id, productName: product.name, qty, cost, total: conv !== 1 ? inputQty * inputCost : qty * cost,
+      previousCost: previousItem ? (Number(previousItem.previousCost) || 0) : (Number(product.cost) || 0),
+      ...(conv !== 1 ? { inputQty, inputUnit, inputCost } : {}) };
   });
   if (editingPurchase) {
     const hasNewerPurchase = productId => data.purchases.slice(0, purchaseIndex).some(candidate =>

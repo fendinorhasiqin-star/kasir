@@ -543,6 +543,10 @@ body {
 .cart-unit-select { max-width: 96px; padding: 4px 6px; border: 1px solid #D9E2DD; border-radius: 8px; background: #fff; color: #2F3B34; font: inherit; font-size: 13px; font-weight: 700; text-transform: lowercase; }
 .pu-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; align-items: center; margin-bottom: 10px; padding: 10px; border: 1px dashed #BFD6C7; border-radius: 12px; background: #F8FBF9; }
 .pu-row input { min-width: 0; margin: 0; }
+.purchase-unit-select { width: 100%; margin-top: 6px; padding: 8px 10px; border: 1px solid #D9E2DD; border-radius: 10px; background: #fff; color: #26352D; font: inherit; font-weight: 700; }
+.stock-input-row { display: flex; gap: 8px; align-items: stretch; }
+.stock-input-row input { flex: 1 1 auto; min-width: 0; }
+.stock-unit-select { flex: 0 0 auto; max-width: 42%; padding: 0 10px; border: 1px solid #D9E2DD; border-radius: 10px; background: #fff; color: #26352D; font: inherit; font-weight: 700; }
 .pu-remove { grid-column: 1 / -1; border: 0; background: transparent; color: #C0392B; cursor: pointer; font: inherit; font-size: 13px; font-weight: 700; padding: 6px; }
 .cashier-price-edit { display: inline-flex; align-items: center; gap: 8px; padding: 5px 8px; border: 1px dashed #B9C8BE; border-radius: 9px; background: #F4F7F5; color: #26352D; font-weight: 700; font-size: 13px; cursor: pointer; white-space: nowrap; }
 .cashier-quantity { display: flex; align-items: center; gap: 6px; }
@@ -1650,13 +1654,49 @@ function showProductActions(id) {
     </section>
   </div>`);
 }
+/* ===== Isi stok dengan satuan lain (mis. 5 dus x isi 50 = 250 pcs): disimpan selalu dalam satuan dasar ===== */
+function productStockUnitList(form) {
+  const base = (form.querySelector('#productUnit')?.value || '').trim() || 'satuan dasar';
+  const list = [{ name: base, conv: 1 }];
+  form.querySelectorAll('.pu-row').forEach(row => {
+    const name = row.querySelector('.pu-name').value.trim();
+    const conv = Number(row.querySelector('.pu-conv').value);
+    if (name && Number.isFinite(conv) && conv > 0) list.push({ name, conv });
+  });
+  return list;
+}
+function productStockUnitSelectHTML(product) {
+  const list = [{ name: (product?.unit || '').trim() || 'satuan dasar', conv: 1 }];
+  (product?.units || []).forEach(u => { if (u.name && Number(u.conv) > 0) list.push({ name: u.name, conv: Number(u.conv) }); });
+  return `<select id="productStockUnit" name="stockUnit" class="stock-unit-select" aria-label="Satuan untuk mengisi stok" data-sig='${escapeHTML(JSON.stringify(list))}'${list.length < 2 ? ' style="display:none"' : ''}>${list.map((u, i) => `<option value="${i}" data-name="${escapeHTML(u.name)}">${escapeHTML(u.name)}</option>`).join('')}</select>`;
+}
+function refreshProductStockUnit(form) {
+  const select = form && form.querySelector('#productStockUnit');
+  if (!select) return;
+  const list = productStockUnitList(form);
+  const sig = JSON.stringify(list);
+  if ((select.dataset.sig || '') !== sig) {
+    const prevIndex = select.selectedIndex, prevName = select.options[prevIndex]?.dataset.name;
+    let index = 0;
+    if (prevIndex > 0) index = Math.max(0, list.findIndex((u, i) => i > 0 && u.name === prevName));
+    select.innerHTML = list.map((u, i) => `<option value="${i}" data-name="${escapeHTML(u.name)}"${i === index ? ' selected' : ''}>${escapeHTML(u.name)}</option>`).join('');
+    select.dataset.sig = sig;
+  }
+  select.style.display = list.length < 2 ? 'none' : '';
+  const hint = form.querySelector('#productStockHint');
+  if (hint) {
+    const conv = list[select.selectedIndex]?.conv || 1;
+    const qty = Number(form.querySelector('#productStock')?.value);
+    hint.textContent = conv !== 1 && qty > 0 ? `= ${(Math.round(qty * conv * 1000) / 1000).toLocaleString('id-ID')} ${list[0].name} akan disimpan sebagai stok` : '';
+  }
+}
 function productUnitRowHTML(unit = {}) {
   return `<div class="pu-row">
     <input class="pu-name" placeholder="Satuan (mis. dus)" aria-label="Nama satuan lain" value="${escapeHTML(unit.name || '')}">
     <input class="pu-conv" type="number" min="0" step="any" placeholder="Isi (mis. 24)" aria-label="Isi per satuan, dalam satuan dasar" value="${unit.conv ?? ''}">
     <input class="pu-price money-input" type="text" inputmode="numeric" autocomplete="off" placeholder="Harga jual" aria-label="Harga jual satuan lain" value="${formatMoney(unit.price)}">
     <input class="pu-cost money-input" type="text" inputmode="numeric" autocomplete="off" placeholder="Modal (opsional)" aria-label="Harga modal satuan lain" value="${formatMoney(unit.cost)}">
-    <button class="pu-remove" type="button" onclick="this.closest('.pu-row').remove()" aria-label="Hapus satuan"><i class="fa-solid fa-trash-can" aria-hidden="true"></i> Hapus satuan</button>
+    <button class="pu-remove" type="button" onclick="const f = this.closest('form'); this.closest('.pu-row').remove(); refreshProductStockUnit(f)" aria-label="Hapus satuan"><i class="fa-solid fa-trash-can" aria-hidden="true"></i> Hapus satuan</button>
   </div>`;
 }
 function addProductUnitRow() {
@@ -1668,13 +1708,13 @@ function addProductUnitRow() {
 function showProductEditor(id = null) {
   if (id === null && !wajibLogin()) return;
   const product = data.products.find(item => item.id === id);
-  document.getElementById('featureContent').innerHTML = `<form class="feature-form" autocomplete="off" onsubmit="saveProduct(event)">
+  document.getElementById('featureContent').innerHTML = `<form class="feature-form" autocomplete="off" onsubmit="saveProduct(event)" oninput="refreshProductStockUnit(this)">
     <h3>${product ? 'Edit produk' : 'Tambah produk'}</h3><input type="hidden" name="id" value="${product?.id || ''}">
     <label for="productName">Nama barang</label><input id="productName" type="text" name="name" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Contoh: Beras 5 kg" value="${escapeHTML(product?.name || '')}" required>
     <label for="productUnit">Satuan</label><input id="productUnit" name="unit" placeholder="Contoh: pcs, kg, liter" value="${escapeHTML(product?.unit || '')}">
     <label for="productPrice">Harga jual (Rp)</label><input id="productPrice" name="price" ${MONEY_ATTRS} placeholder="Masukkan harga yang dibayar pelanggan" value="${formatMoney(product?.price)}" required>
     <label for="productCost">Harga modal per unit (Rp)</label><input id="productCost" name="cost" ${MONEY_ATTRS} placeholder="Harga beli dari supplier (opsional)" value="${formatMoney(product?.cost)}">
-    <label for="productStock">Stok barang (satuan dasar)</label><input id="productStock" name="stock" type="number" min="0" placeholder="Jumlah stok saat ini" value="${product?.stock ?? ''}">
+    <label for="productStock">Stok barang (satuan dasar)</label><div class="stock-input-row"><input id="productStock" name="stock" type="number" min="0" step="any" placeholder="Jumlah stok saat ini" value="${product?.stock ?? ''}">${productStockUnitSelectHTML(product)}</div><small id="productStockHint" class="product-hint"></small>
     <label>Satuan lain (opsional)</label>
     <p class="product-hint">Contoh: satuan dasar pcs, tambah "dus" dengan isi 24 dan harga dus sendiri. Stok tetap dihitung dalam satuan dasar.</p>
     <div id="productUnitRows">${(product?.units || []).map(productUnitRowHTML).join('')}</div>
@@ -1753,6 +1793,9 @@ function saveProduct(event) {
     extraUnits.push({ name, conv, price, cost });
   }
   values.units = extraUnits;
+  /* stok yang diketik dalam satuan lain (mis. 5 dus) dikonversi ke satuan dasar (5 x isi) */
+  const stockConv = productStockUnitList(form)[Number(form.elements.namedItem('stockUnit')?.value) || 0]?.conv || 1;
+  if (stockConv !== 1) values.stock = Math.round(values.stock * stockConv * 1000) / 1000;
   if (id) Object.assign(data.products.find(product => product.id === id), values);
   else data.products.push({ id: Date.now(), ...values });
   saveData(); openMenu('Produk');
@@ -1795,9 +1838,9 @@ function renderStockList() {
   const query = (document.getElementById('stockSearch')?.value || '').trim().toLocaleLowerCase('id-ID');
   const products = data.products.filter(product => product.name.toLocaleLowerCase('id-ID').includes(query));
   return products.map(product => `<div class="feature-card"><h3>${escapeHTML(product.name)}</h3>
-    <p>Stok saat ini: <strong>${product.stock}</strong> unit</p>
+    <p>Stok saat ini: <strong>${product.stock}</strong> ${escapeHTML(product.unit || 'unit')}${stockBreakdownText(product)}</p>
     <form class="stock-adjust" onsubmit="adjustStock(event, ${product.id})">
-      <input name="amount" type="number" min="1" placeholder="Jumlah" required>
+      ${stockAdjustUnitSelect(product)}<input name="amount" type="number" min="0.001" step="any" placeholder="Jumlah" required>
       <button class="feature-button secondary" name="change" value="add">+ Tambah</button>
       <button class="feature-button danger" name="change" value="subtract">− Kurangi</button>
     </form></div>`).join('') || emptyMessage(data.products.length ? 'Produk tidak ditemukan.' : 'Belum ada produk.');
@@ -1810,7 +1853,12 @@ function adjustStock(event, id) {
   event.preventDefault();
   
   const product = data.products.find(item => item.id === id);
-  const amount = Number(event.submitter.value === 'add' ? event.currentTarget.amount.value : -event.currentTarget.amount.value);
+  const form = event.currentTarget;
+  /* jumlah diketik dalam satuan pilihan (mis. 2 dus), disimpan dalam satuan dasar (2 x isi) */
+  const conv = productUnits(product)[Number(form.elements.namedItem('unit')?.value) || 0]?.conv || 1;
+  const entered = Math.round(Number(form.elements.namedItem('amount').value) * conv * 1000) / 1000;
+  if (!Number.isInteger(entered) || entered < 1) return alert('Jumlah harus bilangan bulat dalam satuan dasar.');
+  const amount = event.submitter.value === 'add' ? entered : -entered;
   if (product.stock + amount < 0) return alert('Stok tidak boleh kurang dari nol.');
   product.stock += amount; saveData(); openMenu('Tambah/Kurangi Stok');
 }
@@ -1897,8 +1945,8 @@ function renderPurchaseHistoryList() {
     const items = getPurchaseItems(purchase);
     const statusText = purchase.paymentStatus === 'paid' ? 'Lunas' : purchase.paymentStatus === 'unpaid' ? 'Belum lunas' : 'Status belum dicatat';
     const isLegacy = !purchase.productId && !Array.isArray(purchase.items);
-    const heading = items.length === 1 ? `${escapeHTML(items[0].productName || 'Produk')} × ${items[0].qty}` : `${items.length || 1} produk dari ${escapeHTML(purchase.supplierName || 'supplier')}`;
-    const itemDetails = items.map(item => `<p>${escapeHTML(item.productName || 'Produk')} × ${item.qty} · ${rupiah(item.cost ?? (item.qty ? item.total / item.qty : 0))}/unit · ${rupiah(item.total ?? item.qty * item.cost)}</p>`).join('');
+    const heading = items.length === 1 ? `${escapeHTML(items[0].productName || 'Produk')} × ${purchaseQtyText(items[0])}` : `${items.length || 1} produk dari ${escapeHTML(purchase.supplierName || 'supplier')}`;
+    const itemDetails = items.map(item => `<p>${escapeHTML(item.productName || 'Produk')} × ${purchaseQtyText(item)} · ${item.inputUnit ? `${rupiah(item.inputCost)}/${escapeHTML(item.inputUnit)}` : `${rupiah(item.cost ?? (item.qty ? item.total / item.qty : 0))}/unit`} · ${rupiah(item.total ?? item.qty * item.cost)}</p>`).join('');
     return `<article class="feature-card"><h3>${heading}</h3>
       <p>${escapeHTML(purchase.supplierName || 'Supplier tidak tercatat')} · ${Number.isNaN(date.getTime()) ? '-' : date.toLocaleDateString('id-ID')} · ${rupiah(purchase.total)}</p>
       ${purchase.cancelled ? '<span class="purchase-status">Dibatalkan</span>' : `<span class="purchase-status ${purchase.paymentStatus === 'paid' ? 'paid' : ''}">${statusText}</span>`}
@@ -1919,17 +1967,55 @@ function applyPurchaseDateFilter(event) {
   if (start && end && start > end) return alert('Tanggal awal harus sama dengan atau sebelum tanggal akhir.');
   filterPurchases();
 }
+/* ===== Pembelian & stok dalam satuan lain (mis. 10 dus): diketik per satuan pilihan, disimpan dalam satuan dasar ===== */
+function purchaseUnitSelectHTML(product, selectedName = '') {
+  const units = product ? productUnits(product) : [];
+  const current = Math.max(0, units.findIndex(u => u.name === selectedName));
+  return `<select class="purchase-unit-select" name="unit" aria-label="Satuan pembelian" onchange="onPurchaseUnitChange(this)"${units.length < 2 ? ' style="display:none"' : ''}>${units.map((u, i) => `<option value="${i}"${i === current ? ' selected' : ''}>${escapeHTML(u.name || 'satuan dasar')}</option>`).join('')}</select>`;
+}
+function onPurchaseUnitChange(select) {
+  const row = select.closest('.purchase-item-row');
+  const product = data.products.find(p => String(p.id) === row.querySelector('[name="product"]').value);
+  const unit = product ? productUnits(product)[Number(select.value) || 0] : null;
+  const costInput = row.querySelector('[name="cost"]');
+  if (unit && costInput) {
+    costInput.placeholder = 'Modal/' + (unit.name || 'satuan dasar');
+    if (!costInput.value.trim() && unit.cost > 0) costInput.value = formatMoney(unit.cost);
+  }
+  updatePurchaseTotal();
+}
+function purchaseQtyText(item) {
+  return item.inputUnit ? `${item.inputQty} ${escapeHTML(item.inputUnit)} (= ${item.qty})` : `${item.qty}`;
+}
+function stockBreakdownText(product) {
+  const stock = Number(product.stock) || 0;
+  const units = productUnits(product);
+  const bigger = units.slice(1).filter(u => u.conv > 1 && u.conv <= stock).sort((a, b) => b.conv - a.conv)[0];
+  if (!bigger) return '';
+  const whole = Math.floor(stock / bigger.conv), rest = Math.round((stock - whole * bigger.conv) * 1000) / 1000;
+  return ` <small>(≈ ${whole} ${escapeHTML(bigger.name)}${rest ? ` + ${rest} ${escapeHTML(units[0].name || 'satuan dasar')}` : ''})</small>`;
+}
+function stockAdjustUnitSelect(product) {
+  const units = productUnits(product);
+  if (units.length < 2) return '';
+  return `<select name="unit" class="stock-unit-select" style="grid-column:1/-1;max-width:none;padding:10px 12px" aria-label="Satuan jumlah">${units.map((u, i) => `<option value="${i}">${escapeHTML(u.name || 'satuan dasar')}</option>`).join('')}</select>`;
+}
 function renderPurchaseRow(item = null) {
   const itemCost = item?.cost ?? (item?.qty ? item.total / item.qty : '');
   const selectedProduct = data.products.find(product => product.id === (item?.productId ?? null));
+  /* pembelian lama yang dicatat dalam satuan lain (mis. dus) dibuka kembali dalam satuan itu */
+  const useInput = !!(item?.inputUnit && selectedProduct && productUnits(selectedProduct).some(u => u.name === item.inputUnit));
+  const shownQty = useInput ? item.inputQty : (item?.qty ?? '');
+  const shownCost = useInput ? item.inputCost : itemCost;
   return `<div class="feature-card purchase-item-row">
     <div class="purchase-product-picker">
       <input type="search" autocomplete="off" placeholder="Cari produk berdasarkan nama…" value="${escapeHTML(selectedProduct?.name || '')}" onfocus="filterPurchaseProducts(this)" oninput="filterPurchaseProducts(this)" aria-label="Cari produk untuk pembelian">
       <input type="hidden" name="product" value="${selectedProduct?.id ?? ''}">
       <div class="purchase-product-options"></div>
+      ${purchaseUnitSelectHTML(selectedProduct, useInput ? item.inputUnit : '')}
     </div>
-    <input name="qty" type="number" min="1" placeholder="Jumlah" aria-label="Jumlah dibeli" value="${item?.qty ?? ''}" oninput="updatePurchaseTotal()" required>
-    <input name="cost" ${MONEY_ATTRS} placeholder="Modal/unit" aria-label="Harga modal per unit" value="${formatMoney(itemCost)}" oninput="updatePurchaseTotal()" required>
+    <input name="qty" type="number" min="0.001" step="any" placeholder="Jumlah" aria-label="Jumlah dibeli" value="${shownQty}" oninput="updatePurchaseTotal()" required>
+    <input name="cost" ${MONEY_ATTRS} placeholder="Modal/unit" aria-label="Harga modal per unit" value="${formatMoney(shownCost)}" oninput="updatePurchaseTotal()" required>
     <button class="feature-button danger" type="button" aria-label="Hapus produk" onclick="this.closest('.purchase-item-row').remove(); ensurePurchaseRow(); updatePurchaseTotal()"><i class="fa-solid fa-trash-can" aria-hidden="true"></i></button>
   </div>`;
 }
@@ -1937,7 +2023,10 @@ function filterPurchaseProducts(input) {
   const picker = input.closest('.purchase-product-picker');
   const selectedId = picker.querySelector('[name="product"]').value;
   const selectedProduct = data.products.find(product => String(product.id) === selectedId);
-  if (input.value.trim() !== (selectedProduct?.name || '')) picker.querySelector('[name="product"]').value = '';
+  if (input.value.trim() !== (selectedProduct?.name || '')) {
+    picker.querySelector('[name="product"]').value = '';
+    picker.querySelector('.purchase-unit-select')?.remove();
+  }
   const query = input.value.trim().toLocaleLowerCase('id-ID');
   const matches = data.products.filter(product => product.name.toLocaleLowerCase('id-ID').includes(query)).slice(0, 40);
   picker.classList.add('open');
@@ -1951,6 +2040,8 @@ function selectPurchaseProduct(button, id) {
   if (!product || !picker) return;
   picker.querySelector('input[type="search"]').value = product.name;
   picker.querySelector('[name="product"]').value = product.id;
+  picker.querySelector('.purchase-unit-select')?.remove();
+  picker.querySelector('.purchase-product-options').insertAdjacentHTML('afterend', purchaseUnitSelectHTML(product));
   picker.classList.remove('open');
   updatePurchaseTotal();
 }
@@ -2010,10 +2101,15 @@ function savePurchase(event) {
   const rows = [...form.querySelectorAll('.purchase-item-row')];
   const items = rows.map(row => {
     const product = data.products.find(item => item.id === Number(row.querySelector('[name="product"]').value));
-    const qty = Number(row.querySelector('[name="qty"]').value);
-    const cost = moneyNumber(row.querySelector('[name="cost"]').value);
+    const inputQty = Number(row.querySelector('[name="qty"]').value);
+    const inputCost = moneyNumber(row.querySelector('[name="cost"]').value);
+    /* qty & modal diketik per satuan pilihan; disimpan dalam satuan dasar (qty x isi, modal / isi) */
+    const unit = product ? productUnits(product)[Number(row.querySelector('[name="unit"]')?.value) || 0] : null;
+    const conv = unit?.conv || 1;
+    const qty = Math.round(inputQty * conv * 1000) / 1000;
+    const cost = conv === 1 ? inputCost : Math.round(inputCost / conv * 100) / 100;
     return product && Number.isInteger(qty) && qty > 0 && Number.isFinite(cost) && cost >= 0
-      ? { product, qty, cost } : null;
+      ? { product, qty, cost, inputQty, inputCost, inputUnit: conv !== 1 ? unit.name : '', conv } : null;
   });
   if (!supplier || !purchaseDate || !items.length || items.some(item => !item)) return alert('Periksa kembali data pembelian.');
   const duplicateProducts = new Set();
@@ -2030,10 +2126,11 @@ function savePurchase(event) {
     const product = data.products.find(item => item.id === productId);
     if (!product || product.stock + change < 0) return alert(`Stok ${product?.name || 'produk'} tidak cukup untuk menyimpan perubahan pembelian.`);
   }
-  const purchaseItems = items.map(({ product, qty, cost }) => {
+  const purchaseItems = items.map(({ product, qty, cost, inputQty, inputCost, inputUnit, conv }) => {
     const previousItem = oldItems.find(item => item.productId === product.id);
-    return { productId: product.id, productName: product.name, qty, cost, total: qty * cost,
-      previousCost: previousItem ? (Number(previousItem.previousCost) || 0) : (Number(product.cost) || 0) };
+    return { productId: product.id, productName: product.name, qty, cost, total: conv !== 1 ? inputQty * inputCost : qty * cost,
+      previousCost: previousItem ? (Number(previousItem.previousCost) || 0) : (Number(product.cost) || 0),
+      ...(conv !== 1 ? { inputQty, inputUnit, inputCost } : {}) };
   });
   if (editingPurchase) {
     const hasNewerPurchase = productId => data.purchases.slice(0, purchaseIndex).some(candidate =>
