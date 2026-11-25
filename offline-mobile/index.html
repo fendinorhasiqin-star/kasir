@@ -901,6 +901,74 @@ body {
 .rpt-top b{flex:1;min-width:0;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .rpt-top small{font-size:12px;color:#6B7A71;white-space:nowrap}
 .rpt-top strong{font-size:13px;white-space:nowrap}
+
+/* ===== PERBAIKAN KERAPIAN & FITUR ===== */
+.app-toast { position: fixed; left: 50%; top: calc(14px + env(safe-area-inset-top)); transform: translate(-50%, -14px); z-index: 70; max-width: min(92vw, 440px); padding: 11px 16px; border-radius: 14px; background: #26352D; color: #fff; font-size: 13px; font-weight: 600; line-height: 1.4; text-align: center; box-shadow: 0 8px 24px #0004; opacity: 0; pointer-events: none; transition: opacity .2s, transform .2s; }
+.app-toast.show { opacity: 1; transform: translate(-50%, 0); }
+.app-toast.ok { background: #0D6638; }
+.app-toast.warn, .app-toast.warning { background: #8A4B0F; }
+.feature-panel > .feature-header { flex-direction: row-reverse; justify-content: flex-end; }
+.bh-lainnya .menu-grid { grid-auto-rows: 1fr; }
+.search-icon-field, .product-tools input[type="search"], #cashierSearch { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%2389958E' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='m20 20-3.5-3.5'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: 13px center; padding-left: 40px; }
+.cashier-item-top { align-items: flex-start; }
+.cashier-item-top .cashier-item-name { flex: 1; }
+.cashier-item-top .cashier-line-total { flex: 0 0 auto; color: #16834A; font-size: 14px; text-align: right; white-space: nowrap; }
+.cashier-price-unit { flex: 1; }
+.cashier-cart-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: 0 2px 8px; color: #718078; font-size: 12px; font-weight: 600; }
+.cashier-cart-head button { border: 0; background: none; color: #B8335D; font: inherit; font-size: 12px; font-weight: 700; cursor: pointer; padding: 6px 4px; }
+.cash-fields[hidden] { display: none; }
+.cash-fields { display: grid; gap: 10px; }
+.payment-change small { display: block; margin-top: 3px; font-weight: 600; font-size: 11px; }
+.stk { display: inline-block; padding: 1px 8px; border-radius: 999px; font-size: 11px; font-weight: 700; line-height: 1.5; }
+.stk.out { background: #FBE4E4; color: #C0392B; }
+.stk.low { background: #FFF1DC; color: #A66A10; }
+.purchase-status.empty { background: #FBE4E4; color: #C0392B; }
+.feature-row .purchase-status { margin-top: 0; white-space: nowrap; }
+.pu-cell { display: grid; gap: 4px; min-width: 0; color: #53645A; font-size: 11px; font-weight: 700; }
+.pu-cell span { padding-left: 2px; }
+.feature-form .pu-row .pu-remove { grid-column: 1 / -1; min-height: 36px; background: #FCE8EF; color: #B8335D; font-size: 12px; }
+.barcode-row { display: flex; gap: 8px; align-items: stretch; }
+.barcode-row input { flex: 1; min-width: 0; }
+.feature-form .barcode-row .camera-button { width: 50px; min-width: 50px; min-height: 42px; padding: 0; background: #E5F5EA; color: #16834A; font-size: 18px; }
+.stock-adjust { grid-template-columns: minmax(0, 1fr) auto auto; }
+.stock-adjust input { grid-column: auto; }
+.stock-hub { display: grid; gap: 10px; }
+.stock-hub-btn { display: flex; align-items: center; gap: 12px; width: 100%; padding: 14px; border: 1px solid #EDF1EE; border-radius: 15px; background: #fff; color: #26352D; font: inherit; text-align: left; cursor: pointer; }
+.stock-hub-btn > i:first-child { width: 42px; height: 42px; flex: none; display: grid; place-items: center; border-radius: 12px; background: #E5F5EA; color: #16834A; font-size: 17px; }
+.stock-hub-btn > span { flex: 1; min-width: 0; }
+.stock-hub-btn b { display: block; font-size: 14px; }
+.stock-hub-btn small { display: block; margin-top: 2px; color: #718078; font-size: 12px; line-height: 1.35; }
+.stock-hub-btn > i:last-child { color: #A2ADA5; font-size: 12px; }
+.contact-actions { display: flex; gap: 8px; }
+.contact-actions .feature-button { min-width: 44px; padding: 10px; }
+.contact-links { display: flex; flex-wrap: wrap; gap: 6px 14px; }
+.contact-links a { color: #16834A; font-weight: 700; text-decoration: none; }
+.filter-box { border: 1px solid #DCE5DF; border-radius: 12px; background: #fff; }
+.filter-box > summary { display: flex; align-items: center; gap: 8px; min-height: 46px; padding: 0 14px; color: #16834A; font-size: 13px; font-weight: 700; cursor: pointer; list-style: none; }
+.filter-box > summary::-webkit-details-marker { display: none; }
+.filter-box[open] > summary { border-bottom: 1px solid #EDF1EE; }
+.filter-box > select { width: calc(100% - 24px); margin: 10px 12px 0; }
+.filter-box > .purchase-date-range { margin: 10px 12px 12px; padding: 0; border: 0; }
+.rpt-top-info { flex: 1; min-width: 0; display: grid; gap: 2px; }
+.rpt-top .rpt-top-info b { flex: none; white-space: normal; overflow: visible; text-overflow: clip; overflow-wrap: anywhere; font-size: 14px; }
+.restore-stock { display: flex; align-items: center; gap: 8px; margin: 0 0 14px; color: #26352D; font-size: 13px; font-weight: 600; }
+.restore-stock input { width: 20px; height: 20px; min-height: 0; accent-color: #16834A; }
+#bhAlerts { display: grid; gap: 10px; margin: 0 0 16px; }
+#bhAlerts:empty { display: none; }
+.bh-alert { display: flex; align-items: center; gap: 12px; width: 100%; padding: 13px 14px; border: 0; border-radius: 18px; background: #fff; box-shadow: 0 3px 12px rgba(13,102,56,.08); font: inherit; text-align: left; cursor: pointer; }
+.bh-alert > i:first-child { width: 38px; height: 38px; flex: none; display: grid; place-items: center; border-radius: 12px; font-size: 16px; }
+.bh-alert.warn > i:first-child { background: #FFF1DC; color: #C77A12; }
+.bh-alert.late > i:first-child { background: #FBE4E4; color: #C0392B; }
+.bh-alert > span { flex: 1; min-width: 0; }
+.bh-alert b { display: block; color: #26352D; font-size: 13px; }
+.bh-alert small { display: block; margin-top: 2px; color: #6B7A71; font-size: 12px; }
+.bh-alert > i:last-child { color: #A2ADA5; font-size: 12px; }
+.bh-st .l { white-space: nowrap; }
+@media (max-width: 380px) {
+  .bh-st .ic { width: 32px; height: 32px; font-size: 15px; }
+  .bh-st .hd { gap: 7px; }
+  .bh-st .l { font-size: 13px; }
+}
 </style>
 </head>
 
@@ -920,7 +988,7 @@ body {
   <main class="content">
 
     <section class="bh-panel">
-      <div class="bh-ph"><div class="bh-pi"><i class="fa-solid fa-chart-pie"></i></div><div><h2>Performa Usaha</h2><p>Pantau perkembangan toko Anda secara real-time</p></div></div>
+      <div class="bh-ph"><div class="bh-pi"><i class="fa-solid fa-chart-pie"></i></div><div><h2>Performa Usaha</h2><p>Pantau perkembangan toko Anda secara real&#8209;time</p></div></div>
       <div class="bh-seg" id="bhSeg">
         <button data-k="hari" onclick="renderBeranda('hari')">Hari Ini</button><button data-k="minggu" class="on" onclick="renderBeranda('minggu')">Minggu Ini</button><button data-k="bulan" onclick="renderBeranda('bulan')">Bulan Ini</button>
       </div>
@@ -935,6 +1003,8 @@ body {
       <div class="bh-chart-h"><h3>Grafik Penjualan</h3><a onclick="openMenu('Laporan')">Lihat Detail ›</a></div>
       <div class="bh-bars" id="pBars"></div>
     </section>
+
+    <section id="bhAlerts" aria-label="Perlu perhatian"></section>
 
   </main>
 
@@ -983,13 +1053,17 @@ const data = {
   transactions: loadData('transactions', []),
   purchases: loadData('purchases', []),
   settings: loadData('settings', { shop: 'TOKO SEMBAKO', admin: 'Admin' }),
-  cart: []
+  cart: loadData('cart', [])
 };
+if (!Array.isArray(data.cart)) data.cart = [];
+data.cart = data.cart.filter(item => item && Number(item.qty) > 0 && (item.quick || data.products.some(product => product.id === item.id)));
+function saveCart() { try { localStorage.setItem('posoff_cart', JSON.stringify(data.cart)); } catch (error) { /* abaikan */ } }
 let activeFeature = 'Dashboard';
 let featureHistory = [];
 let featureHistoryDepth = 0;
 let featureSessionId = null;
 let restoringFeature = false;
+let inProductEditor = false;
 let reportState = { period: 'today', start: '', end: '' };
 let reportBestSellerList = [];
 
@@ -1000,7 +1074,7 @@ function ignoreStockLimit() { return getEmptyStock() === 1; }
 function saveStockSetting(value) {
   data.settings.emptyStock = Number(value) === 1 ? 1 : 0;
   saveData();
-  alert('Pengaturan stok disimpan: produk stok 0 ' + (data.settings.emptyStock === 1 ? 'tetap bisa dijual.' : 'tidak bisa dijual.'));
+  notify('Pengaturan stok disimpan: produk stok 0 ' + (data.settings.emptyStock === 1 ? 'tetap bisa dijual.' : 'tidak bisa dijual.'));
 }
 function saveData() {
   ['products', 'suppliers', 'customers', 'debts', 'transactions', 'purchases', 'settings'].forEach(key => {
@@ -1080,6 +1154,45 @@ function escapeHTML(value) {
     '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
   }[char]));
 }
+/* ===== Notifikasi & dialog konfirmasi (pengganti alert/confirm bawaan browser) ===== */
+let toastTimer;
+function notify(message, type) {
+  const text = String(message ?? '');
+  const kind = type || (/berhasil|disimpan|tersimpan/i.test(text) ? 'ok' : 'warn');
+  let toast = document.getElementById('appToast');
+  if (!toast) {
+    toast = document.createElement('div');
+    toast.id = 'appToast';
+    toast.setAttribute('role', 'status');
+    toast.setAttribute('aria-live', 'polite');
+    document.body.appendChild(toast);
+  }
+  toast.className = 'app-toast ' + kind;
+  toast.textContent = text;
+  void toast.offsetWidth;
+  toast.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toast.classList.remove('show'), Math.min(6500, 2400 + text.length * 40));
+}
+function confirmDialog(message, onYes, options = {}) {
+  document.getElementById('appConfirmOverlay')?.remove();
+  const overlay = document.createElement('div');
+  overlay.className = 'payment-overlay';
+  overlay.id = 'appConfirmOverlay';
+  overlay.style.zIndex = '55';
+  overlay.innerHTML = `<section class="payment-box" role="alertdialog" aria-modal="true" aria-labelledby="appConfirmTitle">
+    <h3 id="appConfirmTitle" style="margin-bottom:8px">${escapeHTML(options.title || 'Konfirmasi')}</h3>
+    <p style="margin-bottom:16px;color:#718078;font-size:13px;line-height:1.5">${escapeHTML(message)}</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px"><button class="feature-button secondary" type="button" data-act="no">Batal</button><button class="feature-button ${options.danger === false ? '' : 'danger'}" type="button" data-act="yes">${escapeHTML(options.yesLabel || 'Ya, hapus')}</button></div>
+  </section>`;
+  overlay.addEventListener('click', event => {
+    const act = event.target.closest('[data-act]')?.dataset.act;
+    if (act === 'yes') { overlay.remove(); onYes(); }
+    else if (act === 'no' || event.target === overlay) overlay.remove();
+  });
+  document.body.appendChild(overlay);
+  overlay.querySelector('[data-act="no"]').focus();
+}
 function syncNavigation(feature) {
   const activeLabel = ({
     'Home': 'Home', 'Dashboard': 'Home',
@@ -1098,6 +1211,7 @@ function closeFeature(fromHistory = false) {
   featureSessionId = null;
   document.getElementById('featureModal').classList.remove('open', 'cashier-mode');
   syncNavigation('Home');
+  if (typeof updateDashboard === 'function') updateDashboard();
   if (!fromHistory && depth > 0) history.go(-depth);
 }
 function showFeature(title, html) {
@@ -1113,10 +1227,13 @@ function showFeature(title, html) {
     featureHistoryDepth++;
     history.pushState({ ...(history.state || {}), posFeatureSession: featureSessionId }, '');
   }
+  const pageChanged = !isOpen || activeFeature !== title;
   activeFeature = title;
+  inProductEditor = false;
   modal.classList.toggle('cashier-mode', title === 'Keranjang' || title === 'Kasir');
-  document.getElementById('featureTitle').textContent = title;
+  document.getElementById('featureTitle').textContent = ({ Riwayat: 'Riwayat Penjualan' })[title] || title;
   document.getElementById('featureContent').innerHTML = html;
+  if (pageChanged) document.getElementById('featureContent').scrollTop = 0;
   document.getElementById('featureContent').querySelectorAll('input, textarea, select, form').forEach(element => {
     if (element.matches('form')) element.autocomplete = 'off';
     else {
@@ -1132,6 +1249,7 @@ function showFeature(title, html) {
   syncNavigation(title);
 }
 function backFeature() {
+  if (inProductEditor) { openMenu('Produk'); return; }
   if (featureSessionId && history.state?.posFeatureSession === featureSessionId) {
     history.back();
     return;
@@ -1168,20 +1286,19 @@ function renderCashier() {
   const itemCount = data.cart.reduce((sum, item) => sum + item.qty, 0);
   const total = data.cart.reduce((sum, item) => sum + item.price * item.qty, 0);
   const cartMarkup = data.cart.length ? `<div class="cashier-cart">${data.cart.map((item, index) => { const unitSel = cartUnitSelect(item, index); return `<article class="cashier-cart-item">
-    <div class="cashier-item-top"><strong>${escapeHTML(item.name)}</strong><button class="cashier-remove" type="button" onclick="removeFromCartById(${index})" aria-label="Hapus ${escapeHTML(item.name)}"><i class="fa-solid fa-trash-can"></i></button></div>
+    <div class="cashier-item-top"><strong class="cashier-item-name">${escapeHTML(item.name)}</strong><strong class="cashier-line-total">${rupiah(item.price * item.qty)}</strong><button class="cashier-remove" type="button" onclick="removeFromCartById(${index})" aria-label="Hapus ${escapeHTML(item.name)}"><i class="fa-solid fa-trash-can"></i></button></div>
     <div class="cashier-item-bottom">
       <span class="cashier-price-unit"><button class="cashier-price-edit" type="button" onclick="editCartPrice(${index})">${rupiah(item.price)}${item.unit && !unitSel ? ` · ${escapeHTML(item.unit)}` : ''} <i class="fa-solid fa-pen"></i></button>${unitSel}</span>
       <div class="cashier-quantity"><button type="button" onclick="changeCartQuantity(${index}, -1)" aria-label="Kurangi jumlah">−</button><strong>${item.qty}</strong><button type="button" onclick="changeCartQuantity(${index}, 1)" aria-label="Tambah jumlah">+</button></div>
-      <strong class="cashier-line-total">${rupiah(item.price * item.qty)}</strong>
     </div>
   </article>`; }).join('')}</div>` : '<div class="cashier-empty">Keranjang masih kosong.<br>Cari atau scan produk untuk mulai berbelanja.</div>';
-  return `<header class="cashier-page-header"><strong><i class="fa-solid fa-cart-shopping" aria-hidden="true" style="margin-right:8px"></i>Keranjang</strong><span><i class="fa-solid fa-user" style="margin-right:5px"></i>${escapeHTML(data.settings.admin)}</span></header>
+  return `<header class="cashier-page-header"><strong><i class="fa-solid fa-cart-shopping" aria-hidden="true" style="margin-right:8px"></i>Kasir</strong><span><i class="fa-solid fa-user" style="margin-right:5px"></i>${escapeHTML(data.settings.admin)}</span></header>
     <main class="cashier-page-content">
       <div class="cashier-search">
-        <input id="cashierSearch" type="search" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Scan / ketik nama atau barcode" oninput="searchCashierProducts()" aria-label="Cari nama atau barcode produk">
+        <input id="cashierSearch" type="search" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Scan / ketik nama atau barcode" oninput="searchCashierProducts()" onkeydown="cashierSearchKey(event)" enterkeyhint="done" aria-label="Cari nama atau barcode produk">
         <button class="camera-button" type="button" onclick="scanProductBarcode()" aria-label="Scan barcode produk"><i class="fa-solid fa-barcode"></i></button>
       </div>
-      <div class="cashier-results" id="cashierResults"></div>${cartMarkup}
+      <div class="cashier-results" id="cashierResults"></div>${data.cart.length ? `<div class="cashier-cart-head"><span>${data.cart.length} baris · ${itemCount} barang</span><button type="button" onclick="clearCart()"><i class="fa-solid fa-trash-can" aria-hidden="true"></i> Kosongkan</button></div>` : ''}${cartMarkup}
     </main>
     <footer class="cashier-bottom">
       <div class="cashier-total"><div><small>${itemCount} barang</small><strong>${rupiah(total)}</strong></div><button class="feature-button cashier-pay" type="button" onclick="openPayment()" ${!data.cart.length ? 'disabled' : ''}>Bayar ›</button></div>
@@ -1195,6 +1312,7 @@ function renderCashier() {
     </footer>`;
 }
 function refreshKeepingScroll() {
+  saveCart();
   const content = document.getElementById('featureContent');
   const list = content.querySelector('.cashier-page-content');
   const listTop = list ? list.scrollTop : 0;
@@ -1214,7 +1332,7 @@ function changeCartQuantity(index, change) {
   if (!item) return;
   const product = data.products.find(product => product.id === item.id);
   if (!product && !item.quick) return;
-  if (change > 0 && !item.quick && !ignoreStockLimit() && cartBaseQty(item.id) + (item.conv || 1) > product.stock) return alert('Stok tidak mencukupi.');
+  if (change > 0 && !item.quick && !ignoreStockLimit() && cartBaseQty(item.id) + (item.conv || 1) > product.stock) return notify('Stok tidak mencukupi.');
   if (change > 0) playAddToCartSound();
   item.qty += change;
   if (item.qty < 1) data.cart.splice(index, 1);
@@ -1229,7 +1347,7 @@ function changeCartUnit(index, unitIndex) {
   const twin = data.cart.findIndex((other, i) => i !== index && !other.quick && other.id === item.id && (other.unit || '') === unit.name);
   const newQty = item.qty + (twin >= 0 ? data.cart[twin].qty : 0);
   if (!ignoreStockLimit() && cartBaseQty(item.id, index) - (twin >= 0 ? data.cart[twin].qty * (data.cart[twin].conv || 1) : 0) + newQty * unit.conv > product.stock) {
-    alert('Stok tidak mencukupi untuk satuan ini.');
+    notify('Stok tidak mencukupi untuk satuan ini.');
     return refreshKeepingScroll();
   }
   Object.assign(item, { unit: unit.name, conv: unit.conv, price: unit.price, cost: unit.cost, qty: newQty });
@@ -1261,7 +1379,7 @@ function saveCartPrice(event, id) {
   if (!item) return closeCartPrice();
   const value = event.currentTarget.elements.namedItem('price').value.trim();
   const price = moneyNumber(value);
-  if (!value || !Number.isFinite(price) || price < 0) return alert('Harga harus berupa angka nol atau lebih.');
+  if (!value || !Number.isFinite(price) || price < 0) return notify('Harga harus berupa angka nol atau lebih.');
   item.price = price;
   refreshKeepingScroll();
 }
@@ -1272,12 +1390,34 @@ function searchCashierProducts() {
   const matches = data.products.filter(product => `${product.name} ${product.barcode || ''}`.toLocaleLowerCase('id-ID').includes(query) && (product.stock > 0 || ignoreStockLimit()));
   results.innerHTML = matches.length ? matches.map(product => `<button class="cashier-product" type="button" onclick="addProductToCart(${product.id})"><strong>${escapeHTML(product.name)}</strong><small><b class="price-strong">${rupiah(product.price)}</b>${product.unit ? ' · ' + escapeHTML(product.unit) : ''} · Stok ${product.stock}</small></button>`).join('') : emptyMessage('Produk tidak ditemukan atau stok habis.');
 }
+function cashierSearchKey(event) {
+  if (event.key !== 'Enter') return;
+  event.preventDefault();
+  const value = event.currentTarget.value.trim();
+  if (!value) return;
+  const lower = value.toLocaleLowerCase('id-ID');
+  /* barcode yang persis sama (scanner) langsung masuk keranjang; kalau tidak, hanya bila hasil pencarian tunggal */
+  let product = data.products.find(item => String(item.barcode || '').trim() === value);
+  if (!product) {
+    const matches = data.products.filter(item => `${item.name} ${item.barcode || ''}`.toLocaleLowerCase('id-ID').includes(lower) && (item.stock > 0 || ignoreStockLimit()));
+    if (matches.length === 1) product = matches[0];
+    else if (!matches.length) return notify('Produk tidak ditemukan atau stok habis.');
+    else return notify(`Ada ${matches.length} produk yang cocok. Pilih salah satu dari daftar.`);
+  }
+  addProductToCart(product.id);
+  const fresh = document.getElementById('cashierSearch');
+  if (fresh) { fresh.value = ''; fresh.focus({ preventScroll: true }); }
+}
+function clearCart() {
+  if (!data.cart.length) return;
+  confirmDialog('Semua barang di keranjang akan dihapus.', () => { data.cart = []; refreshKeepingScroll(); }, { title: 'Kosongkan keranjang?', yesLabel: 'Ya, kosongkan' });
+}
 function addProductToCart(id) {
   const product = data.products.find(item => item.id === id);
-  if (!product || (product.stock < 1 && !ignoreStockLimit())) return alert('Stok produk habis.');
+  if (!product || (product.stock < 1 && !ignoreStockLimit())) return notify('Stok produk habis.');
   /* produk dari pencarian/scan selalu masuk dengan satuan dasar; satuan lain dipilih lewat dropdown di keranjang */
   const existing = data.cart.find(item => item.id === id && (item.unit || '') === (product.unit || ''));
-  if (!ignoreStockLimit() && cartBaseQty(id) + 1 > product.stock) return alert('Stok tidak mencukupi.');
+  if (!ignoreStockLimit() && cartBaseQty(id) + 1 > product.stock) return notify('Stok tidak mencukupi.');
   if (existing) existing.qty++;
   else data.cart.push({ id, name: product.name, unit: product.unit || '', conv: 1, price: product.price, cost: product.cost, qty: 1 });
   playAddToCartSound();
@@ -1287,26 +1427,40 @@ function openPayment() {
   if (!data.cart.length) return;
   const total = data.cart.reduce((sum, item) => sum + item.price * item.qty, 0);
   const quickAmounts = [...new Set([
+    total,
     Math.ceil(total / 10000) * 10000,
     Math.ceil(total / 50000) * 50000,
     Math.ceil(total / 100000) * 100000
   ])];
+  const names = [...new Set([...data.customers.map(c => c.name), ...data.debts.map(d => d.name)].map(n => String(n || '').trim()).filter(Boolean))];
   document.getElementById('featureContent').insertAdjacentHTML('beforeend', `<div class="payment-overlay" id="paymentOverlay" onclick="if(event.target === this) closePayment()">
     <section class="payment-box" role="dialog" aria-modal="true" aria-labelledby="paymentTitle">
       <div class="feature-header"><h2 id="paymentTitle">Pembayaran</h2><button class="feature-close" type="button" onclick="closePayment()" aria-label="Tutup">&times;</button></div>
       <div class="payment-total"><small>Total pembayaran</small><strong>${rupiah(total)}</strong></div>
       <form class="feature-form" onsubmit="checkout(event)">
-        <input name="customer" placeholder="Nama pelanggan (opsional)">
-        <label for="cashReceived">Uang diterima</label>
-        <input id="cashReceived" name="cash" ${MONEY_ATTRS} placeholder="Masukkan jumlah uang" oninput="updateChange()" required>
-        <div class="payment-quick-amounts" aria-label="Pilihan nominal cepat">
-          ${quickAmounts.map(amount => `<button type="button" class="feature-button secondary" aria-pressed="false" onclick="setPaymentAmount(${amount})">${rupiah(amount)}</button>`).join('')}
+        <input name="customer" list="paymentCustomerList" placeholder="Nama pelanggan (wajib bila ada hutang)">
+        <datalist id="paymentCustomerList">${names.map(name => `<option value="${escapeHTML(name)}"></option>`).join('')}</datalist>
+        <label for="paymentMethod">Metode pembayaran</label>
+        <select id="paymentMethod" name="method" onchange="togglePaymentMethod()"><option value="Tunai">Tunai</option><option value="Transfer">Transfer</option><option value="QRIS">QRIS</option></select>
+        <div id="cashFields" class="cash-fields">
+          <label for="cashReceived">Uang diterima</label>
+          <input id="cashReceived" name="cash" ${MONEY_ATTRS} placeholder="Masukkan jumlah uang" oninput="updateChange()" required>
+          <div class="payment-quick-amounts" aria-label="Pilihan nominal cepat">
+            ${quickAmounts.map((amount, index) => `<button type="button" class="feature-button secondary" aria-pressed="false" onclick="setPaymentAmount(${amount})">${index === 0 ? 'Uang pas' : rupiah(amount)}</button>`).join('')}
+          </div>
+          <div class="payment-change" id="paymentChange" aria-live="polite">Kembalian</div>
         </div>
-        <div class="payment-change" id="paymentChange" aria-live="polite">Kembalian</div>
         <button type="submit">Konfirmasi pembayaran</button>
       </form>
     </section>
   </div>`);
+}
+function togglePaymentMethod() {
+  const method = document.getElementById('paymentMethod')?.value || 'Tunai';
+  const cashFields = document.getElementById('cashFields');
+  const cashInput = document.getElementById('cashReceived');
+  if (cashFields) cashFields.hidden = method !== 'Tunai';
+  if (cashInput) cashInput.required = method === 'Tunai';
 }
 function setPaymentAmount(amount) {
   const cashInput = document.getElementById('cashReceived');
@@ -1331,7 +1485,7 @@ function updateChange() {
   if (!cashInput.value) {
     changeDisplay.innerHTML = 'Kembalian';
   } else if (cash < total) {
-    changeDisplay.innerHTML = 'Kembalian<strong>Uang belum mencukupi</strong>';
+    changeDisplay.innerHTML = `Kurang<strong>${rupiah(total - cash)}</strong><small>Isi nama pelanggan untuk mencatat sisanya sebagai hutang</small>`;
   } else {
     changeDisplay.innerHTML = `Kembalian<strong>${rupiah(cash - total)}</strong>`;
   }
@@ -1339,10 +1493,11 @@ function updateChange() {
 function closePayment() {
   document.getElementById('paymentOverlay')?.remove();
 }
-function scanProductBarcode() {
+function scanProductBarcode(onCode) {
+  const handleCode = typeof onCode === 'function' ? onCode : findScannedProduct;
   if (!('BarcodeDetector' in window) || !navigator.mediaDevices?.getUserMedia) {
     const barcode = prompt('Pemindaian kamera tidak didukung di browser ini. Masukkan barcode produk:');
-    if (barcode) findScannedProduct(barcode.trim());
+    if (barcode) handleCode(barcode.trim());
     return;
   }
   const overlay = document.createElement('div');
@@ -1359,14 +1514,24 @@ function scanProductBarcode() {
       if (!document.getElementById('cameraOverlay')) return;
       try {
         const codes = await detector.detect(video);
-        if (codes.length) { findScannedProduct(codes[0].rawValue); closeScanner(); return; }
+        if (codes.length) { handleCode(codes[0].rawValue); closeScanner(); return; }
       } catch (error) { /* Kamera masih menunggu gambar yang dapat dipindai. */ }
       requestAnimationFrame(scan);
     };
     video.addEventListener('loadeddata', scan, { once: true });
   }).catch(() => {
     closeScanner();
-    alert('Kamera tidak dapat dibuka. Periksa izin kamera perangkat.');
+    notify('Kamera tidak dapat dibuka. Periksa izin kamera perangkat.');
+  });
+}
+function scanBarcodeInto(inputId) {
+  scanProductBarcode(code => {
+    const input = document.getElementById(inputId);
+    if (!input) return;
+    input.value = String(code).trim();
+    const ownId = document.querySelector('#featureContent form input[name="id"]')?.value || '';
+    const dup = data.products.find(product => String(product.barcode || '').trim() === input.value && String(product.id) !== ownId);
+    if (dup) notify(`Barcode ini sudah dipakai produk "${dup.name}".`);
   });
 }
 function closeScanner() {
@@ -1376,7 +1541,7 @@ function closeScanner() {
 }
 function findScannedProduct(barcode) {
   const product = data.products.find(item => String(item.barcode || '') === String(barcode));
-  if (!product) return alert('Barcode tidak ditemukan. Tambahkan barcode pada data produk terlebih dahulu.');
+  if (!product) return notify('Barcode tidak ditemukan. Tambahkan barcode pada data produk terlebih dahulu.');
   addProductToCart(product.id);
 }
 function addToCart(event) {
@@ -1384,9 +1549,9 @@ function addToCart(event) {
   const form = event.currentTarget;
   const product = data.products.find(item => item.id === Number(form.product.value));
   const qty = Number(form.qty.value);
-  if (!product || qty < 1 || (!ignoreStockLimit() && qty > product.stock)) return alert('Stok tidak mencukupi.');
+  if (!product || qty < 1 || (!ignoreStockLimit() && qty > product.stock)) return notify('Stok tidak mencukupi.');
   const existing = data.cart.find(item => item.id === product.id && (item.unit || '') === (product.unit || ''));
-  if (!ignoreStockLimit() && cartBaseQty(product.id) + qty > product.stock) return alert('Stok tidak mencukupi.');
+  if (!ignoreStockLimit() && cartBaseQty(product.id) + qty > product.stock) return notify('Stok tidak mencukupi.');
   if (existing) existing.qty += qty;
   else data.cart.push({ id: product.id, name: product.name, unit: product.unit || '', conv: 1, price: product.price, cost: product.cost, qty });
   playAddToCartSound();
@@ -1398,48 +1563,63 @@ function removeFromCart(index) {
 }
 function checkout(event) {
   event.preventDefault();
-  
   if (!data.cart.length) return;
   const total = data.cart.reduce((sum, item) => sum + item.price * item.qty, 0);
   const form = event.currentTarget;
-  const cash = moneyNumber(form.elements.namedItem('cash').value);
-  if (!Number.isFinite(cash) || cash < total) return alert('Uang yang diterima belum mencukupi.');
-  const unavailable = cartExceedsStock();
-  if (unavailable) return alert('Stok produk berubah dan tidak mencukupi. Periksa kembali keranjang.');
+  const method = form.elements.namedItem('method')?.value || 'Tunai';
+  const customerName = form.elements.namedItem('customer').value.trim();
+  const cash = method === 'Tunai' ? moneyNumber(form.elements.namedItem('cash').value) : total;
+  if (!Number.isFinite(cash) || cash < 0) return notify('Masukkan jumlah uang yang diterima.');
+  if (cartExceedsStock()) return notify('Stok produk berubah dan tidak mencukupi. Periksa kembali keranjang.');
+  if (cash < total) {
+    /* uang kurang: sisanya bisa dicatat sebagai hutang pelanggan */
+    if (!customerName) return notify(`Uang kurang ${rupiah(total - cash)}. Isi nama pelanggan untuk mencatat sisanya sebagai hutang.`);
+    const debt = total - cash;
+    return confirmDialog(`Uang diterima ${rupiah(cash)}, kurang ${rupiah(debt)}. Catat sisanya sebagai hutang atas nama ${customerName}?`,
+      () => finishCheckout({ total, cash, method, customerName, debt }),
+      { title: 'Catat sisa sebagai hutang?', yesLabel: 'Ya, catat hutang', danger: false });
+  }
+  finishCheckout({ total, cash, method, customerName, debt: 0 });
+}
+function finishCheckout({ total, cash, method, customerName, debt }) {
   /* stok dipotong dalam satuan dasar: qty × isi satuan (mis. 2 dus × 24 = 48 pcs) */
   data.cart.forEach(item => {
     if (item.quick) return;
     const product = data.products.find(product => product.id === item.id);
+    if (!product) return;
     const used = item.qty * (item.conv || 1);
     product.stock = ignoreStockLimit() ? Math.max(0, product.stock - used) : product.stock - used;
   });
   const transaction = {
-    id: Date.now(), customer: form.elements.namedItem('customer').value.trim() || 'Pelanggan Umum',
+    id: Date.now(), customer: customerName || 'Pelanggan Umum',
     total, cash, date: new Date().toISOString(), items: data.cart.map(item => ({ ...item }))
   };
+  if (method !== 'Tunai') transaction.method = method;
+  if (debt > 0) {
+    transaction.debt = debt;
+    const known = data.customers.find(c => String(c.name || '').trim().toLocaleLowerCase('id-ID') === customerName.toLocaleLowerCase('id-ID'));
+    data.debts.unshift({ id: transaction.id + 1, name: customerName, phone: known?.phone || '', due: '', date: transaction.date, amount: debt, remaining: debt, payments: [], transactionId: transaction.id });
+  }
   data.transactions.unshift(transaction);
   data.cart = [];
+  saveCart();
   saveData();
   updateDashboard();
-  showPaymentSuccess(transaction, cash);
+  showPaymentSuccess(transaction);
 }
-function showPaymentSuccess(transaction, cash) {
+function showPaymentSuccess(transaction) {
   const overlay = document.getElementById('paymentOverlay');
-  const receiptItems = transaction.items.map(item => `<div class="receipt-line"><span>${escapeHTML(item.name)} × ${item.qty}${item.unit ? ' ' + escapeHTML(item.unit) : ''}</span><span>${rupiah(item.price * item.qty)}</span></div>`).join('');
+  const debt = Number(transaction.debt) || 0;
+  const info = debt > 0 ? `Sisa hutang: ${rupiah(debt)}<br>a.n. ${escapeHTML(transaction.customer)}`
+    : transaction.method && transaction.method !== 'Tunai' ? `Metode: ${escapeHTML(transaction.method)}`
+    : `Kembalian: ${rupiah(Number(transaction.cash) - Number(transaction.total))}`;
   overlay.innerHTML = `<section class="payment-box" role="dialog" aria-modal="true" aria-labelledby="successTitle">
     <div class="payment-success"><i class="fa-solid fa-circle-check payment-success-icon" aria-hidden="true"></i>
-      <h3 id="successTitle">Transaksi Selesai</h3><p>Pembayaran berhasil disimpan.</p>
-      <div class="feature-total">Total: ${rupiah(transaction.total)}<br>Kembalian: ${rupiah(cash - transaction.total)}</div>
+      <h3 id="successTitle">Transaksi Selesai</h3><p>${debt > 0 ? 'Pembayaran disimpan dan sisanya dicatat sebagai hutang.' : 'Pembayaran berhasil disimpan.'}</p>
+      <div class="feature-total">Total: ${rupiah(transaction.total)}<br>${info}</div>
       <div class="payment-success-actions"><button class="feature-button secondary" type="button" onclick="printReceipt(${transaction.id})">CETAK</button><button class="feature-button" type="button" onclick="closeFeature()">SELESAI</button></div>
     </div>
-    <div class="receipt-print" id="receiptPrint"><div class="receipt-header"><h2>${escapeHTML(data.settings.shop)}</h2>
-      ${data.settings.address ? `<p>${escapeHTML(data.settings.address)}</p>` : ''}<p>${new Date(transaction.date).toLocaleDateString('id-ID')} · ${new Date(transaction.date).toLocaleTimeString('id-ID')}</p></div>
-      <div class="receipt-divider"></div>${receiptItems}<div class="receipt-divider"></div>
-      <div class="receipt-line"><strong>Total</strong><strong>${rupiah(transaction.total)}</strong></div>
-      <div class="receipt-line"><span>Tunai</span><span>${rupiah(cash)}</span></div>
-      <div class="receipt-line"><span>Kembalian</span><span>${rupiah(cash - transaction.total)}</span></div>
-      <div class="receipt-divider"></div><p style="text-align:center">Terima kasih telah berbelanja</p>
-    </div>
+    <div class="receipt-print" id="receiptPrint">${receiptPaperHTML(transaction)}</div>
   </section>`;
 }
 function printReceiptSystem() {
@@ -1461,7 +1641,7 @@ function printerStatus(message) {
 async function connectBluetoothPrinter() {
   if (!bluetoothSupported()) {
     printerStatus('Web Bluetooth tidak didukung browser ini. Gunakan menu cetak Android.');
-    alert('Browser ini tidak mendukung Web Bluetooth.');
+    notify('Browser ini tidak mendukung Web Bluetooth.');
     return null;
   }
   try {
@@ -1536,7 +1716,13 @@ function bluetoothReceiptBytes(transaction) {
   });
   line(rule); bold(true);
   line('TOTAL'.padEnd(32 - rupiah(transaction.total).length) + rupiah(transaction.total));
-  bold(false); line(rule);
+  bold(false);
+  const pay = (label, value) => line(label.padEnd(Math.max(1, 32 - value.length)) + value);
+  const cashValue = Number(transaction.cash), debtValue = Number(transaction.debt) || 0;
+  if (transaction.method && transaction.method !== 'Tunai') pay('BAYAR VIA', String(transaction.method).toUpperCase());
+  else if (debtValue > 0) { pay('TUNAI', rupiah(cashValue)); pay('SISA HUTANG', rupiah(debtValue)); }
+  else if (Number.isFinite(cashValue) && cashValue >= Number(transaction.total)) { pay('TUNAI', rupiah(cashValue)); pay('KEMBALIAN', rupiah(cashValue - Number(transaction.total))); }
+  line(rule);
   center(); line('Terima kasih telah'); line('berbelanja');
   push(0x0A, 0x0A, 0x0A, 0x0A);
   return new Uint8Array(bytes);
@@ -1592,30 +1778,17 @@ async function printReceipt(transactionId) {
   printReceiptSystem();
 }
 function renderProducts() {
-  const list = getSortedProducts().map(product => `<article class="product-list-item" onpointerdown="startProductPress(${product.id}, event)" onpointerup="cancelProductPress()" onpointerleave="cancelProductPress()" onpointercancel="cancelProductPress()" oncontextmenu="event.preventDefault(); showProductActions(${product.id})">
-    <div class="product-list-icon"><i class="fa-solid fa-box"></i></div>
-    <div class="product-list-detail"><strong>${escapeHTML(product.name)}</strong><small><b class="price-strong">${rupiah(product.price)}</b>${product.unit ? ' · ' + escapeHTML(product.unit) : ''} · Stok ${product.stock}</small></div>
-    <i class="fa-solid fa-chevron-right product-list-arrow" aria-hidden="true"></i>
-  </article>`).join('') || emptyMessage('Produk tidak ditemukan.');
   return `<div class="product-tools"><input id="productSearch" type="search" placeholder="Cari nama atau barcode produk" oninput="filterProducts()" aria-label="Cari produk">
-    <label class="product-sort-label" for="productSort">Urutkan</label>
-    <select id="productSort" onchange="filterProducts()" aria-label="Urutkan produk"><option value="az">Nama A–Z</option><option value="za">Nama Z–A</option><option value="newest">Terbaru</option><option value="price-low">Harga terendah</option><option value="price-high">Harga tertinggi</option></select>
     <p class="product-hint">Tekan dan tahan produk untuk mengedit.</p></div>
     <p class="product-count" id="productCount" aria-live="polite">${productCountText()}</p>
-    <div class="product-list" id="productList">${list}</div>
+    <div class="product-list" id="productList">${renderProductsList()}</div>
     <button class="product-add-button" type="button" onclick="showProductEditor()" aria-label="Tambah produk"><i class="fa-solid fa-plus"></i></button>`;
 }
 let productPressTimer;
 function getSortedProducts() {
   const query = (document.getElementById('productSearch')?.value || '').trim().toLocaleLowerCase('id-ID');
-  const sort = document.getElementById('productSort')?.value || 'az';
-  return [...data.products].filter(product => `${product.name} ${product.barcode || ''}`.toLocaleLowerCase('id-ID').includes(query)).sort((a, b) => {
-    if (sort === 'za') return b.name.localeCompare(a.name, 'id');
-    if (sort === 'newest') return b.id - a.id;
-    if (sort === 'price-low') return a.price - b.price;
-    if (sort === 'price-high') return b.price - a.price;
-    return a.name.localeCompare(b.name, 'id');
-  });
+  /* urutan tetap: nama A–Z */
+  return [...data.products].filter(product => `${product.name} ${product.barcode || ''}`.toLocaleLowerCase('id-ID').includes(query)).sort((a, b) => a.name.localeCompare(b.name, 'id'));
 }
 function filterProducts() {
   const list = document.getElementById('productList');
@@ -1628,9 +1801,15 @@ function productCountText() {
   const shown = getSortedProducts().length;
   return shown === total ? `Total ${total} produk` : `Menampilkan ${shown} dari ${total} produk`;
 }
+function stockTag(product) {
+  const stock = Number(product.stock);
+  if (stock <= 0) return '<span class="stk out">Stok habis</span>';
+  if (stock <= 5) return `<span class="stk low">Stok ${product.stock}</span>`;
+  return `Stok ${product.stock}`;
+}
 function renderProductsList() {
   return getSortedProducts().map(product => `<article class="product-list-item" onpointerdown="startProductPress(${product.id}, event)" onpointerup="cancelProductPress()" onpointerleave="cancelProductPress()" onpointercancel="cancelProductPress()" oncontextmenu="event.preventDefault(); showProductActions(${product.id})">
-    <div class="product-list-icon"><i class="fa-solid fa-box"></i></div><div class="product-list-detail"><strong>${escapeHTML(product.name)}</strong><small><b class="price-strong">${rupiah(product.price)}</b>${product.unit ? ' · ' + escapeHTML(product.unit) : ''} · Stok ${product.stock}</small></div><i class="fa-solid fa-chevron-right product-list-arrow" aria-hidden="true"></i>
+    <div class="product-list-icon"><i class="fa-solid fa-box"></i></div><div class="product-list-detail"><strong>${escapeHTML(product.name)}</strong><small><b class="price-strong">${rupiah(product.price)}</b>${product.unit ? ' · ' + escapeHTML(product.unit) : ''} · ${stockTag(product)}</small></div><i class="fa-solid fa-chevron-right product-list-arrow" aria-hidden="true"></i>
   </article>`).join('') || emptyMessage('Produk tidak ditemukan.');
 }
 function startProductPress(id, event) {
@@ -1692,10 +1871,10 @@ function refreshProductStockUnit(form) {
 }
 function productUnitRowHTML(unit = {}) {
   return `<div class="pu-row">
-    <input class="pu-name" placeholder="Satuan (mis. dus)" aria-label="Nama satuan lain" value="${escapeHTML(unit.name || '')}">
-    <input class="pu-conv" type="number" min="0" step="any" placeholder="Isi (mis. 24)" aria-label="Isi per satuan, dalam satuan dasar" value="${unit.conv ?? ''}">
-    <input class="pu-price money-input" type="text" inputmode="numeric" autocomplete="off" placeholder="Harga jual" aria-label="Harga jual satuan lain" value="${formatMoney(unit.price)}">
-    <input class="pu-cost money-input" type="text" inputmode="numeric" autocomplete="off" placeholder="Modal (opsional)" aria-label="Harga modal satuan lain" value="${formatMoney(unit.cost)}">
+    <label class="pu-cell"><span>Satuan</span><input class="pu-name" placeholder="mis. dus" aria-label="Nama satuan lain" value="${escapeHTML(unit.name || '')}"></label>
+    <label class="pu-cell"><span>Isi (dalam satuan dasar)</span><input class="pu-conv" type="number" min="0" step="any" placeholder="mis. 24" aria-label="Isi per satuan, dalam satuan dasar" value="${unit.conv ?? ''}"></label>
+    <label class="pu-cell"><span>Harga jual (Rp)</span><input class="pu-price money-input" type="text" inputmode="numeric" autocomplete="off" placeholder="Harga per satuan ini" aria-label="Harga jual satuan lain" value="${formatMoney(unit.price)}"></label>
+    <label class="pu-cell"><span>Modal (Rp)</span><input class="pu-cost money-input" type="text" inputmode="numeric" autocomplete="off" placeholder="Opsional" aria-label="Harga modal satuan lain" value="${formatMoney(unit.cost)}"></label>
     <button class="pu-remove" type="button" onclick="const f = this.closest('form'); this.closest('.pu-row').remove(); refreshProductStockUnit(f)" aria-label="Hapus satuan"><i class="fa-solid fa-trash-can" aria-hidden="true"></i> Hapus satuan</button>
   </div>`;
 }
@@ -1707,19 +1886,20 @@ function addProductUnitRow() {
 }
 function showProductEditor(id = null) {
   if (id === null && !wajibLogin()) return;
+  inProductEditor = true;
   const product = data.products.find(item => item.id === id);
   document.getElementById('featureContent').innerHTML = `<form class="feature-form" autocomplete="off" onsubmit="saveProduct(event)" oninput="refreshProductStockUnit(this)">
     <h3>${product ? 'Edit produk' : 'Tambah produk'}</h3><input type="hidden" name="id" value="${product?.id || ''}">
     <label for="productName">Nama barang</label><input id="productName" type="text" name="name" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Contoh: Beras 5 kg" value="${escapeHTML(product?.name || '')}" required>
-    <label for="productUnit">Satuan</label><input id="productUnit" name="unit" placeholder="Contoh: pcs, kg, liter" value="${escapeHTML(product?.unit || '')}">
-    <label for="productPrice">Harga jual (Rp)</label><input id="productPrice" name="price" ${MONEY_ATTRS} placeholder="Masukkan harga yang dibayar pelanggan" value="${formatMoney(product?.price)}" required>
-    <label for="productCost">Harga modal per unit (Rp)</label><input id="productCost" name="cost" ${MONEY_ATTRS} placeholder="Harga beli dari supplier (opsional)" value="${formatMoney(product?.cost)}">
+    <label for="productUnit">Satuan dasar</label><input id="productUnit" name="unit" placeholder="Contoh: pcs, kg, liter" value="${escapeHTML(product?.unit || '')}">
+    <label for="productPrice">Harga jual per satuan dasar (Rp)</label><input id="productPrice" name="price" ${MONEY_ATTRS} placeholder="Masukkan harga yang dibayar pelanggan" value="${formatMoney(product?.price)}" required>
+    <label for="productCost">Harga modal per satuan dasar (Rp)</label><input id="productCost" name="cost" ${MONEY_ATTRS} placeholder="Harga beli dari supplier (opsional)" value="${formatMoney(product?.cost)}">
     <label for="productStock">Stok barang (satuan dasar)</label><div class="stock-input-row"><input id="productStock" name="stock" type="number" min="0" step="any" placeholder="Jumlah stok saat ini" value="${product?.stock ?? ''}">${productStockUnitSelectHTML(product)}</div><small id="productStockHint" class="product-hint"></small>
     <label>Satuan lain (opsional)</label>
     <p class="product-hint">Contoh: satuan dasar pcs, tambah "dus" dengan isi 24 dan harga dus sendiri. Stok tetap dihitung dalam satuan dasar.</p>
     <div id="productUnitRows">${(product?.units || []).map(productUnitRowHTML).join('')}</div>
     <button class="feature-button secondary" type="button" onclick="addProductUnitRow()"><i class="fa-solid fa-plus" aria-hidden="true"></i> Tambah satuan lain</button>
-    <label for="productBarcode">Barcode (opsional)</label><input id="productBarcode" name="barcode" placeholder="Masukkan nomor barcode" value="${escapeHTML(product?.barcode || '')}">
+    <label for="productBarcode">Barcode (opsional)</label><div class="barcode-row"><input id="productBarcode" name="barcode" placeholder="Ketik atau scan nomor barcode" value="${escapeHTML(product?.barcode || '')}"><button class="camera-button" type="button" onclick="scanBarcodeInto('productBarcode')" aria-label="Scan barcode dengan kamera"><i class="fa-solid fa-barcode" aria-hidden="true"></i></button></div>
     <button type="submit">${product ? 'Simpan perubahan' : 'Tambah produk'}</button><button class="feature-button secondary" type="button" onclick="openMenu('Produk')">Batal</button>
     ${product ? `<button class="feature-button danger" type="button" onclick="deleteProduct(${product.id})">Hapus produk</button>` : ''}</form>`;
   document.getElementById('featureContent').scrollTop = 0;
@@ -1749,12 +1929,12 @@ function showProductLimitNotice() {
 function activateUnlimitedProducts(event) {
   event.preventDefault();
   const code = event.currentTarget.elements.namedItem('activationCode').value.trim();
-  if (!ACTIVATION_CODE) return alert('Kode aktivasi belum tersedia. Silakan hubungi kami lewat WhatsApp.');
-  if (code !== ACTIVATION_CODE) return alert('Kode aktivasi tidak valid.');
+  if (!ACTIVATION_CODE) return notify('Kode aktivasi belum tersedia. Silakan hubungi kami lewat WhatsApp.');
+  if (code !== ACTIVATION_CODE) return notify('Kode aktivasi tidak valid.');
   data.settings.unlimitedProducts = true;
   saveData();
   document.getElementById('productLimitOverlay')?.remove();
-  alert('Aktivasi berhasil. Anda sekarang dapat menyimpan produk tanpa batas.');
+  notify('Aktivasi berhasil. Anda sekarang dapat menyimpan produk tanpa batas.');
 }
 function saveProduct(event) {
   event.preventDefault();
@@ -1774,7 +1954,11 @@ function saveProduct(event) {
     stock: Number(form.elements.namedItem('stock').value) || 0,
     barcode: form.elements.namedItem('barcode').value.trim()
   };
-  if (!values.name || !Number.isFinite(values.price)) return alert('Nama barang dan harga jual wajib diisi.');
+  if (!values.name || !Number.isFinite(values.price)) return notify('Nama barang dan harga jual wajib diisi.');
+  if (values.barcode) {
+    const dup = data.products.find(product => product.id !== id && String(product.barcode || '').trim() === values.barcode);
+    if (dup) return notify(`Barcode ini sudah dipakai produk "${dup.name}". Gunakan barcode yang berbeda.`);
+  }
   /* satuan lain: baris yang kosong semua diabaikan; sisanya harus lengkap, unik, dan beda dari satuan dasar */
   const extraUnits = [];
   const seen = new Set([values.unit.toLocaleLowerCase('id-ID')]);
@@ -1785,10 +1969,10 @@ function saveProduct(event) {
     const costText = row.querySelector('.pu-cost').value.trim();
     if (!name && !convText && !priceText && !costText) continue;
     const conv = Number(convText), price = moneyNumber(priceText), cost = moneyNumber(costText) || 0;
-    if (!name) { alert('Nama satuan lain wajib diisi.'); row.querySelector('.pu-name').focus(); return; }
-    if (seen.has(name.toLocaleLowerCase('id-ID'))) { alert(`Satuan "${name}" sudah dipakai. Gunakan nama yang berbeda.`); row.querySelector('.pu-name').focus(); return; }
-    if (!Number.isFinite(conv) || conv <= 0) { alert(`Isi satuan "${name}" harus lebih dari nol.`); row.querySelector('.pu-conv').focus(); return; }
-    if (priceText === '' || !Number.isFinite(price) || price < 0) { alert(`Harga jual satuan "${name}" wajib diisi.`); row.querySelector('.pu-price').focus(); return; }
+    if (!name) { notify('Nama satuan lain wajib diisi.'); row.querySelector('.pu-name').focus(); return; }
+    if (seen.has(name.toLocaleLowerCase('id-ID'))) { notify(`Satuan "${name}" sudah dipakai. Gunakan nama yang berbeda.`); row.querySelector('.pu-name').focus(); return; }
+    if (!Number.isFinite(conv) || conv <= 0) { notify(`Isi satuan "${name}" harus lebih dari nol.`); row.querySelector('.pu-conv').focus(); return; }
+    if (priceText === '' || !Number.isFinite(price) || price < 0) { notify(`Harga jual satuan "${name}" wajib diisi.`); row.querySelector('.pu-price').focus(); return; }
     seen.add(name.toLocaleLowerCase('id-ID'));
     extraUnits.push({ name, conv, price, cost });
   }
@@ -1818,9 +2002,15 @@ function confirmDeleteProduct(id) {
   saveData(); openMenu('Produk');
 }
 function renderStock() {
-  return `<section class="feature-card"><h3>Kelola stok barang</h3><p>Pilih tindakan yang ingin dilakukan.</p></section>
-    <button class="feature-button secondary" type="button" style="width:100%;margin-bottom:10px;text-align:left" onclick="openMenu('Tambah/Kurangi Stok')"><i class="fa-solid fa-boxes-stacked" aria-hidden="true" style="margin-right:9px"></i>Tambah / Kurangi Stok</button>
-    <button class="feature-button secondary" type="button" style="width:100%;text-align:left" onclick="openMenu('Cek Stok Menipis')"><i class="fa-solid fa-triangle-exclamation" aria-hidden="true" style="margin-right:9px"></i>Cek Stok Menipis</button>`;
+  const habis = data.products.filter(p => Number(p.stock) <= 0).length;
+  const tipis = data.products.filter(p => Number(p.stock) > 0 && Number(p.stock) <= 5).length;
+  const badge = habis + tipis ? `<span class="stk ${habis ? 'out' : 'low'}">${habis + tipis} produk</span>` : '';
+  return `<section class="feature-card"><h3>Kelola stok barang</h3><p>${data.products.length} produk · ${habis} habis · ${tipis} menipis</p></section>
+    <div class="stock-hub">
+      <button class="stock-hub-btn" type="button" onclick="openMenu('Tambah/Kurangi Stok')"><i class="fa-solid fa-boxes-stacked" aria-hidden="true"></i><span><b>Tambah / Kurangi Stok</b><small>Koreksi stok barang satu per satu</small></span><i class="fa-solid fa-chevron-right" aria-hidden="true"></i></button>
+      <button class="stock-hub-btn" type="button" onclick="openMenu('Cek Stok Menipis')"><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i><span><b>Cek Stok Menipis</b><small>Barang yang habis atau tinggal sedikit</small></span>${badge}<i class="fa-solid fa-chevron-right" aria-hidden="true"></i></button>
+      <button class="stock-hub-btn" type="button" onclick="openMenu('Pembelian')"><i class="fa-solid fa-basket-shopping" aria-hidden="true"></i><span><b>Catat Pembelian</b><small>Barang masuk dari supplier, stok bertambah otomatis</small></span><i class="fa-solid fa-chevron-right" aria-hidden="true"></i></button>
+    </div>`;
 }
 function renderStockAdjustments() {
   return `<div class="product-tools"><input id="stockSearch" type="search" placeholder="Cari nama produk" oninput="filterStock()" aria-label="Cari produk di stok barang"></div>
@@ -1828,11 +2018,12 @@ function renderStockAdjustments() {
 }
 function renderLowStock() {
   const products = data.products.filter(product => Number(product.stock) <= 5).sort((a, b) => a.stock - b.stock);
-  const list = products.map(product => `<article class="feature-card"><h3>${escapeHTML(product.name)}</h3>
-    <p>Stok saat ini: <strong>${product.stock}</strong> ${escapeHTML(product.unit || 'unit')}</p>
-    <span class="purchase-status">${Number(product.stock) === 0 ? 'Stok habis' : 'Stok menipis'}</span></article>`).join('');
+  const list = products.map(product => { const out = Number(product.stock) <= 0; return `<article class="feature-card feature-row"><div><h3>${escapeHTML(product.name)}</h3>
+    <p>Stok saat ini: <strong>${product.stock}</strong> ${escapeHTML(product.unit || 'unit')}</p></div>
+    <span class="purchase-status ${out ? 'empty' : ''}">${out ? 'Stok habis' : 'Stok menipis'}</span></article>`; }).join('');
   return `<section class="feature-card"><h3>Cek stok menipis</h3><p>${products.length} produk memiliki stok 5 unit atau kurang.</p></section>
-    ${list || emptyMessage('Tidak ada produk dengan stok menipis.')}`;
+    ${list || emptyMessage('Tidak ada produk dengan stok menipis.')}
+    ${list ? `<button class="feature-button" type="button" style="width:100%" onclick="openMenu('Pembelian')"><i class="fa-solid fa-basket-shopping" aria-hidden="true" style="margin-right:7px"></i>Catat pembelian stok</button>` : ''}`;
 }
 function renderStockList() {
   const query = (document.getElementById('stockSearch')?.value || '').trim().toLocaleLowerCase('id-ID');
@@ -1857,34 +2048,62 @@ function adjustStock(event, id) {
   /* jumlah diketik dalam satuan pilihan (mis. 2 dus), disimpan dalam satuan dasar (2 x isi) */
   const conv = productUnits(product)[Number(form.elements.namedItem('unit')?.value) || 0]?.conv || 1;
   const entered = Math.round(Number(form.elements.namedItem('amount').value) * conv * 1000) / 1000;
-  if (!Number.isInteger(entered) || entered < 1) return alert('Jumlah harus bilangan bulat dalam satuan dasar.');
+  if (!Number.isInteger(entered) || entered < 1) return notify('Jumlah harus bilangan bulat dalam satuan dasar.');
   const amount = event.submitter.value === 'add' ? entered : -entered;
-  if (product.stock + amount < 0) return alert('Stok tidak boleh kurang dari nol.');
+  if (product.stock + amount < 0) return notify('Stok tidak boleh kurang dari nol.');
   product.stock += amount; saveData(); openMenu('Tambah/Kurangi Stok');
 }
+function contactLinks(phone) {
+  const raw = String(phone || '').trim();
+  if (!raw) return '<p>Tidak ada nomor</p>';
+  const digits = raw.replace(/\D/g, '');
+  const wa = digits.startsWith('0') ? '62' + digits.slice(1) : digits.startsWith('62') ? digits : '62' + digits;
+  return `<p class="contact-links"><span>${escapeHTML(raw)}</span><a href="tel:${escapeHTML(raw.replace(/[^\d+]/g, ''))}"><i class="fa-solid fa-phone" aria-hidden="true"></i> Telepon</a><a href="https://wa.me/${wa}" target="_blank" rel="noopener"><i class="fa-solid fa-message" aria-hidden="true"></i> WhatsApp</a></p>`;
+}
+function contactListHTML(key, title, emptyText) {
+  return data[key].map(item => `<div class="feature-card feature-row"><div><h3>${escapeHTML(item.name)}</h3>${contactLinks(item.phone)}</div><div class="contact-actions"><button class="feature-button secondary" type="button" onclick="editContact('${key}', ${item.id}, '${title}')" aria-label="Ubah ${escapeHTML(item.name)}"><i class="fa-solid fa-pen" aria-hidden="true"></i></button><button class="feature-button danger" type="button" onclick="deleteEntry('${key}', ${item.id}, '${title}')" aria-label="Hapus ${escapeHTML(item.name)}"><i class="fa-solid fa-trash-can" aria-hidden="true"></i></button></div></div>`).join('') || emptyMessage(emptyText);
+}
+function editContact(key, id, title) {
+  const entry = data[key].find(item => item.id === id);
+  const form = document.querySelector('#featureContent form.contact-form');
+  if (!entry || !form) return;
+  form.elements.namedItem('id').value = id;
+  form.elements.namedItem('name').value = entry.name || '';
+  form.elements.namedItem('phone').value = entry.phone || '';
+  form.querySelector('h3').textContent = 'Ubah ' + title.toLowerCase();
+  form.querySelector('button[type="submit"]').textContent = 'Simpan perubahan';
+  form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  form.elements.namedItem('name').focus({ preventScroll: true });
+}
 function renderSuppliers() {
-  const list = data.suppliers.map(supplier => `<div class="feature-card feature-row"><div><h3>${escapeHTML(supplier.name)}</h3><p>${escapeHTML(supplier.phone || 'Tidak ada nomor')}</p></div><button class="feature-button danger" onclick="deleteEntry('suppliers', ${supplier.id}, 'Supplier')">Hapus</button></div>`).join('') || emptyMessage('Belum ada supplier.');
-  return `<form class="feature-form" onsubmit="saveContact(event, 'suppliers', 'Supplier')"><h3>Tambah supplier</h3><input name="name" placeholder="Nama supplier" required><input name="phone" placeholder="Nomor telepon"><button type="submit">Simpan supplier</button></form>${list}`;
+  return `<form class="feature-form contact-form" onsubmit="saveContact(event, 'suppliers', 'Supplier')"><h3>Tambah supplier</h3><input type="hidden" name="id" value=""><input name="name" placeholder="Nama supplier" required><input name="phone" type="tel" inputmode="tel" placeholder="Nomor telepon"><button type="submit">Simpan supplier</button></form>${contactListHTML('suppliers', 'Supplier', 'Belum ada supplier.')}`;
 }
 function renderCustomers() {
-  const list = data.customers.map(customer => `<div class="feature-card feature-row"><div><h3>${escapeHTML(customer.name)}</h3><p>${escapeHTML(customer.phone || 'Tidak ada nomor')}</p></div><button class="feature-button danger" onclick="deleteEntry('customers', ${customer.id}, 'Pelanggan')">Hapus</button></div>`).join('') || emptyMessage('Belum ada pelanggan.');
-  return `<form class="feature-form" onsubmit="saveContact(event, 'customers', 'Pelanggan')"><h3>Tambah pelanggan</h3><input name="name" placeholder="Nama pelanggan" required><input name="phone" placeholder="Nomor telepon"><button type="submit">Simpan pelanggan</button></form>
+  return `<form class="feature-form contact-form" onsubmit="saveContact(event, 'customers', 'Pelanggan')"><h3>Tambah pelanggan</h3><input type="hidden" name="id" value=""><input name="name" placeholder="Nama pelanggan" required><input name="phone" type="tel" inputmode="tel" placeholder="Nomor telepon"><button type="submit">Simpan pelanggan</button></form>
     <button class="feature-button secondary" type="button" style="width:100%;margin-bottom:12px" onclick="openMenu('Import/Ekspor Pelanggan')"><i class="fa-solid fa-arrow-right-arrow-left" aria-hidden="true" style="margin-right:7px"></i>Import / Ekspor Data Pelanggan</button>
-    ${list}`;
+    ${contactListHTML('customers', 'Pelanggan', 'Belum ada pelanggan.')}`;
+}
+function saveContact(event, key, title) {
+  event.preventDefault(); const form = event.currentTarget;
+  const name = form.elements.namedItem('name').value.trim(), phone = form.elements.namedItem('phone').value.trim();
+  const id = Number(form.elements.namedItem('id')?.value) || 0;
+  const existing = id ? data[key].find(item => item.id === id) : null;
+  if (existing) { existing.name = name; existing.phone = phone; }
+  else data[key].push({ id: Date.now(), name, phone });
+  saveData(); openMenu(title);
+}
+function deleteEntry(key, id, title) {
+  const entry = data[key].find(item => item.id === id);
+  if (!entry) return;
+  confirmDialog(`"${entry.name}" akan dihapus dari daftar ${title.toLowerCase()}. Tindakan ini tidak dapat dibatalkan.`, () => {
+    data[key] = data[key].filter(item => item.id !== id); saveData(); openMenu(title);
+  }, { title: `Hapus ${title.toLowerCase()}?` });
 }
 function renderCustomerImportExport() {
   return `<section class="feature-card"><h3>Import dan ekspor data pelanggan</h3><p>Ekspor pelanggan sebagai CSV, atau impor file CSV dengan kolom: name, phone. Kolom id bersifat opsional. Pelanggan yang cocok berdasarkan ID, nomor telepon, atau nama akan diperbarui; lainnya ditambahkan.</p>
       <div class="purchase-actions"><button class="feature-button secondary" type="button" onclick="exportCustomersCSV()"><i class="fa-solid fa-download" aria-hidden="true"></i> Ekspor pelanggan</button></div>
       <form class="feature-form" style="padding:0;margin:12px 0 0;border:0" onsubmit="return false"><label for="customersCSV" class="product-sort-label">Pilih file CSV untuk diimpor</label><input id="customersCSV" type="file" accept=".csv,text/csv" onchange="importCustomersCSV(event)"></form>
     </section>`;
-}
-function saveContact(event, key, title) {
-  event.preventDefault(); const form = event.currentTarget;
-  data[key].push({ id: Date.now(), name: form.elements.namedItem('name').value.trim(), phone: form.phone.value.trim() });
-  saveData(); openMenu(title);
-}
-function deleteEntry(key, id, title) {
-  data[key] = data[key].filter(item => item.id !== id); saveData(); openMenu(title);
 }
 function getPurchaseItems(purchase) {
   if (Array.isArray(purchase.items)) return purchase.items;
@@ -1916,6 +2135,7 @@ function renderPurchaseHistoryPage() {
   const supplierFilters = data.suppliers.map(supplier => `<option value="${supplier.id}">${escapeHTML(supplier.name)}</option>`).join('');
   return `<div class="product-tools">
       <input id="purchaseSearch" type="search" placeholder="Cari supplier atau produk" oninput="filterPurchases()" aria-label="Cari riwayat pembelian">
+      <details class="filter-box"><summary><i class="fa-solid fa-sliders" aria-hidden="true"></i> Filter supplier, status &amp; tanggal</summary>
       <select id="purchaseSupplierFilter" onchange="filterPurchases()" aria-label="Filter supplier"><option value="">Semua supplier</option>${supplierFilters}</select>
       <select id="purchaseStatusFilter" onchange="filterPurchases()" aria-label="Filter status pembayaran"><option value="">Semua status</option><option value="paid">Lunas</option><option value="unpaid">Belum lunas</option><option value="cancelled">Dibatalkan</option></select>
       <form class="purchase-date-range" onsubmit="applyPurchaseDateFilter(event)">
@@ -1923,7 +2143,7 @@ function renderPurchaseHistoryPage() {
         <label for="purchaseStartFilter">Dari<input id="purchaseStartFilter" type="date"></label>
         <label for="purchaseEndFilter">Sampai<input id="purchaseEndFilter" type="date"></label>
         <button class="feature-button secondary" type="submit">Terapkan tanggal</button>
-      </form>
+      </form></details>
     </div><div id="purchaseHistoryList">${renderPurchaseHistoryList()}</div>`;
 }
 function renderPurchaseHistoryList() {
@@ -1964,7 +2184,7 @@ function applyPurchaseDateFilter(event) {
   event.preventDefault();
   const start = document.getElementById('purchaseStartFilter').value;
   const end = document.getElementById('purchaseEndFilter').value;
-  if (start && end && start > end) return alert('Tanggal awal harus sama dengan atau sebelum tanggal akhir.');
+  if (start && end && start > end) return notify('Tanggal awal harus sama dengan atau sebelum tanggal akhir.');
   filterPurchases();
 }
 /* ===== Pembelian & stok dalam satuan lain (mis. 10 dus): diketik per satuan pilihan, disimpan dalam satuan dasar ===== */
@@ -2095,7 +2315,7 @@ function savePurchase(event) {
   const purchaseId = Number(form.elements.namedItem('purchaseId')?.value || 0);
   const purchaseIndex = purchaseId ? data.purchases.findIndex(item => item.id === purchaseId && !item.cancelled) : -1;
   const editingPurchase = purchaseIndex >= 0 ? data.purchases[purchaseIndex] : null;
-  if (purchaseId && !editingPurchase) return alert('Transaksi pembelian tidak ditemukan atau sudah dibatalkan.');
+  if (purchaseId && !editingPurchase) return notify('Transaksi pembelian tidak ditemukan atau sudah dibatalkan.');
   const supplier = data.suppliers.find(item => item.id === Number(form.elements.namedItem('supplier').value));
   const purchaseDate = form.elements.namedItem('date').value;
   const rows = [...form.querySelectorAll('.purchase-item-row')];
@@ -2111,20 +2331,20 @@ function savePurchase(event) {
     return product && Number.isInteger(qty) && qty > 0 && Number.isFinite(cost) && cost >= 0
       ? { product, qty, cost, inputQty, inputCost, inputUnit: conv !== 1 ? unit.name : '', conv } : null;
   });
-  if (!supplier || !purchaseDate || !items.length || items.some(item => !item)) return alert('Periksa kembali data pembelian.');
+  if (!supplier || !purchaseDate || !items.length || items.some(item => !item)) return notify('Periksa kembali data pembelian.');
   const duplicateProducts = new Set();
   for (const item of items) {
-    if (duplicateProducts.has(item.product.id)) return alert('Produk yang sama tidak boleh ditambahkan lebih dari sekali. Gabungkan jumlahnya dalam satu baris.');
+    if (duplicateProducts.has(item.product.id)) return notify('Produk yang sama tidak boleh ditambahkan lebih dari sekali. Gabungkan jumlahnya dalam satu baris.');
     duplicateProducts.add(item.product.id);
   }
   const oldItems = editingPurchase ? getPurchaseItems(editingPurchase) : [];
-  if (editingPurchase && oldItems.some(item => !data.products.some(product => product.id === item.productId))) return alert('Ada produk lama yang sudah tidak ditemukan. Pembelian tidak dapat diedit dengan aman.');
+  if (editingPurchase && oldItems.some(item => !data.products.some(product => product.id === item.productId))) return notify('Ada produk lama yang sudah tidak ditemukan. Pembelian tidak dapat diedit dengan aman.');
   const stockChanges = new Map();
   oldItems.forEach(item => stockChanges.set(item.productId, (stockChanges.get(item.productId) || 0) - Number(item.qty || 0)));
   items.forEach(({ product, qty }) => stockChanges.set(product.id, (stockChanges.get(product.id) || 0) + qty));
   for (const [productId, change] of stockChanges) {
     const product = data.products.find(item => item.id === productId);
-    if (!product || product.stock + change < 0) return alert(`Stok ${product?.name || 'produk'} tidak cukup untuk menyimpan perubahan pembelian.`);
+    if (!product || product.stock + change < 0) return notify(`Stok ${product?.name || 'produk'} tidak cukup untuk menyimpan perubahan pembelian.`);
   }
   const purchaseItems = items.map(({ product, qty, cost, inputQty, inputCost, inputUnit, conv }) => {
     const previousItem = oldItems.find(item => item.productId === product.id);
@@ -2180,8 +2400,8 @@ function cancelPurchase(id) {
   const purchase = data.purchases[purchaseIndex];
   const items = getPurchaseItems(purchase);
   const products = items.map(item => ({ item, product: data.products.find(product => product.id === item.productId) }));
-  if (!products.length || products.some(entry => !entry.product)) return alert('Produk pembelian tidak ditemukan; pembelian tidak dapat dibatalkan dengan aman.');
-  if (products.some(({ item, product }) => product.stock < item.qty)) return alert('Stok salah satu produk lebih sedikit daripada jumlah pembelian. Pembatalan akan membuat stok negatif, jadi tidak dapat dilakukan.');
+  if (!products.length || products.some(entry => !entry.product)) return notify('Produk pembelian tidak ditemukan; pembelian tidak dapat dibatalkan dengan aman.');
+  if (products.some(({ item, product }) => product.stock < item.qty)) return notify('Stok salah satu produk lebih sedikit daripada jumlah pembelian. Pembatalan akan membuat stok negatif, jadi tidak dapat dilakukan.');
   if (!confirm(`Batalkan pembelian dari ${purchase.supplierName || 'supplier ini'} yang berisi ${items.length} produk? Stok semua produk akan dikurangi.`)) return;
   products.forEach(({ item, product }) => {
     product.stock -= item.qty;
@@ -2209,10 +2429,12 @@ function debtSummaryHTML() {
   const open = data.debts.filter(d => (Number(d.remaining) || 0) > 0);
   const total = open.reduce((s, d) => s + Number(d.remaining), 0);
   const people = new Set(open.map(d => String(d.name || '').trim().toLowerCase())).size;
+  const lateList = data.debts.filter(debtOverdue);
+  const lateTotal = lateList.reduce((s, d) => s + (Number(d.remaining) || 0), 0);
   const now = new Date(); let paidMonth = 0;
   data.debts.forEach(d => (d.payments || []).forEach(p => { const x = new Date(p.date); if (x.getFullYear() === now.getFullYear() && x.getMonth() === now.getMonth()) paidMonth += Number(p.amount) || 0; }));
-  return `<section class="dbt-sum"><div class="dbt-sum-top"><small>Total Piutang</small><h2>${rupiah(total)}</h2><span class="dbt-chip"><i class="fa-solid fa-users"></i> ${people} pelanggan</span><span class="dbt-chip"><i class="fa-solid fa-receipt"></i> ${open.length} catatan</span></div>
-    <div class="dbt-sum-bot"><div><small>Belum Dibayar</small><strong style="color:#D9822B">${rupiah(total)}</strong><em>${people} pelanggan</em></div><div><small>Dibayar Bulan Ini</small><strong style="color:#16834A">${rupiah(paidMonth)}</strong><em>masuk kas</em></div></div></section>`;
+  return `<section class="dbt-sum"><div class="dbt-sum-top"><small>Total Hutang Pelanggan</small><h2>${rupiah(total)}</h2><span class="dbt-chip"><i class="fa-solid fa-users"></i> ${people} pelanggan</span><span class="dbt-chip"><i class="fa-solid fa-receipt"></i> ${open.length} catatan</span></div>
+    <div class="dbt-sum-bot"><div><small>Lewat Jatuh Tempo</small><strong style="color:${lateTotal ? '#C0392B' : '#16834A'}">${rupiah(lateTotal)}</strong><em>${lateList.length} catatan</em></div><div><small>Dibayar Bulan Ini</small><strong style="color:#16834A">${rupiah(paidMonth)}</strong><em>masuk kas</em></div></div></section>`;
 }
 function debtPillsHTML() {
   const open = data.debts.filter(d => (Number(d.remaining) || 0) > 0).length, late = data.debts.filter(debtOverdue).length;
@@ -2276,7 +2498,7 @@ function deleteDebt(id) {
 }
 function addDebt(event) {
   event.preventDefault(); const form = event.currentTarget, amount = moneyNumber(form.elements.namedItem('amount').value);
-  if (!Number.isFinite(amount) || amount < 1) return alert('Jumlah hutang harus lebih dari nol.');
+  if (!Number.isFinite(amount) || amount < 1) return notify('Jumlah hutang harus lebih dari nol.');
   data.debts.unshift({ id: Date.now(), name: form.elements.namedItem('name').value.trim(), phone: form.elements.namedItem('phone').value.trim(), due: form.elements.namedItem('due').value || '', date: new Date().toISOString(), amount, remaining: amount, payments: [] });
   saveData(); openMenu('Hutang');
 }
@@ -2284,7 +2506,7 @@ function payDebt(event, id) {
   event.preventDefault(); const debt = data.debts.find(item => item.id === id);
   if (!debt) return;
   const payment = moneyNumber(event.currentTarget.elements.namedItem('payment').value);
-  if (!Number.isFinite(payment) || payment < 1) return alert('Jumlah pembayaran harus lebih dari nol.');
+  if (!Number.isFinite(payment) || payment < 1) return notify('Jumlah pembayaran harus lebih dari nol.');
   const dibayar = Math.min(payment, Number(debt.remaining) || 0);
   debt.remaining = Math.max(0, debt.remaining - payment);
   (debt.payments = debt.payments || []).push({ date: new Date().toISOString(), amount: dibayar });
@@ -2330,9 +2552,9 @@ async function importDebtsCSV(event) {
       data.debts.push({ id, phone: item.phone, due: item.due, name: item.name, amount: item.amount, remaining: item.remaining });
     });
     saveData(); openMenu('Hutang');
-    alert(`${imported.length} catatan hutang berhasil diimpor.`);
+    notify(`${imported.length} catatan hutang berhasil diimpor.`);
   } catch (error) {
-    alert(error.message || 'File CSV tidak dapat dibaca.');
+    notify(error.message || 'File CSV tidak dapat dibaca.');
   } finally {
     input.value = '';
   }
@@ -2376,7 +2598,7 @@ function histCardHTML(t, nums) {
     <button class="feature-button danger history-delete-action" type="button" onclick="showTransactionDeleteConfirmation(${t.id})"><i class="fa-solid fa-trash-can" aria-hidden="true" style="margin-right:6px"></i>Hapus transaksi</button>
     <div class="history-delete-confirm" id="historyDeleteConfirm-${t.id}" role="group" aria-label="Konfirmasi hapus transaksi">
       <p>Hapus transaksi ini?</p>
-      <div class="purchase-actions"><button class="feature-button danger" type="button" onclick="deleteTransaction(${t.id})">Ya, hapus</button><button class="feature-button secondary" type="button" onclick="cancelTransactionDelete(${t.id})">Batal</button></div>
+      <div class="purchase-actions"><button class="feature-button danger" type="button" onclick="confirmDeleteTransaction(${t.id})">Ya, hapus</button><button class="feature-button secondary" type="button" onclick="cancelTransactionDelete(${t.id})">Batal</button></div>
     </div>
   </article>`;
 }
@@ -2417,16 +2639,21 @@ function startTransactionPress(id, event) {
 function receiptPaperHTML(transaction) {
   const date = new Date(transaction.date);
   const items = Array.isArray(transaction.items) ? transaction.items : [];
-  const hasCash = Number.isFinite(Number(transaction.cash)) && Number(transaction.cash) >= Number(transaction.total);
+  const total = Number(transaction.total), cash = Number(transaction.cash), debt = Number(transaction.debt) || 0;
+  const method = transaction.method && transaction.method !== 'Tunai' ? transaction.method : '';
+  const hasCash = Number.isFinite(cash) && cash >= total;
   const itemRows = items.length
     ? items.map(item => `<div class="receipt-item"><div class="receipt-item-name">${escapeHTML(item.name)}</div><div class="receipt-line"><span>${item.qty}${item.unit ? ' ' + escapeHTML(item.unit) : ''} x ${rupiah(item.price)}</span><span>${rupiah(item.price * item.qty)}</span></div></div>`).join('')
     : '<p class="receipt-empty">Rincian barang tidak tersedia untuk transaksi lama ini.</p>';
+  let payRows = '';
+  if (method) payRows = `<div class="receipt-line"><span>Bayar via</span><span>${escapeHTML(method)}</span></div>`;
+  else if (debt > 0) payRows = `<div class="receipt-line"><span>Tunai</span><span>${rupiah(cash)}</span></div><div class="receipt-line"><strong>Sisa hutang</strong><strong>${rupiah(debt)}</strong></div>${transaction.customer ? `<p>a.n. ${escapeHTML(transaction.customer)}</p>` : ''}`;
+  else if (hasCash) payRows = `<div class="receipt-line"><span>Tunai</span><span>${rupiah(cash)}</span></div><div class="receipt-line"><span>Kembalian</span><span>${rupiah(cash - total)}</span></div>`;
   return `<div class="receipt-header"><h2>${escapeHTML(data.settings.shop)}</h2>
       ${data.settings.address ? `<p>${escapeHTML(data.settings.address)}</p>` : ''}<p>${Number.isNaN(date.getTime()) ? '-' : date.toLocaleDateString('id-ID') + ' · ' + date.toLocaleTimeString('id-ID')}</p></div>
     <div class="receipt-divider"></div>${itemRows}<div class="receipt-divider"></div>
     <div class="receipt-line"><strong>Total</strong><strong>${rupiah(transaction.total)}</strong></div>
-    ${hasCash ? `<div class="receipt-line"><span>Tunai</span><span>${rupiah(Number(transaction.cash))}</span></div>
-    <div class="receipt-line"><span>Kembalian</span><span>${rupiah(Number(transaction.cash) - Number(transaction.total))}</span></div>` : ''}
+    ${payRows}
     <div class="receipt-divider"></div><p style="text-align:center">Terima kasih telah berbelanja</p>`;
 }
 function openTransactionDetail(id, event) {
@@ -2461,6 +2688,7 @@ function confirmDeleteTransaction(id) {
     <section class="payment-box" role="alertdialog" aria-modal="true" aria-labelledby="transactionDeleteTitle" aria-describedby="transactionDeleteMessage">
       <div class="feature-header"><h2 id="transactionDeleteTitle">Hapus transaksi?</h2><button class="feature-close" type="button" onclick="closeTransactionDeleteConfirm()" aria-label="Batal">&times;</button></div>
       <p id="transactionDeleteMessage" style="margin-bottom:16px;color:#718078;font-size:13px;line-height:1.5">Transaksi ${escapeHTML(transaction.customer)} senilai ${rupiah(transaction.total)} akan dihapus. Tindakan ini tidak dapat dibatalkan.</p>
+      <label class="restore-stock"><input type="checkbox" id="restoreStockOnDelete" checked> Kembalikan stok barang ke produk</label>
       <div class="purchase-actions"><button class="feature-button secondary" type="button" onclick="closeTransactionDeleteConfirm()">Batal</button><button class="feature-button danger" type="button" onclick="executeTransactionDelete(${transaction.id})">Ya, hapus</button></div>
     </section>
   </div>`);
@@ -2470,16 +2698,17 @@ function closeTransactionDeleteConfirm() {
 }
 function executeTransactionDelete(id) {
   if (!data.transactions.some(item => item.id === id)) return closeTransactionDeleteConfirm();
+  const restore = document.getElementById('restoreStockOnDelete')?.checked !== false;
   closeTransactionDetail();
-  deleteTransaction(id);
+  deleteTransaction(id, restore);
 }
 async function reprintTransaction(id) {
   const transaction = data.transactions.find(item => item.id === id);
-  if (!transaction) return alert('Transaksi tidak ditemukan.');
+  if (!transaction) return notify('Transaksi tidak ditemukan.');
   try {
     await printReceipt(transaction.id);
   } catch (error) {
-    alert('Struk gagal dicetak. Periksa pengaturan atau koneksi printer.');
+    notify('Struk gagal dicetak. Periksa pengaturan atau koneksi printer.');
   }
 }
 function cancelTransactionPress() { clearTimeout(transactionPressTimer); }
@@ -2491,9 +2720,19 @@ function cancelTransactionDelete(id) {
   const card = document.getElementById(`historyDeleteConfirm-${id}`)?.closest('.history-transaction');
   if (card) card.classList.remove('confirm-delete');
 }
-function deleteTransaction(id) {
+function deleteTransaction(id, restoreStock = false) {
   const transaction = data.transactions.find(item => item.id === id);
   if (!transaction) return;
+  if (restoreStock) {
+    /* barang yang terjual dikembalikan ke stok (dalam satuan dasar) */
+    (transaction.items || []).forEach(item => {
+      if (item.quick) return;
+      const product = data.products.find(p => p.id === item.id);
+      if (product) product.stock += (Number(item.qty) || 0) * (Number(item.conv) || 1);
+    });
+  }
+  /* catatan hutang dari transaksi ini ikut dihapus bila belum pernah dibayar */
+  data.debts = data.debts.filter(d => !(d.transactionId === id && !(d.payments || []).length));
   data.transactions = data.transactions.filter(item => item.id !== id);
   saveData();
   updateDashboard();
@@ -2555,7 +2794,7 @@ function renderReports(period = document.getElementById('reportPeriod')?.value |
     if (prev > 0) { const pct = Math.round((totalSales - prev) / prev * 100); trend = `<span class="hst-chip" style="color:${pct >= 0 ? '#16834A' : '#C0392B'};font-weight:700">${pct >= 0 ? '\u2191' : '\u2193'} ${Math.abs(pct)}% dari periode sebelumnya</span>`; }
   }
   const margin = totalSales ? totalProfit / totalSales * 100 : 0;
-  const topRows = reportBestSellerList.slice(0, 3).map((p, i) => `<div class="rpt-top"><span class="rpt-rank">${i + 1}</span><b>${escapeHTML(p.name)}</b><small>${p.qty} terjual</small><strong>${rupiah(p.total)}</strong></div>`).join('');
+  const topRows = reportBestSellerList.slice(0, 3).map((p, i) => `<div class="rpt-top"><span class="rpt-rank">${i + 1}</span><div class="rpt-top-info"><b>${escapeHTML(p.name)}</b><small>${p.qty} terjual</small></div><strong>${rupiah(p.total)}</strong></div>`).join('');
   reportState = { period, start: customStart, end: customEnd };
   return `<div class="rpt-filters report-filters"><label for="reportPeriod">Periode laporan</label>
       <select id="reportPeriod" onchange="filterReports()">
@@ -2738,9 +2977,9 @@ async function importCustomersCSV(event) {
     });
     saveData();
     openMenu('Pelanggan');
-    alert(`${imported.length} pelanggan berhasil diimpor.`);
+    notify(`${imported.length} pelanggan berhasil diimpor.`);
   } catch (error) {
-    alert(error.message || 'File CSV tidak dapat dibaca.');
+    notify(error.message || 'File CSV tidak dapat dibaca.');
   } finally {
     input.value = '';
   }
@@ -2929,9 +3168,9 @@ async function importProductsCSV(event) {
       }
     });
     saveData();
-    alert(`${imported.length} produk berhasil diimpor.${skipped ? ` ${skipped} baris tidak valid dilewati.` : ''}`);
+    notify(`${imported.length} produk berhasil diimpor.${skipped ? ` ${skipped} baris tidak valid dilewati.` : ''}`);
   } catch (error) {
-    alert(error.message || 'File CSV tidak dapat dibaca.');
+    notify(error.message || 'File CSV tidak dapat dibaca.');
   } finally {
     input.value = '';
   }
@@ -2940,19 +3179,19 @@ function saveProfile(event) {
   event.preventDefault();
   data.settings.admin = event.currentTarget.elements.namedItem('admin').value.trim();
   saveData();
-  alert('Profil berhasil disimpan.');
+  notify('Profil berhasil disimpan.');
 }
 function saveSettings(event) {
   event.preventDefault();
   data.settings = { ...data.settings, shop: event.currentTarget.elements.namedItem('shop').value.trim(), address: event.currentTarget.elements.namedItem('address').value.trim() };
   saveData();
   document.querySelector('.brand h3').textContent = data.settings.shop.toUpperCase();
-  alert('Pengaturan berhasil disimpan.');
+  notify('Pengaturan berhasil disimpan.');
 }
 function resetData() {
   const saran = '\n\nData hanya tersimpan di perangkat ini. Ekspor produk dulu supaya tidak hilang permanen.';
   if (!confirm('Semua data POS di browser ini akan dihapus. Lanjutkan?' + saran)) return;
-  ['products', 'suppliers', 'customers', 'debts', 'transactions', 'purchases', 'settings'].forEach(key => localStorage.removeItem('posoff_' + key));
+  ['products', 'suppliers', 'customers', 'debts', 'transactions', 'purchases', 'settings', 'cart'].forEach(key => localStorage.removeItem('posoff_' + key));
   location.reload();
 }
 /* ===== VERSI OFFLINE: tanpa akun, tanpa login, tanpa database online ===== */
@@ -3027,8 +3266,20 @@ function renderBeranda(k) {
   const j = n.getHours(), adm = data.settings.admin ? ', ' + data.settings.admin : '';
   document.getElementById('sapaan').textContent = 'Selamat ' + (j < 11 ? 'Pagi' : j < 15 ? 'Siang' : j < 18 ? 'Sore' : 'Malam') + adm + ' \u{1F44B}';
 }
+function renderBerandaAlerts() {
+  const el = document.getElementById('bhAlerts');
+  if (!el) return;
+  const habis = data.products.filter(p => Number(p.stock) <= 0).length;
+  const tipis = data.products.filter(p => Number(p.stock) > 0 && Number(p.stock) <= 5).length;
+  const late = data.debts.filter(debtOverdue);
+  const lateTotal = late.reduce((s, d) => s + (Number(d.remaining) || 0), 0);
+  const rows = [];
+  if (habis || tipis) rows.push(`<button type="button" class="bh-alert warn" onclick="openMenu('Cek Stok Menipis')"><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i><span><b>${[habis ? habis + ' stok habis' : '', tipis ? tipis + ' stok menipis' : ''].filter(Boolean).join(' · ')}</b><small>Ketuk untuk melihat barangnya</small></span><i class="fa-solid fa-chevron-right" aria-hidden="true"></i></button>`);
+  if (late.length) rows.push(`<button type="button" class="bh-alert late" onclick="openMenu('Hutang')"><i class="fa-solid fa-clock" aria-hidden="true"></i><span><b>${late.length} hutang lewat jatuh tempo</b><small>Total ${rupiah(lateTotal)}</small></span><i class="fa-solid fa-chevron-right" aria-hidden="true"></i></button>`);
+  el.innerHTML = rows.join('');
+}
 function renderMenuLainnya() {
-  return `<div class="bh-lainnya"><section class="menu-grid"><div class="menu-card" onclick="openMenu('Produk')"><div class="menu-icon blue"><i class="fa-solid fa-box-open"></i></div><span>Produk</span></div><div class="menu-card" onclick="openMenu('Stok Barang')"><div class="menu-icon cyan"><i class="fa-solid fa-warehouse"></i></div><span>Stok Barang</span></div><div class="menu-card" onclick="openMenu('Pembelian')"><div class="menu-icon pink"><i class="fa-solid fa-basket-shopping"></i></div><span>Pembelian</span></div><div class="menu-card" onclick="openMenu('Riwayat Pembelian')"><div class="menu-icon orange"><i class="fa-solid fa-clock-rotate-left"></i></div><span>Riwayat Pembelian</span></div><div class="menu-card" onclick="openMenu('Supplier')"><div class="menu-icon purple"><i class="fa-solid fa-truck"></i></div><span>Supplier</span></div><div class="menu-card" onclick="openMenu('Pelanggan')"><div class="menu-icon yellow"><i class="fa-solid fa-users"></i></div><span>Pelanggan</span></div><div class="menu-card" onclick="openMenu('Hutang')"><div class="menu-icon violet"><i class="fa-solid fa-wallet"></i></div><span>Hutang</span></div><div class="menu-card" onclick="window.Akses && Akses.buka()"><div class="menu-icon violet"><i class="fa-solid fa-user-shield"></i></div><span>Manajemen Akun</span></div><div class="menu-card" onclick="openMenu('Pengaturan')"><div class="menu-icon gray"><i class="fa-solid fa-gear"></i></div><span>Pengaturan</span></div></section></div>`;
+  return `<div class="bh-lainnya"><section class="menu-grid"><div class="menu-card" onclick="openMenu('Riwayat')"><div class="menu-icon green"><i class="fa-solid fa-receipt"></i></div><span>Riwayat Penjualan</span></div><div class="menu-card" onclick="openMenu('Stok Barang')"><div class="menu-icon cyan"><i class="fa-solid fa-warehouse"></i></div><span>Stok Barang</span></div><div class="menu-card" onclick="openMenu('Pembelian')"><div class="menu-icon pink"><i class="fa-solid fa-basket-shopping"></i></div><span>Pembelian</span></div><div class="menu-card" onclick="openMenu('Riwayat Pembelian')"><div class="menu-icon orange"><i class="fa-solid fa-clock-rotate-left"></i></div><span>Riwayat Pembelian</span></div><div class="menu-card" onclick="openMenu('Supplier')"><div class="menu-icon purple"><i class="fa-solid fa-truck"></i></div><span>Supplier</span></div><div class="menu-card" onclick="openMenu('Pelanggan')"><div class="menu-icon yellow"><i class="fa-solid fa-users"></i></div><span>Pelanggan</span></div><div class="menu-card" onclick="openMenu('Hutang')"><div class="menu-icon violet"><i class="fa-solid fa-wallet"></i></div><span>Hutang</span></div><div class="menu-card" onclick="window.Akses && Akses.buka()"><div class="menu-icon violet"><i class="fa-solid fa-user-shield"></i></div><span>Manajemen Akun</span></div><div class="menu-card" onclick="openMenu('Pengaturan')"><div class="menu-icon gray"><i class="fa-solid fa-gear"></i></div><span>Pengaturan</span></div></section></div>`;
 }
 function renderLainnya() { return renderMenuLainnya(); }
 
@@ -3040,6 +3291,7 @@ function updateDashboard() {
   const sales = todaysTransactions.reduce((sum, transaction) => sum + transaction.total, 0);
   const profit = todaysTransactions.reduce((sum, transaction) => sum + (transaction.items || []).reduce((total, item) => total + (item.price - (item.cost || 0)) * item.qty, 0), 0);
   renderBeranda();
+  renderBerandaAlerts();
 }
 function seedPreviewData() {
   const previewEditor = window.self !== window.top;
@@ -3086,6 +3338,11 @@ document.querySelector('.brand h3').textContent = data.settings.shop.toUpperCase
 updateDashboard();
 window.addEventListener('popstate', event => {
   if (!document.getElementById('featureModal').classList.contains('open')) return;
+  if (inProductEditor) {
+    history.pushState({ ...(history.state || {}), posFeatureSession: featureSessionId }, '');
+    openMenu('Produk');
+    return;
+  }
   if (event.state?.posFeatureSession === featureSessionId && featureHistory.length) {
     const previous = featureHistory.pop();
     featureHistoryDepth = Math.max(1, featureHistoryDepth - 1);
