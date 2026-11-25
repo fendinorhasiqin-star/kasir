@@ -1613,8 +1613,6 @@ function renderProducts() {
     <i class="fa-solid fa-chevron-right product-list-arrow" aria-hidden="true"></i>
   </article>`).join('') || emptyMessage('Produk tidak ditemukan.');
   return `<div class="product-tools"><input id="productSearch" type="search" placeholder="Cari nama atau barcode produk" oninput="filterProducts()" aria-label="Cari produk">
-    <label class="product-sort-label" for="productSort">Urutkan</label>
-    <select id="productSort" onchange="filterProducts()" aria-label="Urutkan produk"><option value="az">Nama A–Z</option><option value="za">Nama Z–A</option><option value="newest">Terbaru</option><option value="price-low">Harga terendah</option><option value="price-high">Harga tertinggi</option></select>
     <p class="product-hint">Tekan dan tahan produk untuk mengedit.</p></div>
     <p class="product-count" id="productCount" aria-live="polite">${productCountText()}</p>
     <div class="product-list" id="productList">${list}</div>
@@ -1623,14 +1621,8 @@ function renderProducts() {
 let productPressTimer;
 function getSortedProducts() {
   const query = (document.getElementById('productSearch')?.value || '').trim().toLocaleLowerCase('id-ID');
-  const sort = document.getElementById('productSort')?.value || 'az';
-  return [...data.products].filter(product => `${product.name} ${product.barcode || ''}`.toLocaleLowerCase('id-ID').includes(query)).sort((a, b) => {
-    if (sort === 'za') return b.name.localeCompare(a.name, 'id');
-    if (sort === 'newest') return b.id - a.id;
-    if (sort === 'price-low') return a.price - b.price;
-    if (sort === 'price-high') return b.price - a.price;
-    return a.name.localeCompare(b.name, 'id');
-  });
+  /* urutan tetap: nama A–Z */
+  return [...data.products].filter(product => `${product.name} ${product.barcode || ''}`.toLocaleLowerCase('id-ID').includes(query)).sort((a, b) => a.name.localeCompare(b.name, 'id'));
 }
 function filterProducts() {
   const list = document.getElementById('productList');
