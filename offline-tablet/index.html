@@ -920,6 +920,12 @@ body {
 .cash-fields { display: grid; gap: 10px; }
 .payment-change small { display: block; margin-top: 3px; font-weight: 600; font-size: 11px; }
 .pu-wide { grid-column: 1 / -1; }
+.cashier-product.multi { cursor: default; }
+.cashier-product small small { display: inline; margin: 0; }
+.unit-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.unit-chip { display: grid; gap: 2px; min-width: 88px; padding: 9px 12px; border: 1px solid #CFE6D7; border-radius: 12px; background: #F1FAF4; color: #16834A; font: inherit; font-size: 13px; font-weight: 700; text-align: left; cursor: pointer; }
+.unit-chip b { color: #26352D; font-size: 12px; }
+.unit-chip:disabled { opacity: .45; cursor: not-allowed; }
 .stk { display: inline-block; padding: 1px 8px; border-radius: 999px; font-size: 11px; font-weight: 700; line-height: 1.5; }
 .stk.out { background: #FBE4E4; color: #C0392B; }
 .stk.low { background: #FFF1DC; color: #A66A10; }
@@ -1414,7 +1420,7 @@ function searchCashierProducts() {
   const results = document.getElementById('cashierResults');
   if (!query) { results.innerHTML = ''; return; }
   const matches = data.products.filter(product => `${product.name} ${product.barcode || ''} ${(product.units || []).map(u => u.barcode || '').join(' ')}`.toLocaleLowerCase('id-ID').includes(query) && (product.stock > 0 || ignoreStockLimit()));
-  results.innerHTML = matches.length ? matches.map(product => `<button class="cashier-product" type="button" onclick="addProductToCart(${product.id})"><strong>${escapeHTML(product.name)}</strong><small><b class="price-strong">${rupiah(product.price)}</b>${product.unit ? ' · ' + escapeHTML(product.unit) : ''} · Stok ${product.stock}</small></button>`).join('') : emptyMessage('Produk tidak ditemukan atau stok habis.');
+  results.innerHTML = matches.length ? matches.map(product => (product.units || []).length ? `<div class="cashier-product multi"><strong>${escapeHTML(product.name)}</strong><small>Stok ${product.stock}${product.unit ? ' ' + escapeHTML(product.unit) : ''}${stockBreakdownText(product)} · pilih satuan:</small><div class="unit-chips">${productUnits(product).map((u, i) => `<button type="button" class="unit-chip" ${product.stock < u.conv && !ignoreStockLimit() ? 'disabled' : ''} onclick="addProductToCart(${product.id}, ${i})">${escapeHTML(u.name || 'satuan dasar')}<b>${rupiah(u.price)}</b></button>`).join('')}</div></div>` : `<button class="cashier-product" type="button" onclick="addProductToCart(${product.id})"><strong>${escapeHTML(product.name)}</strong><small><b class="price-strong">${rupiah(product.price)}</b>${product.unit ? ' · ' + escapeHTML(product.unit) : ''} · Stok ${product.stock}</small></button>`).join('') : emptyMessage('Produk tidak ditemukan atau stok habis.');
 }
 function cashierSearchKey(event) {
   if (event.key !== 'Enter') return;
@@ -1444,7 +1450,7 @@ function addProductToCart(id, unitName) {
   if (!product) return;
   /* dari pencarian masuk satuan dasar; dari scan barcode satuan lain (mis. dus) masuk satuan itu */
   const units = productUnits(product);
-  const unit = (unitName !== undefined && units.find(u => u.name === unitName)) || units[0];
+  const unit = (typeof unitName === 'number' ? units[unitName] : unitName !== undefined && units.find(u => u.name === unitName)) || units[0];
   if (product.stock < unit.conv && !ignoreStockLimit()) return notify(unit.conv > 1 ? `Stok tidak cukup untuk 1 ${unit.name}.` : 'Stok produk habis.');
   const existing = data.cart.find(item => item.id === id && (item.unit || '') === (unit.name || ''));
   if (!ignoreStockLimit() && cartBaseQty(id) + unit.conv > product.stock) return notify('Stok tidak mencukupi.');
