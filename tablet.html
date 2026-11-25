@@ -920,6 +920,7 @@ body {
 .cash-fields[hidden] { display: none; }
 .cash-fields { display: grid; gap: 10px; }
 .payment-change small { display: block; margin-top: 3px; font-weight: 600; font-size: 11px; }
+.pu-wide { grid-column: 1 / -1; }
 .stk { display: inline-block; padding: 1px 8px; border-radius: 999px; font-size: 11px; font-weight: 700; line-height: 1.5; }
 .stk.out { background: #FBE4E4; color: #C0392B; }
 .stk.low { background: #FFF1DC; color: #A66A10; }
@@ -1124,8 +1125,19 @@ function moneyNumber(value) {
 /* ===== Satuan ganda: satuan dasar = product.unit/price/cost (conv 1); satuan lain di product.units (conv = isi dalam satuan dasar) ===== */
 function productUnits(product) {
   const base = { name: product.unit || '', conv: 1, price: product.price, cost: product.cost };
-  const others = (product.units || []).map(u => ({ name: u.name, conv: Number(u.conv) || 1, price: Number(u.price) || 0, cost: Number(u.cost) || 0 }));
+  const others = (product.units || []).map(u => ({ name: u.name, conv: Number(u.conv) || 1, price: Number(u.price) || 0, cost: Number(u.cost) || 0, barcode: String(u.barcode || '').trim() }));
   return [base, ...others];
+}
+/* Cari produk + satuan dari barcode (barcode satuan dasar maupun barcode satuan lain, mis. dus) */
+function findBarcodeMatch(code) {
+  code = String(code ?? '').trim();
+  if (!code) return null;
+  for (const product of data.products) {
+    if (String(product.barcode || '').trim() === code) return { product, unitName: product.unit || '' };
+    const unit = (product.units || []).find(u => String(u.barcode || '').trim() === code);
+    if (unit) return { product, unitName: unit.name };
+  }
+  return null;
 }
 /* Total pemakaian stok (dalam satuan dasar) untuk satu produk di keranjang, semua baris satuan dijumlahkan */
 function cartBaseQty(productId, exceptIndex = -1) {
@@ -1416,7 +1428,7 @@ function searchCashierProducts() {
   const query = document.getElementById('cashierSearch').value.trim().toLocaleLowerCase('id-ID');
   const results = document.getElementById('cashierResults');
   if (!query) { results.innerHTML = ''; return; }
-  const matches = data.products.filter(product => `${product.name} ${product.barcode || ''}`.toLocaleLowerCase('id-ID').includes(query) && (product.stock > 0 || ignoreStockLimit()));
+  const matches = data.products.filter(product => `${product.name} ${product.barcode || ''} ${(product.units || []).map(u => u.barcode || '').join(' ')}`.toLocaleLowerCase('id-ID').includes(query) && (product.stock > 0 || ignoreStockLimit()));
   results.innerHTML = matches.length ? matches.map(product => `<button class="cashier-product" type="button" onclick="addProductToCart(${product.id})"><strong>${escapeHTML(product.name)}</strong><small><b class="price-strong">${rupiah(product.price)}</b>${product.unit ? ' · ' + escapeHTML(product.unit) : ''} · Stok ${product.stock}</small></button>`).join('') : emptyMessage('Produk tidak ditemukan atau stok habis.');
 }
 function cashierSearchKey(event) {
@@ -1426,14 +1438,15 @@ function cashierSearchKey(event) {
   if (!value) return;
   const lower = value.toLocaleLowerCase('id-ID');
   /* barcode yang persis sama (scanner) langsung masuk keranjang; kalau tidak, hanya bila hasil pencarian tunggal */
-  let product = data.products.find(item => String(item.barcode || '').trim() === value);
+  const exact = findBarcodeMatch(value);
+  let product = exact?.product;
   if (!product) {
     const matches = data.products.filter(item => `${item.name} ${item.barcode || ''}`.toLocaleLowerCase('id-ID').includes(lower) && (item.stock > 0 || ignoreStockLimit()));
     if (matches.length === 1) product = matches[0];
     else if (!matches.length) return notify('Produk tidak ditemukan atau stok habis.');
     else return notify(`Ada ${matches.length} produk yang cocok. Pilih salah satu dari daftar.`);
   }
-  addProductToCart(product.id);
+  addProductToCart(product.id, exact ? exact.unitName : undefined);
   const fresh = document.getElementById('cashierSearch');
   if (fresh) { fresh.value = ''; fresh.focus({ preventScroll: true }); }
 }
@@ -1441,14 +1454,17 @@ function clearCart() {
   if (!data.cart.length) return;
   confirmDialog('Semua barang di keranjang akan dihapus.', () => { data.cart = []; refreshKeepingScroll(); }, { title: 'Kosongkan keranjang?', yesLabel: 'Ya, kosongkan' });
 }
-function addProductToCart(id) {
+function addProductToCart(id, unitName) {
   const product = data.products.find(item => item.id === id);
-  if (!product || (product.stock < 1 && !ignoreStockLimit())) return notify('Stok produk habis.');
-  /* produk dari pencarian/scan selalu masuk dengan satuan dasar; satuan lain dipilih lewat dropdown di keranjang */
-  const existing = data.cart.find(item => item.id === id && (item.unit || '') === (product.unit || ''));
-  if (!ignoreStockLimit() && cartBaseQty(id) + 1 > product.stock) return notify('Stok tidak mencukupi.');
+  if (!product) return;
+  /* dari pencarian masuk satuan dasar; dari scan barcode satuan lain (mis. dus) masuk satuan itu */
+  const units = productUnits(product);
+  const unit = (unitName !== undefined && units.find(u => u.name === unitName)) || units[0];
+  if (product.stock < unit.conv && !ignoreStockLimit()) return notify(unit.conv > 1 ? `Stok tidak cukup untuk 1 ${unit.name}.` : 'Stok produk habis.');
+  const existing = data.cart.find(item => item.id === id && (item.unit || '') === (unit.name || ''));
+  if (!ignoreStockLimit() && cartBaseQty(id) + unit.conv > product.stock) return notify('Stok tidak mencukupi.');
   if (existing) existing.qty++;
-  else data.cart.push({ id, name: product.name, unit: product.unit || '', conv: 1, price: product.price, cost: product.cost, qty: 1 });
+  else data.cart.push({ id, name: product.name, unit: unit.name || '', conv: unit.conv, price: unit.price, cost: unit.cost, qty: 1 });
   playAddToCartSound();
   refreshKeepingScroll();
 }
@@ -1569,9 +1585,9 @@ function closeScanner() {
   document.getElementById('cameraOverlay')?.remove();
 }
 function findScannedProduct(barcode) {
-  const product = data.products.find(item => String(item.barcode || '') === String(barcode));
-  if (!product) return notify('Barcode tidak ditemukan. Tambahkan barcode pada data produk terlebih dahulu.');
-  addProductToCart(product.id);
+  const match = findBarcodeMatch(barcode);
+  if (!match) return notify('Barcode tidak ditemukan. Tambahkan barcode pada data produk terlebih dahulu.');
+  addProductToCart(match.product.id, match.unitName);
 }
 function addToCart(event) {
   event.preventDefault();
@@ -1833,8 +1849,8 @@ function productCountText() {
 function stockTag(product) {
   const stock = Number(product.stock);
   if (stock <= 0) return '<span class="stk out">Stok habis</span>';
-  if (stock <= 5) return `<span class="stk low">Stok ${product.stock}</span>`;
-  return `Stok ${product.stock}`;
+  if (stock <= 5) return `<span class="stk low">Stok ${product.stock}</span>${stockBreakdownText(product)}`;
+  return `Stok ${product.stock}${stockBreakdownText(product)}`;
 }
 function renderProductsList() {
   return getSortedProducts().map(product => `<article class="product-list-item" onpointerdown="startProductPress(${product.id}, event)" onpointerup="cancelProductPress()" onpointerleave="cancelProductPress()" onpointercancel="cancelProductPress()" oncontextmenu="event.preventDefault(); showProductActions(${product.id})">
@@ -1902,8 +1918,9 @@ function productUnitRowHTML(unit = {}) {
   return `<div class="pu-row">
     <label class="pu-cell"><span>Satuan</span><input class="pu-name" placeholder="mis. dus" aria-label="Nama satuan lain" value="${escapeHTML(unit.name || '')}"></label>
     <label class="pu-cell"><span>Isi (dalam satuan dasar)</span><input class="pu-conv" type="number" min="0" step="any" placeholder="mis. 24" aria-label="Isi per satuan, dalam satuan dasar" value="${unit.conv ?? ''}"></label>
-    <label class="pu-cell"><span>Harga jual (Rp)</span><input class="pu-price money-input" type="text" inputmode="numeric" autocomplete="off" placeholder="Harga per satuan ini" aria-label="Harga jual satuan lain" value="${formatMoney(unit.price)}"></label>
+    <label class="pu-cell"><span>Harga jual (Rp)</span><input class="pu-price money-input" type="text" inputmode="numeric" autocomplete="off" placeholder="Kosong = isi × harga dasar" aria-label="Harga jual satuan lain" value="${formatMoney(unit.price)}"></label>
     <label class="pu-cell"><span>Modal (Rp)</span><input class="pu-cost money-input" type="text" inputmode="numeric" autocomplete="off" placeholder="Opsional" aria-label="Harga modal satuan lain" value="${formatMoney(unit.cost)}"></label>
+    <label class="pu-cell pu-wide"><span>Barcode satuan ini (opsional)</span><input class="pu-barcode" placeholder="Barcode dus/kemasan ini" aria-label="Barcode satuan lain" value="${escapeHTML(unit.barcode || '')}"></label>
     <button class="pu-remove" type="button" onclick="const f = this.closest('form'); this.closest('.pu-row').remove(); refreshProductStockUnit(f)" aria-label="Hapus satuan"><i class="fa-solid fa-trash-can" aria-hidden="true"></i> Hapus satuan</button>
   </div>`;
 }
@@ -1997,13 +2014,21 @@ function saveProduct(event) {
     const priceText = row.querySelector('.pu-price').value.trim();
     const costText = row.querySelector('.pu-cost').value.trim();
     if (!name && !convText && !priceText && !costText) continue;
-    const conv = Number(convText), price = moneyNumber(priceText), cost = moneyNumber(costText) || 0;
+    const conv = Number(convText);
+    const barcodeText = row.querySelector('.pu-barcode')?.value.trim() || '';
+    /* harga/modal kosong -> otomatis isi × harga/modal satuan dasar */
+    const price = priceText === '' ? Math.round(conv * values.price) : moneyNumber(priceText);
+    const cost = costText === '' ? Math.round(conv * (values.cost || 0)) : (moneyNumber(costText) || 0);
     if (!name) { notify('Nama satuan lain wajib diisi.'); row.querySelector('.pu-name').focus(); return; }
     if (seen.has(name.toLocaleLowerCase('id-ID'))) { notify(`Satuan "${name}" sudah dipakai. Gunakan nama yang berbeda.`); row.querySelector('.pu-name').focus(); return; }
     if (!Number.isFinite(conv) || conv <= 0) { notify(`Isi satuan "${name}" harus lebih dari nol.`); row.querySelector('.pu-conv').focus(); return; }
-    if (priceText === '' || !Number.isFinite(price) || price < 0) { notify(`Harga jual satuan "${name}" wajib diisi.`); row.querySelector('.pu-price').focus(); return; }
+    if (!Number.isFinite(price) || price < 0) { notify(`Harga jual satuan "${name}" wajib diisi.`); row.querySelector('.pu-price').focus(); return; }
+    if (barcodeText) {
+      const clash = barcodeText === values.barcode || extraUnits.some(u => u.barcode === barcodeText) || data.products.some(p => p.id !== id && (String(p.barcode || '').trim() === barcodeText || (p.units || []).some(u => String(u.barcode || '').trim() === barcodeText)));
+      if (clash) { notify(`Barcode "${barcodeText}" sudah dipakai. Gunakan barcode yang berbeda.`); row.querySelector('.pu-barcode').focus(); return; }
+    }
     seen.add(name.toLocaleLowerCase('id-ID'));
-    extraUnits.push({ name, conv, price, cost });
+    extraUnits.push({ name, conv, price, cost, ...(barcodeText ? { barcode: barcodeText } : {}) });
   }
   values.units = extraUnits;
   /* stok yang diketik dalam satuan lain (mis. 5 dus) dikonversi ke satuan dasar (5 x isi) */
@@ -2048,7 +2073,7 @@ function renderStockAdjustments() {
 function renderLowStock() {
   const products = data.products.filter(product => Number(product.stock) <= 5).sort((a, b) => a.stock - b.stock);
   const list = products.map(product => { const out = Number(product.stock) <= 0; return `<article class="feature-card feature-row"><div><h3>${escapeHTML(product.name)}</h3>
-    <p>Stok saat ini: <strong>${product.stock}</strong> ${escapeHTML(product.unit || 'unit')}</p></div>
+    <p>Stok saat ini: <strong>${product.stock}</strong> ${escapeHTML(product.unit || 'unit')}${stockBreakdownText(product)}</p></div>
     <span class="purchase-status ${out ? 'empty' : ''}">${out ? 'Stok habis' : 'Stok menipis'}</span></article>`; }).join('');
   return `<section class="feature-card"><h3>Cek stok menipis</h3><p>${products.length} produk memiliki stok 5 unit atau kurang.</p></section>
     ${list || emptyMessage('Tidak ada produk dengan stok menipis.')}
@@ -2810,7 +2835,8 @@ function renderReports(period = document.getElementById('reportPeriod')?.value |
   const bestSellers = new Map();
   transactions.forEach(transaction => (transaction.items || []).forEach(item => {
     const key = String(item.id ?? item.name);
-    const product = bestSellers.get(key) || { name: item.name, qty: 0, total: 0 };
+    const baseUnit = data.products.find(p => p.id === item.id)?.unit || item.unit || '';
+    const product = bestSellers.get(key) || { name: item.name, unit: baseUnit, qty: 0, total: 0 };
     product.qty += item.qty * (item.conv || 1);
     product.total += item.price * item.qty;
     bestSellers.set(key, product);
@@ -2823,7 +2849,7 @@ function renderReports(period = document.getElementById('reportPeriod')?.value |
     if (prev > 0) { const pct = Math.round((totalSales - prev) / prev * 100); trend = `<span class="hst-chip" style="color:${pct >= 0 ? '#16834A' : '#C0392B'};font-weight:700">${pct >= 0 ? '\u2191' : '\u2193'} ${Math.abs(pct)}% dari periode sebelumnya</span>`; }
   }
   const margin = totalSales ? totalProfit / totalSales * 100 : 0;
-  const topRows = reportBestSellerList.slice(0, 3).map((p, i) => `<div class="rpt-top"><span class="rpt-rank">${i + 1}</span><div class="rpt-top-info"><b>${escapeHTML(p.name)}</b><small>${p.qty} terjual</small></div><strong>${rupiah(p.total)}</strong></div>`).join('');
+  const topRows = reportBestSellerList.slice(0, 3).map((p, i) => `<div class="rpt-top"><span class="rpt-rank">${i + 1}</span><div class="rpt-top-info"><b>${escapeHTML(p.name)}</b><small>${Math.round(p.qty * 1000) / 1000} ${escapeHTML(p.unit || 'unit')} terjual</small></div><strong>${rupiah(p.total)}</strong></div>`).join('');
   reportState = { period, start: customStart, end: customEnd };
   return `<div class="rpt-filters report-filters"><label for="reportPeriod">Periode laporan</label>
       <select id="reportPeriod" onchange="filterReports()">
@@ -2851,7 +2877,7 @@ function openBestSellers() {
 }
 function renderBestSellersPage() {
   const list = reportBestSellerList.length ? reportBestSellerList.map((product, index) =>
-    `<div class="feature-card"><div class="feature-row"><div><h3>${index + 1}. ${escapeHTML(product.name)}</h3><p>${product.qty} unit terjual · Omzet ${rupiah(product.total)}</p></div><i class="fa-solid fa-trophy" style="color:#C8A64B" aria-hidden="true"></i></div></div>`
+    `<div class="feature-card"><div class="feature-row"><div><h3>${index + 1}. ${escapeHTML(product.name)}</h3><p>${Math.round(product.qty * 1000) / 1000} ${escapeHTML(product.unit || 'unit')} terjual · Omzet ${rupiah(product.total)}</p></div><i class="fa-solid fa-trophy" style="color:#C8A64B" aria-hidden="true"></i></div></div>`
   ).join('') : emptyMessage('Belum ada produk terjual pada periode ini.');
   return `<div class="feature-card"><h3>Produk terlaris</h3><p>Urutan berdasarkan jumlah unit terjual pada periode laporan yang dipilih.</p></div>${list}<button class="feature-button secondary" type="button" style="width:100%" onclick="backToReports()"><i class="fa-solid fa-arrow-left" style="margin-right:6px"></i>Kembali ke laporan</button>`;
 }
